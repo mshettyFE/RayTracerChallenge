@@ -1,8 +1,0 @@
-cmake_minimum_required(VERSION 3.10)
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-project(RayTracer)
-file(GLOB SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
-include_directories(SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/include)
-set(PROG "Tracer")
-add_executable(${PROG} ${SRC})
