@@ -24,9 +24,10 @@ if(TESTING)
 
     enable_testing()
     file(GLOB Tracer_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/*.cpp)
+    list(REMOVE_ITEM SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
     add_executable(
         ${PROG}
-        ${Tracer_tests})
+        ${Tracer_tests} ${SOURCE})
     target_link_libraries(
         ${PROG}
     GTest::gtest_main)

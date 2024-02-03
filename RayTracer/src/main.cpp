@@ -1,11 +1,11 @@
 #include <iostream>
-#include "Vector.h"
+#include "Tuple.h"
 
 int main(){
-  Vector a = Vector{1,2,3};
-  Vector b = Vector{10,20,30};
-  Vector c = a;
-  Vector d = b;
+  Tuple a = Tuple{1,2,3};
+  Tuple b = Tuple{10,20,30};
+  Tuple c = a;
+  Tuple d = b;
   d -= a;
   c += a;
 
@@ -13,6 +13,8 @@ int main(){
 
   std::cout << c << std::endl;
   std::cout << c*temp << std::endl;
+  a.normalize();
+  std::cout << a << std::endl;
   std::cout << d-a << std::endl;
   return 0;
 }
