@@ -83,4 +83,8 @@ class Tuple{
 
 };
 
+template <typename T>
+Tuple operator*(T scalar, Tuple const & matrix) {
+    return matrix * scalar;
+}
 #endif

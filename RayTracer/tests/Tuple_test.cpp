@@ -42,6 +42,7 @@ TEST(TupleTests, TupleArithmetic){
   Tuple g({1,2,3}, TupType::POINT);
   Tuple h({2,4,6}, TupType::POINT);
   EXPECT_EQ(g*2.0,h);
+  EXPECT_EQ(2.0*g,h);
   g *= 2.0;
   EXPECT_EQ(g,h);
 
