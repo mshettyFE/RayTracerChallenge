@@ -1,9 +1,16 @@
+#include "Constants.h"
 #include "Tuple.h"
 #include <stdexcept>
 #include <iostream>
 #include <cmath>
 
-Tuple::Tuple(std::initializer_list<double> args, TupType a_type, const double a_resolution){
+Tuple::Tuple(){
+  dim = 1;
+  resolution = 1E-9;
+}
+
+
+Tuple::Tuple(std::initializer_list<double> args, const TupType a_type, double a_resolution){
   for (double item: args){
     data.push_back(item);
   }
@@ -12,7 +19,7 @@ Tuple::Tuple(std::initializer_list<double> args, TupType a_type, const double a_
   data.push_back(a_type);
 }
 
-Tuple::Tuple(unsigned int a_dim, TupType a_type, const double a_resolution){
+Tuple::Tuple(unsigned int a_dim, const TupType a_type, double a_resolution){
   for(int i=0; i< a_dim; ++i){
     data.push_back(0);
   }

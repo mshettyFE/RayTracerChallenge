@@ -4,16 +4,10 @@
 #include <vector>
 #include <iostream>
 #include <initializer_list>
-
-// Named typed to delinear between Points and Vectors in homogeneous transformations
-// w component choosen such that transformations become nice
-enum TupType{
-  VECTOR = 0, // corresponds to w component of 0
-  POINT = 1, // corresponds to w component (ie. last component)  of 1
-};
+#include "Constants.h"
 
 class Tuple{
-  private:
+  protected:
 // How close two doubles need to be to be overlapping
     double resolution;
 // The number of physical dimensions. The actual number of coordinates stored is dim+1 to account for point/vector info
@@ -26,8 +20,9 @@ class Tuple{
   public:
     // Constructors
     // Defaults to internally being Vectors unless constructed as Point
-    Tuple(std::initializer_list<double> args,  TupType a_type=TupType::VECTOR, const double resolution=1E-9);
-    Tuple(unsigned int dim, TupType a_type=TupType::VECTOR,  const double resolution=1E-9);
+    Tuple();
+    Tuple(std::initializer_list<double> args,  const TupType a_type=TupType::VECTOR, double resolution=1E-9);
+    Tuple(unsigned int dim, const TupType a_type=TupType::VECTOR,  double resolution=1E-9);
 
 
     // copy constructors
@@ -84,7 +79,7 @@ class Tuple{
 };
 
 template <typename T>
-Tuple operator*(T scalar, Tuple const & matrix) {
-    return matrix * scalar;
+Tuple operator*(T scalar, Tuple const & other) {
+    return other * scalar;
 }
 #endif
