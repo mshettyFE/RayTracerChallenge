@@ -73,6 +73,9 @@ class Tuple{
 
     TupType type() const;
 
+    const double get_resolution(){return resolution;};
+    const double get_dim(){return dim;};
+
     // Friend printing methods
     friend std::ostream& operator << (std::ostream &out, const Tuple& other);
 

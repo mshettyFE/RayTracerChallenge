@@ -198,7 +198,7 @@ Tuple Tuple::operator-(){
   }
 
 bool Tuple::is_same(double one, double two) const{
-  if(abs(one-two) < resolution){
+  if(std::abs(one-two) < resolution){
     return true;
   }
   return false;
