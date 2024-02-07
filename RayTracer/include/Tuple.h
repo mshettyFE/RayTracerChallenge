@@ -21,8 +21,8 @@ class Tuple{
     // Constructors
     // Defaults to internally being Vectors unless constructed as Point
     Tuple();
-    Tuple(std::initializer_list<double> args,  const TupType a_type=TupType::VECTOR, double resolution=1E-9);
-    Tuple(unsigned int dim, const TupType a_type=TupType::VECTOR,  double resolution=1E-9);
+    Tuple(std::initializer_list<double> args,  const TupType a_type=TupType::VECTOR, double resolution=glob_resolution);
+    Tuple(unsigned int dim, const TupType a_type=TupType::VECTOR,  double resolution=glob_resolution);
 
 
     // copy constructors

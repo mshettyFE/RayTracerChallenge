@@ -70,3 +70,9 @@ TEST(TupleTests, Norms){
   Tuple b({1.0/sqrt_two,0,1.0/sqrt_two}, TupType::POINT);
   EXPECT_EQ(a,b);
 }
+
+TEST(TupleTests, TupleCopyMove){
+  Tuple a({1,0,1}, TupType::POINT);
+  Tuple b = a;
+  EXPECT_EQ(a,b);
+}

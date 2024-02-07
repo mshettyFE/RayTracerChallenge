@@ -6,7 +6,7 @@
 
 Tuple::Tuple(){
   dim = 1;
-  resolution = 1E-9;
+  resolution = glob_resolution;
 }
 
 

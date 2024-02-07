@@ -1,6 +1,16 @@
 #include "Color.h"
 #include <stdexcept>
 
+Color::Color(){
+    data.clear();
+    data.push_back(0);
+    data.push_back(0);
+    data.push_back(0);
+    data.push_back(TupType::VECTOR);
+    dim = 3;
+    resolution = glob_resolution;
+}
+
 Color::Color(double red, double green, double blue, double a_resolution){
     data.clear();
     data.push_back(red);
