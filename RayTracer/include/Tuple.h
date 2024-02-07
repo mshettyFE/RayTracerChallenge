@@ -24,14 +24,6 @@ class Tuple{
     Tuple(std::initializer_list<double> args,  const TupType a_type=TupType::VECTOR, double resolution=glob_resolution);
     Tuple(unsigned int dim, const TupType a_type=TupType::VECTOR,  double resolution=glob_resolution);
 
-
-    // copy constructors
-    Tuple (const Tuple& other);
-    Tuple& operator=(const Tuple& other);
-    // move constructors
-    Tuple (Tuple&& other);
-    Tuple& operator=(Tuple&& other);
-
     // overloaded binary operators
     bool operator==(const Tuple& other) const;
     bool operator!=(const Tuple& other) const;

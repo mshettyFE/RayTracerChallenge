@@ -28,6 +28,7 @@ Tuple::Tuple(unsigned int a_dim, const TupType a_type, double a_resolution){
   data.push_back(a_type);
 }
 
+/*
 Tuple::Tuple (const Tuple& other){
   for(int i=0; i< other.data.size(); ++i){
     data.push_back(other.data[i]);
@@ -55,6 +56,8 @@ Tuple& Tuple::operator=(Tuple&& other){
   std::swap(data,other.data);
   return *this;
 }
+*/
+
 
 bool Tuple::operator==(const Tuple& other) const {
   if(this->data.size() != other.data.size()){
@@ -146,33 +149,33 @@ Tuple Tuple::operator-(){
 }
 
 
-    void Tuple::normalize(){
-      double scaling = L2Norm();
-      scaling = pow(scaling, 0.5);
-      for(int i=0; i< this->dim; ++i){
-        this->data[i] = this->data[i]/scaling;
-      }
+  void Tuple::normalize(){
+    double scaling = L2Norm();
+    scaling = pow(scaling, 0.5);
+    for(int i=0; i< this->dim; ++i){
+      this->data[i] = this->data[i]/scaling;
     }
+  }
 
-    double Tuple::L2Norm(){
-      double scaling = 0.0;
-      for(int i=0; i< this->dim; ++i){
-        double d = this->data[i];
-        scaling += d*d;
-      }
-      return scaling;
+  double Tuple::L2Norm(){
+    double scaling = 0.0;
+    for(int i=0; i< this->dim; ++i){
+      double d = this->data[i];
+      scaling += d*d;
     }
+    return scaling;
+  }
 
-    double Tuple::dot(const Tuple& other) const{
-      if (this->data.size() != other.data.size()){
-        throw std::invalid_argument("Dimensions don't match");
-      }
-      double tally = 0.0;
-      for(int i=0; i< this->data.size(); ++i){
-        tally += this->data[i]*other.data[i];
-      }
-      return tally;
+  double Tuple::dot(const Tuple& other) const{
+    if (this->data.size() != other.data.size()){
+      throw std::invalid_argument("Dimensions don't match");
     }
+    double tally = 0.0;
+    for(int i=0; i< this->data.size(); ++i){
+      tally += this->data[i]*other.data[i];
+    }
+    return tally;
+  }
 
   Tuple Tuple::cross(const Tuple& other) const{
       if (this->data.size() != other.data.size()){
