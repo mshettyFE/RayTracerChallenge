@@ -34,6 +34,8 @@ class Tuple{
     Tuple operator-=(const Tuple& other);
     Tuple operator-(const Tuple& other) const;
 
+    double operator[](int index);
+
     // negation
     Tuple operator-();
 

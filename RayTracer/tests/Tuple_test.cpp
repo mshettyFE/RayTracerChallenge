@@ -71,6 +71,33 @@ TEST(TupleTests, Norms){
   EXPECT_EQ(a,b);
 }
 
+TEST(TupleTests, Accessing){
+    Tuple a({1,2,3});
+    EXPECT_EQ(a[0],1);
+    EXPECT_EQ(a[1],2);
+    EXPECT_EQ(a[2],3);
+    EXPECT_THROW({
+        try{
+            a[-1];
+        }
+        catch(const std::invalid_argument &e){
+            EXPECT_STREQ( "Argument below 0", e.what() );
+            throw;
+        }
+    }
+    ,std::invalid_argument);
+    EXPECT_THROW({
+        try{
+            a[5];
+        }
+        catch(const std::invalid_argument &e){
+            EXPECT_STREQ( "Argument above 2", e.what() );
+            throw;
+        }
+    }
+    ,std::invalid_argument);
+}
+
 TEST(TupleTests, TupleCopyMove){
   Tuple a({1,0,1}, TupType::POINT);
   Tuple b = a;

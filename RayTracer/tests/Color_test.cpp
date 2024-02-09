@@ -18,3 +18,14 @@ TEST(ColorTests, Arithmetic){
     Color ColorMul(0.63, 0.06, 0.1875);
     EXPECT_EQ(a*b,ColorMul);
 }
+
+TEST(ColorTests, ClampingScaling){
+    Color a(2,2,2);
+    Color clamped(1,1,1);
+    a.clamp();
+    EXPECT_EQ(clamped,a);
+    Color b(3,3,3);
+    Color scaled(255,255,255);
+     b.rescale();
+    EXPECT_EQ(scaled,b);   
+}

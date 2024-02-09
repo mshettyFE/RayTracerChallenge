@@ -28,36 +28,6 @@ Tuple::Tuple(unsigned int a_dim, const TupType a_type, double a_resolution){
   data.push_back(a_type);
 }
 
-/*
-Tuple::Tuple (const Tuple& other){
-  for(int i=0; i< other.data.size(); ++i){
-    data.push_back(other.data[i]);
-  }
-  resolution = other.resolution;
-  dim = other.dim;
-}
-
-Tuple& Tuple::operator=(const Tuple& other){
-  if(this->data.size() != other.data.size()){
-    throw std::invalid_argument("Dimensions don't match");
-  }
-  this->data.clear();
-  for(int i=0; i< this->data.size(); ++i){
-    this->data[i] = other.data[i];
-  }
-  return *this;
-}
-
-Tuple::Tuple (Tuple&& other){
-  other.data.clear();
-}
-
-Tuple& Tuple::operator=(Tuple&& other){
-  std::swap(data,other.data);
-  return *this;
-}
-*/
-
 
 bool Tuple::operator==(const Tuple& other) const {
   if(this->data.size() != other.data.size()){
@@ -138,6 +108,16 @@ Tuple Tuple::operator-(const Tuple& other) const{
     out.data[i] -= other.data[i];
   }
   return out;
+}
+
+double Tuple::operator[](int index){
+    if(index < 0){
+        throw std::invalid_argument("Argument below 0");
+    }
+    if(index >= 3){
+        throw std::invalid_argument("Argument above 2");
+    }
+    return data[index];
 }
 
 Tuple Tuple::operator-(){
