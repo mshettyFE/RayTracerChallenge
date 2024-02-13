@@ -38,7 +38,7 @@ int Canvas::get_index(unsigned int cand_w, unsigned int cand_h){
     if (cand_h>= height){
         throw std::invalid_argument("Invalid Height");
     }
-    return cand_h*width+cand_w;
+    return cand_w*height+cand_h;
 }
 
 

@@ -22,7 +22,7 @@ TEST(CanvasTest, WritePixel){
 }
 
 TEST(CanvasTest, PPM){
-    int width = 480;
+    int width = 400;
     int height = 480;
     Canvas c(width, height);
     for(int i=0; i<width; ++i){

@@ -10,6 +10,7 @@ class Matrix{
     private:
         int dim;
         double resolution;
+        bool is_same(double one, double two) const;
     public:
         std::vector<double> data;
         Matrix(int dim, double resolution=glob_resolution);
@@ -21,6 +22,8 @@ class Matrix{
         int get_dim() const;
 
         double operator()(unsigned int row, unsigned int col) const;
+        bool operator==(const Matrix& other) const;
+        bool operator!=(const Matrix& other) const;
 
 
     friend std::ostream& operator << (std::ostream &out, const Matrix& other);
