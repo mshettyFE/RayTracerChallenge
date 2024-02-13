@@ -7,10 +7,11 @@
 #include <vector>
 
 class Matrix{
-    private:
+    protected:
         int dim;
         double resolution;
         bool is_same(double one, double two) const;
+        friend class Tuple;
     public:
         std::vector<double> data;
         Matrix(int dim, double resolution=glob_resolution);
@@ -24,9 +25,28 @@ class Matrix{
         double operator()(unsigned int row, unsigned int col) const;
         bool operator==(const Matrix& other) const;
         bool operator!=(const Matrix& other) const;
+        Matrix operator*(const Matrix& other) const;
 
+        Matrix Transpose() const;
+
+        template <  typename T>
+        Matrix operator*(T scalar) const{
+            Matrix out = *this;
+            for(int i=0; i< this->dim; ++i){
+                for(int j=0; j< this->dim; ++j){
+                    out.data[get_index(i,j)] *= scalar;
+                }
+            }
+            return out;
+        }
 
     friend std::ostream& operator << (std::ostream &out, const Matrix& other);
 };
 
+template <typename T>
+Matrix operator*(T scalar, Matrix const & other) {
+    return other * scalar;
+}
+
+Matrix MatIdentity(int a_dim);
 #endif

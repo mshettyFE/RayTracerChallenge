@@ -1,5 +1,7 @@
 #include "Constants.h"
 #include "Tuple.h"
+#include "Matrix.h"
+#include <vector>
 #include <stdexcept>
 #include <iostream>
 #include <cmath>
@@ -8,7 +10,6 @@ Tuple::Tuple(){
   dim = 1;
   resolution = glob_resolution;
 }
-
 
 Tuple::Tuple(std::initializer_list<double> args, const TupType a_type, double a_resolution){
   for (double item: args){
@@ -19,6 +20,16 @@ Tuple::Tuple(std::initializer_list<double> args, const TupType a_type, double a_
   data.push_back(a_type);
 }
 
+Tuple::Tuple(std::vector<double> args,  const TupType a_type, double a_resolution){
+  for (double item: args){
+    data.push_back(item);
+  }
+  dim = data.size();
+  resolution = a_resolution;
+  data.push_back(a_type);
+}
+
+
 Tuple::Tuple(unsigned int a_dim, const TupType a_type, double a_resolution){
   for(int i=0; i< a_dim; ++i){
     data.push_back(0);
@@ -27,6 +38,9 @@ Tuple::Tuple(unsigned int a_dim, const TupType a_type, double a_resolution){
   resolution = a_resolution;
   data.push_back(a_type);
 }
+
+double Tuple::get_resolution() const{return resolution;}
+double Tuple::get_dim() const{return dim;}
 
 
 bool Tuple::operator==(const Tuple& other) const {
@@ -186,6 +200,23 @@ bool Tuple::is_same(double one, double two) const{
   }
   return false;
 }
+
+Tuple operator* (const Matrix& cur, const Tuple& other){
+    double total_dims = other.get_dim()+1;
+    if (total_dims != cur.get_dim()){
+        throw std::invalid_argument("matrix dimensions don't match");
+    }
+    Tuple out(other.get_dim());
+    for(int i=0; i<cur.get_dim(); ++i){
+        double sum = 0.0;
+        for(int j=0; j< total_dims; ++j){
+            sum += other.data[j]*cur(i,j);
+        }
+        out.data[i]=  sum;
+    }
+    return out;
+}
+
 
 std::ostream& operator << (std::ostream &out, const Tuple& other){
   for(int i=0; i<other.data.size(); ++i){

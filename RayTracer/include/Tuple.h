@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include <initializer_list>
+#include "Matrix.h"
 #include "Constants.h"
 
 class Tuple{
@@ -16,12 +17,14 @@ class Tuple{
     std::vector<double> data;
 
     bool is_same(double one, double two) const;
+    friend class Matrix;
 
   public:
     // Constructors
     // Defaults to internally being Vectors unless constructed as Point
     Tuple();
     Tuple(std::initializer_list<double> args,  const TupType a_type=TupType::VECTOR, double resolution=glob_resolution);
+    Tuple(std::vector<double> args,  const TupType a_type=TupType::VECTOR, double resolution=glob_resolution);
     Tuple(unsigned int dim, const TupType a_type=TupType::VECTOR,  double resolution=glob_resolution);
 
     // overloaded binary operators
@@ -67,11 +70,11 @@ class Tuple{
 
     TupType type() const;
 
-    const double get_resolution(){return resolution;};
-    const double get_dim(){return dim;};
+    double get_resolution() const;
+    double get_dim() const;
 
-    // Friend printing methods
     friend std::ostream& operator << (std::ostream &out, const Tuple& other);
+    friend Tuple operator* (const Matrix& cur, const Tuple& other);
 
 };
 
