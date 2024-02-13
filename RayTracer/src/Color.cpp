@@ -1,5 +1,6 @@
 #include "Color.h"
 #include <stdexcept>
+#include <cmath>
 
 Color::Color(){
     data.clear();
@@ -20,6 +21,20 @@ Color::Color(double red, double green, double blue, double a_resolution){
     dim = 3;
     resolution = a_resolution;
 }
+
+Color::Color(int hex, double a_resolution){
+    data.clear();
+    double red = RED_CHANNEL(hex);
+    double green = GREEN_CHANNEL(hex);
+    double blue = BLUE_CHANNEL(hex);
+    data.push_back(red/255.0);
+    data.push_back(green/255.0);
+    data.push_back(blue/255.0);
+    data.push_back(TupType::VECTOR);
+    dim = 3;
+    resolution = a_resolution;
+}
+
 
 const double Color::get_red(){return data[0];}
 const double Color::get_green(){return data[1];}
@@ -51,5 +66,11 @@ void Color::rescale(){
     this->clamp();
     for(int i=0; i< dim; ++i){
         data[i] *= 255;
+    }
+}
+
+void Color::normalize(){
+    for(int i=0; i<dim; ++i){
+        data[i] /= 255;
     }
 }

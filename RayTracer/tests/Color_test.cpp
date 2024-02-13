@@ -19,7 +19,7 @@ TEST(ColorTests, Arithmetic){
     EXPECT_EQ(a*b,ColorMul);
 }
 
-TEST(ColorTests, ClampingScaling){
+TEST(ColorTests, ClampingScalingNorm){
     Color a(2,2,2);
     Color clamped(1,1,1);
     a.clamp();
@@ -27,5 +27,12 @@ TEST(ColorTests, ClampingScaling){
     Color b(3,3,3);
     Color scaled(255,255,255);
      b.rescale();
-    EXPECT_EQ(scaled,b);   
+    EXPECT_EQ(scaled,b);
+    Color c(255,255,255);
+    c.normalize();
+    Color normed(1,1,1);
+    EXPECT_EQ(c,normed);
+    Color hexing(0xFF00FF);
+    Color floating(1,0,1);
+    EXPECT_EQ(hexing, floating);
 }

@@ -20,3 +20,15 @@ TEST(CanvasTest, WritePixel){
     Color a = c(0,0);
     EXPECT_EQ(a,RED);
 }
+
+TEST(CanvasTest, PPM){
+    int width = 480;
+    int height = 480;
+    Canvas c(width, height);
+    for(int i=0; i<width; ++i){
+        for(int j=0; j<height; ++j){
+            c.write_pixel(i,j,Color(0xFE019A));
+        }
+    }
+    c.save_ppm("test.ppm");
+}
