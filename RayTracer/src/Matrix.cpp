@@ -2,6 +2,13 @@
 #include <stdexcept>
 #include <cmath>
 
+Matrix::Matrix(){
+    dim = 1;
+    data.push_back(0.0);
+    resolution  = glob_resolution;
+}
+
+
 Matrix::Matrix(int a_dim, double a_resolution){
     if(a_dim<=0){
         throw std::invalid_argument("Matrix dimension must be strictly positive");

@@ -185,6 +185,10 @@ Tuple Tuple::operator-(){
       return out;
   }
 
+  void Tuple::set_type(TupType t){
+    this->data[this->dim] = t;
+  }
+
 
   TupType Tuple::type() const{
     double d = this->data[this->dim];

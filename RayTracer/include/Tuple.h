@@ -69,6 +69,7 @@ class Tuple{
     Tuple cross(const Tuple& other) const;
 
     TupType type() const;
+    void set_type(TupType t);
 
     double get_resolution() const;
     double get_dim() const;

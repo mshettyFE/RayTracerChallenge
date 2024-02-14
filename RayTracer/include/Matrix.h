@@ -14,6 +14,7 @@ class Matrix{
         friend class Tuple;
     public:
         std::vector<double> data;
+        Matrix();
         Matrix(int dim, double resolution=glob_resolution);
         // assumes row, column notation
         Matrix(int a_dim, std::initializer_list<std::initializer_list<double>> args, double a_resolution=glob_resolution);
