@@ -53,4 +53,10 @@ Matrix operator*(T scalar, Matrix const & other) {
 }
 
 Matrix MatIdentity(int a_dim);
+Matrix MatTranslation(double x, double y, double z);
+Matrix MatScaling(double x, double y, double z);
+Matrix MatRotateX(double angle);
+Matrix MatRotateY(double angle);
+Matrix MatRotateZ(double angle);
+Matrix MatShear(double x_y, double x_z, double y_x, double y_z, double z_x, double z_y);
 #endif

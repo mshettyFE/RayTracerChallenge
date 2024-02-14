@@ -23,8 +23,7 @@ TEST(Matrix, Multiplication){
     Matrix next_small(2,{{23,34},{31,46}});
     EXPECT_EQ(small*next, small_next);
     EXPECT_EQ(next*small, next_small);
-    Tuple r({1}, TupType::POINT);
-    Tuple res = small*r;
+    
     Matrix id = MatIdentity(3);
     Matrix TruthID(3,{{1,0,0},{0,1,0},{0,0,1}});
     EXPECT_EQ(id,TruthID);
@@ -51,4 +50,22 @@ TEST(Matrix, TransInverse){
     EXPECT_EQ(true_invs_swap,invs_swap);
 
     EXPECT_EQ(invs,true_invs);
+}
+
+TEST(Matrix, Transformations){
+    Matrix trans = MatTranslation(5,-3,2);
+    Tuple start({-3,4,5}, TupType::POINT);
+    Tuple end({2,1,7}, TupType::POINT);
+    Tuple inv_end({-8,7,3}, TupType::POINT);
+    EXPECT_EQ(trans*start,end);
+    Matrix inv_trans = trans.Inverse();
+    EXPECT_EQ(inv_trans*start,inv_end);
+    Tuple v({-3,4,5});
+    EXPECT_EQ(trans*v,v);
+    Matrix s = MatScaling(2,3,4);
+    start = Tuple({-4,6,8}, TupType::POINT);
+    EXPECT_EQ(s*start,Tuple({-8,18,32},TupType::POINT));
+    start = Tuple({0,1,0}, TupType::POINT);
+    Matrix RotX = MatRotateX(acos(-1)/2.0);
+    EXPECT_EQ(RotX*start, Tuple({0,0,1},TupType::POINT));
 }
