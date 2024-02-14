@@ -22,12 +22,16 @@ class Matrix{
 
         int get_dim() const;
 
+        void swap_row(int old_row, int new_row);
+        void scale(int row, double scaling);
+
         double operator()(unsigned int row, unsigned int col) const;
         bool operator==(const Matrix& other) const;
         bool operator!=(const Matrix& other) const;
         Matrix operator*(const Matrix& other) const;
 
         Matrix Transpose() const;
+        Matrix Inverse(bool debug=false);
 
         template <  typename T>
         Matrix operator*(T scalar) const{
@@ -40,7 +44,7 @@ class Matrix{
             return out;
         }
 
-    friend std::ostream& operator << (std::ostream &out, const Matrix& other);
+        friend std::ostream& operator << (std::ostream &out, const Matrix& other);
 };
 
 template <typename T>

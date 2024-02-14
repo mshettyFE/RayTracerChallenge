@@ -34,4 +34,21 @@ TEST(Matrix, TransInverse){
     Matrix cand(2,{{0,1},{2,0}});
     Matrix res(2,{{0,2},{1,0}});
     EXPECT_EQ(cand.Transpose(), res);
+    cand.swap_row(0, 1);
+    Matrix swapped(2,{{2,0},{0,1}});
+    EXPECT_EQ(cand,swapped);
+    cand.scale(0,10);
+    Matrix scaled(2,{{20,0},{0,1}});
+    EXPECT_EQ(cand,scaled);
+    Matrix cand_mat(3,{{1,2,3},{3,2,1},{2,1,3}});
+    Matrix invs = cand_mat.Inverse();
+    Matrix true_invs(3,{{-5,3,4},{7,3,-8},{1,-3,4}});
+    true_invs = (1.0/12.0)* true_invs;
+    Matrix cand_mat_needs_swap(3,{{0,2,3},{3,2,1},{2,1,3}});
+    Matrix invs_swap =cand_mat_needs_swap.Inverse();
+    Matrix true_invs_swap(3,{{-5,3,4},{7,6,-9},{1,-4,6}});
+    true_invs_swap = (1.0/17.0)*true_invs_swap;
+    EXPECT_EQ(true_invs_swap,invs_swap);
+
+    EXPECT_EQ(invs,true_invs);
 }
