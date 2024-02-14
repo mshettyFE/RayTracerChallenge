@@ -138,7 +138,7 @@ void Matrix::scale(int row, double scaling){
     }
 }
 
-Matrix Matrix::Inverse(bool debug){
+Matrix Matrix::Inverse(bool debug) const{
     // Make a copy...
     Matrix in = *this;
     // and make the output initially the identity

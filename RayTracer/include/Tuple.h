@@ -86,4 +86,7 @@ Tuple operator*(T scalar, Tuple const & other) {
     static_assert(std::is_arithmetic<T>::value,"Need to multiply tuple by a number");
     return other * scalar;
 }
+
+Tuple normalize(const Tuple& other);
+
 #endif

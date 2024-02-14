@@ -40,7 +40,7 @@ class Matrix{
         Matrix operator*(const Matrix& other) const;
 
         Matrix Transpose() const;
-        Matrix Inverse(bool debug=false);
+        Matrix Inverse(bool debug=false) const;
 
         // This needs to be here in header due to translational units (I think...)
         template <  typename T>

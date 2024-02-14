@@ -31,6 +31,10 @@ bool Ray::operator!=(const Ray& other) const{
     return !v;
 }
 
+Tuple Ray::get_origin() const{return origin;};
+Tuple Ray::get_direction() const{return direction;};
+
+
 Tuple Ray::position(double t){
     return origin+direction*t;
 }

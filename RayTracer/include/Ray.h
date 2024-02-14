@@ -12,6 +12,10 @@ class Ray{
         Ray(Tuple a_origin, Tuple a_direction);
         Ray(std::initializer_list<double> a_origin, std::initializer_list<double> a_direction);
 
+        Tuple get_origin() const;
+        Tuple get_direction() const;
+
+
         bool operator==(const Ray& other) const;
         bool operator!=(const Ray& other) const;
 

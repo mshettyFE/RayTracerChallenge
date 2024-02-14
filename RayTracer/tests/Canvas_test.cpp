@@ -21,7 +21,7 @@ TEST(CanvasTest, WritePixel){
     EXPECT_EQ(a,RED);
 }
 
-TEST(CanvasTest, PPM){
+TEST(TestImage, HotPink){
     int width = 400;
     int height = 480;
     Canvas c(width, height);
@@ -30,5 +30,5 @@ TEST(CanvasTest, PPM){
             c.write_pixel(i,j,Color(0xFE019A));
         }
     }
-    c.save_ppm("test.ppm");
+    c.save_ppm("HotPink");
 }

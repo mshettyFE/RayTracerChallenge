@@ -11,3 +11,7 @@ Shape::Shape(Matrix a_Transformation){
     Transformation = a_Transformation;
     id = ++GlobalID;
 }
+
+void Shape::set_transform(Matrix a_Tranformation){
+    Transformation = a_Tranformation;
+}

@@ -104,9 +104,6 @@ Tuple Tuple::operator-=(const Tuple& other){
   if(this->data.size() != other.data.size()){
     throw std::invalid_argument("Dimensions don't match");
   }
-  if(is_same(this->data[this->dim],TupType::POINT) && is_same(other.data[other.dim],TupType::POINT)){
-    throw std::invalid_argument("Can't Subtract points together");
-  }
   for(int i=0; i< this->data.size(); ++i){
     this->data[i] -= other.data[i];
   }
@@ -116,9 +113,6 @@ Tuple Tuple::operator-=(const Tuple& other){
 Tuple Tuple::operator-(const Tuple& other) const{
   if (this->data.size() != other.data.size()){
     throw std::invalid_argument("Dimensions don't match");
-  }
-  if(is_same(this->data[this->dim],TupType::POINT) && is_same(other.data[other.dim],TupType::POINT)){
-    throw std::invalid_argument("Can't Subtract points together");
   }
   Tuple out = *this;
   for(int i=0; i< other.data.size(); ++i){
@@ -231,5 +225,11 @@ std::ostream& operator << (std::ostream &out, const Tuple& other){
     out << other.data[i] << " ";
   }
   out << '\n';
+  return out;
+}
+
+Tuple normalize(const Tuple& other){
+  Tuple out = other;
+  out.normalize();
   return out;
 }
