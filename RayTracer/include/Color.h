@@ -22,9 +22,9 @@ class Color : public Tuple{
         Color();
 
         // Convinience functions to extract RGB channel values
-        const double get_red();
-        const double get_green();
-        const double get_blue();
+        const double get_red() const;
+        const double get_green() const ;
+        const double get_blue() const;
 
         // Effectively a Hadamard product between color channels
         Color operator*(Color& other);
@@ -35,6 +35,9 @@ class Color : public Tuple{
         void rescale();
         // normalize Color vector
         void normalize();
+
+        friend std::ostream& operator << (std::ostream &out, const Color& other);
+
 };
 
 #endif

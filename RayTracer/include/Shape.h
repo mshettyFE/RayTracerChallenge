@@ -12,6 +12,7 @@ protected:
     Matrix Transformation;
 public:
     virtual Tuple normal_at(Tuple pt)=0;
+    virtual void print()=0;
     Shape();
     Shape(Matrix Transformation);
 };

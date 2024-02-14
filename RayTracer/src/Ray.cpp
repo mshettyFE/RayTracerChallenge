@@ -34,3 +34,13 @@ bool Ray::operator!=(const Ray& other) const{
 Tuple Ray::position(double t){
     return origin+direction*t;
 }
+
+Ray Ray::transform(const Matrix& other) const{
+    return Ray(other*origin, other*direction);
+}
+
+std::ostream& operator << (std::ostream &out, const Ray& other){
+    out << "Origin: " << other.origin;
+    out << "Direction: " << other.direction << std::endl;
+    return out;
+}

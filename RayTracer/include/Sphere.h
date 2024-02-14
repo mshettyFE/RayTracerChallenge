@@ -7,6 +7,7 @@
 
 class Sphere: public Shape{
     Tuple normal_at(Tuple pt);
+    void print();
 };
 
 #endif

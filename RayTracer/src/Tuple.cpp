@@ -226,7 +226,6 @@ Tuple operator* (const Matrix& cur, const Tuple& other){
     return out;
 }
 
-
 std::ostream& operator << (std::ostream &out, const Tuple& other){
   for(int i=0; i<other.data.size(); ++i){
     out << other.data[i] << " ";

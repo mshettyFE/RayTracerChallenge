@@ -2,6 +2,7 @@
 #define RAY_H
 
 #include "Tuple.h"
+#include "Matrix.h"
 
 class Ray{
     protected:
@@ -14,8 +15,12 @@ class Ray{
         bool operator==(const Ray& other) const;
         bool operator!=(const Ray& other) const;
 
+        Ray transform(const Matrix& other) const;
+
         // For a given time, return the point along the ray
         Tuple position(double t);
+
+        friend std::ostream& operator << (std::ostream &out, const Ray& other);
 
 };
 

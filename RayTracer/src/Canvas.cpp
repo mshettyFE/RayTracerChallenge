@@ -35,7 +35,7 @@ int Canvas::n_pixels() const{
 };
 
 
-int Canvas::get_index(unsigned int cand_w, unsigned int cand_h){
+int Canvas::get_index(unsigned int cand_w, unsigned int cand_h) const{
     if (cand_w>= width){
         throw std::invalid_argument("Invalid Width");
     }
@@ -51,13 +51,13 @@ void Canvas::write_pixel(unsigned int cand_w, unsigned int cand_h, Color c){
     pixels[i] = c;
 }
 
-void Canvas::print(){
-    for(int i=0; i< width; ++i){
-        for(int j=0; j<height; ++j){
-            std::cout << get_index(i,j) << std::endl;
-            std::cout << "Row: " << i << '\t' << "Col: " << j << '\t' << pixels[get_index(i,j)]  << std::endl;
+std::ostream& operator << (std::ostream &out, const Canvas& other){
+    for(int i=0; i< other.width; ++i){
+        for(int j=0; j<other.height; ++j){
+            out << "Row: " << i << '\t' << "Col: " << j << '\t' << "Index:" << '\t' << other.get_index(i,j) << '\t'<<  other.pixels[other.get_index(i,j)]  << std::endl;
         }
     }
+    return out;
 }
 
 void Canvas::save_ppm(std::string fname){

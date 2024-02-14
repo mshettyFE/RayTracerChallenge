@@ -36,9 +36,9 @@ Color::Color(int hex, double a_resolution){
 }
 
 
-const double Color::get_red(){return data[0];}
-const double Color::get_green(){return data[1];}
-const double Color::get_blue(){return data[2];}
+const double Color::get_red() const {return data[0];}
+const double Color::get_green() const {return data[1];}
+const double Color::get_blue() const {return data[2];}
 
 Color Color::operator*(Color& other){
     if((this->dim != other.dim) && (other.dim !=4)){
@@ -73,4 +73,9 @@ void Color::normalize(){
     for(int i=0; i<dim; ++i){
         data[i] /= 255;
     }
+}
+
+std::ostream& operator << (std::ostream &out, const Color& other){
+    out << "R: " << other.get_red() << " G: " << other.get_green() << " B: " << other.get_blue();
+    return out;
 }
