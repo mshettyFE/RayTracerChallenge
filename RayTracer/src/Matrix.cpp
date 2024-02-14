@@ -8,7 +8,6 @@ Matrix::Matrix(){
     resolution  = glob_resolution;
 }
 
-
 Matrix::Matrix(int a_dim, double a_resolution){
     if(a_dim<=0){
         throw std::invalid_argument("Matrix dimension must be strictly positive");
@@ -130,6 +129,7 @@ void Matrix::swap_row(int old_row, int new_row){
 }
 
 void Matrix::scale(int row, double scaling){
+// In Place scaling of row
     if( (row < 0) ||  (row >= dim)){
         throw std::invalid_argument("Out of bounds array");
     }
@@ -139,7 +139,9 @@ void Matrix::scale(int row, double scaling){
 }
 
 Matrix Matrix::Inverse(bool debug){
+    // Make a copy...
     Matrix in = *this;
+    // and make the output initially the identity
     Matrix out = MatIdentity(dim);
     for(int col=0; col<dim; ++col){
         if(debug){
@@ -148,11 +150,13 @@ Matrix Matrix::Inverse(bool debug){
             std::cout << out << std::endl;
         }
         double pivot = in.data[get_index(col,col)];
+        // Check for 0 pivot. If found, we need to swap rows to find a new pivot
         if(is_same(pivot,0)){
             bool new_pivot_found = false;
             // look at rows below current invalid pivot
             for(int row=col+1; row<dim; ++row){
                 double new_pivot = in.data[get_index(row,col)];
+                // If we found a non-zero pivot
                 if(!is_same(new_pivot,0)){
                     // Move new pivot row to cur row
                     in.swap_row(col,row);
@@ -162,6 +166,7 @@ Matrix Matrix::Inverse(bool debug){
                     break;
                 }
             }
+            // If no pivots found, this means entire column of matrix if 0(ish). Hence  inverse doesn't exist
             if(!new_pivot_found){
                 throw std::domain_error("Inverse does not exist");
             }
@@ -181,13 +186,14 @@ Matrix Matrix::Inverse(bool debug){
         }
         //pivot found, need to reduce all rows above and below current row
         for(int row=0; row<dim; ++row){
+            // Skip  pivot row
             if(row==col){
                 continue;
             }
-            // get the element in the same column as pivot element and negate.
+            // get the element in the same column as pivot element and negate to get scaling factor
             double scaling = -1.0*in.data[get_index(row,col)];
             for(int sweep=0; sweep<dim; ++sweep){
-                // Do the row elimination
+                // Do the row elimination on both copy of initial matrix, and output matrix
                 in.data[get_index(row,sweep)] += in.data[get_index(col,sweep)]*scaling;
                 out.data[get_index(row,sweep)] += out.data[get_index(col,sweep)]*scaling;
             }
@@ -197,8 +203,7 @@ Matrix Matrix::Inverse(bool debug){
             std::cout << in << std::endl;
             std::cout << out << std::endl;
         }
-
-    }
+    } // Iterated through all rows
     return out;
 }
 
@@ -238,7 +243,6 @@ Matrix MatRotateZ(double angle){
 Matrix MatShear(double x_y, double x_z, double y_x, double y_z, double z_x, double z_y){
     return Matrix({{1,x_y,x_z,0},{y_x,1,y_z,0},{z_x,z_y,1,0},{0,0,0,1}});
 }
-
 
 std::ostream& operator << (std::ostream &out, const Matrix& other){
     for(int i=0; i<other.get_dim(); ++i){

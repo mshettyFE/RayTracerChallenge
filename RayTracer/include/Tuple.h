@@ -13,7 +13,7 @@ class Tuple{
     double resolution;
 // The number of physical dimensions. The actual number of coordinates stored is dim+1 to account for point/vector info
     int dim;
-// place where data is stored
+// place where data is stored. Size is dim+1. Last element is always either 0 (Vector) or 1 (Point)
     std::vector<double> data;
 
     bool is_same(double one, double two) const;
@@ -45,6 +45,7 @@ class Tuple{
     // templated overloads need to be in header to be in same translation unit
     template <  typename T>
     Tuple operator*=(T scalar){
+      static_assert(std::is_arithmetic<T>::value,"Need to multiply tuple by a number");
       for(int i=0; i< this->dim; ++i){
         this->data[i] *= scalar;
       }
@@ -53,6 +54,7 @@ class Tuple{
 
     template <  typename T>
     Tuple operator*(T scalar) const{
+      static_assert(std::is_arithmetic<T>::value,"Need to multiply tuple by a number");
       Tuple out = *this;
       for(int i=0; i< this->dim; ++i){
         out.data[i] *= scalar;
@@ -81,6 +83,7 @@ class Tuple{
 
 template <typename T>
 Tuple operator*(T scalar, Tuple const & other) {
+    static_assert(std::is_arithmetic<T>::value,"Need to multiply tuple by a number");
     return other * scalar;
 }
 #endif

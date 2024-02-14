@@ -7,8 +7,11 @@
 #include <cmath>
 
 Tuple::Tuple(){
+  // Empty tuple
   dim = 1;
   resolution = glob_resolution;
+  data.push_back(0);
+  data.push_back(TupType::VECTOR);
 }
 
 Tuple::Tuple(std::initializer_list<double> args, const TupType a_type, double a_resolution){
@@ -143,60 +146,62 @@ Tuple Tuple::operator-(){
 }
 
 
-  void Tuple::normalize(){
-    double scaling = L2Norm();
-    scaling = pow(scaling, 0.5);
-    for(int i=0; i< this->dim; ++i){
-      this->data[i] = this->data[i]/scaling;
-    }
+void Tuple::normalize(){
+  // normalize physical dimensions (ie. leave last entry of data alone)
+  double scaling = L2Norm();
+  scaling = pow(scaling, 0.5);
+  for(int i=0; i< this->dim; ++i){
+    this->data[i] = this->data[i]/scaling;
   }
+}
 
-  double Tuple::L2Norm(){
-    double scaling = 0.0;
-    for(int i=0; i< this->dim; ++i){
-      double d = this->data[i];
-      scaling += d*d;
-    }
-    return scaling;
+double Tuple::L2Norm(){
+  // Return L2Norm
+  double scaling = 0.0;
+  for(int i=0; i< this->dim; ++i){
+    double d = this->data[i];
+    scaling += d*d;
   }
+  return scaling;
+}
 
-  double Tuple::dot(const Tuple& other) const{
+double Tuple::dot(const Tuple& other) const{
+  if (this->data.size() != other.data.size()){
+    throw std::invalid_argument("Dimensions don't match");
+  }
+  double tally = 0.0;
+  for(int i=0; i< this->data.size(); ++i){
+    tally += this->data[i]*other.data[i];
+  }
+  return tally;
+}
+
+Tuple Tuple::cross(const Tuple& other) const{
     if (this->data.size() != other.data.size()){
       throw std::invalid_argument("Dimensions don't match");
     }
-    double tally = 0.0;
-    for(int i=0; i< this->data.size(); ++i){
-      tally += this->data[i]*other.data[i];
+    if(this->dim != 3){
+      throw std::invalid_argument("Dimensions must be 3");
     }
-    return tally;
-  }
+    double cross_x = this->data[1]*other.data[2]-this->data[2]*other.data[1];
+    double cross_y = this->data[2]*other.data[0]-this->data[0]*other.data[2];
+    double cross_z = this->data[0]*other.data[1]-this->data[1]*other.data[0];
+    Tuple out({cross_x, cross_y, cross_z},TupType::VECTOR);
+    return out;
+}
 
-  Tuple Tuple::cross(const Tuple& other) const{
-      if (this->data.size() != other.data.size()){
-        throw std::invalid_argument("Dimensions don't match");
-      }
-      if(this->dim != 3){
-        throw std::invalid_argument("Dimensions must be 3");
-      }
-      double cross_x = this->data[1]*other.data[2]-this->data[2]*other.data[1];
-      double cross_y = this->data[2]*other.data[0]-this->data[0]*other.data[2];
-      double cross_z = this->data[0]*other.data[1]-this->data[1]*other.data[0];
-      Tuple out({cross_x, cross_y, cross_z},TupType::VECTOR);
-      return out;
-  }
-
-  void Tuple::set_type(TupType t){
-    this->data[this->dim] = t;
-  }
+void Tuple::set_type(TupType t){
+  this->data[this->dim] = t;
+}
 
 
-  TupType Tuple::type() const{
-    double d = this->data[this->dim];
-    if ( abs(d-TupType::POINT) < resolution){
-      return TupType::POINT;
-    }
-    return TupType::VECTOR;
+TupType Tuple::type() const{
+  double d = this->data[this->dim];
+  if ( abs(d-TupType::POINT) < resolution){
+    return TupType::POINT;
   }
+  return TupType::VECTOR;
+}
 
 bool Tuple::is_same(double one, double two) const{
   if(std::abs(one-two) < resolution){

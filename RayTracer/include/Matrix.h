@@ -3,6 +3,7 @@
 
 #include <initializer_list>
 #include <iostream>
+#include <type_traits>
 #include "Constants.h"
 #include <vector>
 
@@ -28,11 +29,11 @@ class Matrix{
 
         int get_dim() const;
 
-        // utilized in inverse matrix calculation
+        // utilized in inverse matrix calculation. Done in place
         void swap_row(int old_row, int new_row);
         void scale(int row, double scaling);
 
-        //
+        // Operator overloads for convinience
         double operator()(unsigned int row, unsigned int col) const;
         bool operator==(const Matrix& other) const;
         bool operator!=(const Matrix& other) const;
@@ -41,8 +42,10 @@ class Matrix{
         Matrix Transpose() const;
         Matrix Inverse(bool debug=false);
 
+        // This needs to be here in header due to translational units (I think...)
         template <  typename T>
         Matrix operator*(T scalar) const{
+            static_assert(std::is_arithmetic<T>::value,"Need to multiply matrix by a number");
             Matrix out = *this;
             for(int i=0; i< this->dim; ++i){
                 for(int j=0; j< this->dim; ++j){
@@ -58,6 +61,7 @@ class Matrix{
 // This needs to be declared outside class to allow left multiplication (overloading operator* only allows right multiplication)
 template <typename T>
 Matrix operator*(T scalar, Matrix const & other) {
+    static_assert(std::is_arithmetic<T>::value,"Need to multiply matrix by a number");
     return other * scalar;
 }
 
