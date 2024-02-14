@@ -21,10 +21,12 @@ class Color : public Tuple{
         Color(int hex, double a_resolution=glob_resolution);
         Color();
 
+        // Convinience functions to extract RGB channel values
         const double get_red();
         const double get_green();
         const double get_blue();
 
+        // Effectively a Hadamard product between color channels
         Color operator*(Color& other);
 
         // force rgb values to be between 0 or 1

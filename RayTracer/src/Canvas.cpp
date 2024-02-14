@@ -12,9 +12,8 @@ Canvas::Canvas(unsigned int a_width, unsigned int a_height){
     }
     width = a_width;
     height = a_height;
-    n_pixels = width*height;
-    pixels.reserve(n_pixels);
-    for(int i=0; i<n_pixels; ++i){
+    pixels.reserve(this->n_pixels());
+    for(int i=0; i<this->n_pixels(); ++i){
         pixels[i] = Color(0,0,0);
     }
 }
@@ -30,6 +29,11 @@ Color Canvas::operator()(unsigned int cand_w, unsigned int cand_h){
     Color output = pixels[index];
     return output;
 }
+
+int Canvas::n_pixels() const{
+    return width*height;
+};
+
 
 int Canvas::get_index(unsigned int cand_w, unsigned int cand_h){
     if (cand_w>= width){
@@ -61,15 +65,22 @@ void Canvas::save_ppm(std::string fname){
     std::ofstream output_file (out_fname);
     std::string cur_line;
     if (output_file.is_open()){
+        // specific formate of P3
         output_file << "P3\n";
+        // specify width/height of image
         output_file << width << " " << height << '\n';
+        // specify max value of image
         output_file << 255 << "\n";
-        for(int i=0; i<n_pixels; ++i){
+        for(int i=0; i<this->n_pixels(); ++i){
+            // loop to write all pixels to .ppm file
             Color cur_pixel = pixels[i];
+            // rescale values to lie within 0-255
             cur_pixel.rescale();
             for(int color=0; color< cur_pixel.get_dim(); ++color){
                 std::string cur_num_string = std::to_string((int) cur_pixel[color]);
                 cur_num_string.append(" ");
+                // ppm standard has hard cap of 70 characters per line. This checks if adding a new color will exceed that limit.
+                // If so, write line to file, and then add new color to a new line
                 if (cur_line.length()+cur_num_string.length()>70){
                     output_file << cur_line << "\n";
                     cur_line.clear();
@@ -80,6 +91,7 @@ void Canvas::save_ppm(std::string fname){
                 }
             }
         }
+        // flush last line to file
         output_file << cur_line << '\n';
         output_file.close();
     }
