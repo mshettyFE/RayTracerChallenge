@@ -42,7 +42,9 @@ const Tuple& camera, const Tuple& normal) const{
             specular = BLACK;
         }
         else{
+//            std::cout << Intensity << " " << mat.get_specular() << " " << reflected_dot_camera << " " << mat.get_shininess() <<  std::endl;
             specular = Intensity*mat.get_specular()*pow(reflected_dot_camera, mat.get_shininess());
+//            std::cout << specular << std::endl;
         }
     }
     return ambient+specular+diffuse;
@@ -53,4 +55,3 @@ std::ostream& operator << (std::ostream &out, const PointSource& cur){
     out << cur.get_intensity() << cur.get_position();
     return out;
 }
-
