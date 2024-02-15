@@ -45,13 +45,14 @@ TEST(TestImage, ShadedSphere){
     double slope = 1.0/origin_z;
     double wall_size = std::ceil(slope*(wall_location-origin_z));
     // Define canvas
-    int dim = 100;
+    int dim = 1000;
     Canvas canvas(dim, dim);
     // Map how big a pixel is in world coordinate units
     double pixel_size = wall_size/(double) dim;
     double half = pixel_size/2.0;
     double half_wall = wall_size/2.0;
     // Aim Rays from ray_origin to centers of each pixel on the wall
+    std::vector<double> intersections;
     for(int row=0; row<dim; ++row){
         // Grab center of each pixel in world space, and shift to center of frame
         double world_y = half+pixel_size*row-half_wall;
@@ -59,16 +60,15 @@ TEST(TestImage, ShadedSphere){
             double world_x = -half+pixel_size*col-half_wall;
             Tuple position({world_x, world_y, wall_location}, TupType::POINT);
             Ray r(origin, normalize(position-origin));
-            std::vector<double> intersections = s.intersect(r);
+            intersections = s.intersect(r);
             if(intersections.size() != 0){
                 Tuple position = r.position(intersections[0]);
                 // Calculate what color the pixel should be, given the light source, material, current position, ray direction and normal vector at position
-                canvas.write_pixel(row,col,
-                light_loc.shade(s.get_material(),
-                position,r.get_direction() , s.normal_at(position)));
+                Color p = light_loc.shade(s.get_material(),
+                position,r.get_direction() , s.normal_at(position));
+                canvas.write_pixel(row,col,p);
             }
         }
     }
     canvas.save_ppm("ShadedSphere");
-
 }

@@ -51,7 +51,6 @@ TEST(TestImage, Sphere){
         for(int col=0; col<dim; ++col){
             double world_x = half+pixel_size*col-half_wall;
             Tuple position({world_x, world_y, wall_location}, TupType::POINT);
-//            std::cout << position;
             Ray r(origin, normalize(position-origin));
             if(s.intersect(r).size() != 0){
                 canvas.write_pixel(row,col,color);

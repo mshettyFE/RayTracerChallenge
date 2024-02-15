@@ -12,9 +12,8 @@ Canvas::Canvas(unsigned int a_width, unsigned int a_height){
     }
     width = a_width;
     height = a_height;
-    pixels.reserve(this->n_pixels());
     for(int i=0; i<this->n_pixels(); ++i){
-        pixels[i] = Color(0,0,0);
+        pixels.push_back(Color(0,0,0));
     }
 }
 
@@ -46,7 +45,7 @@ int Canvas::get_index(unsigned int cand_w, unsigned int cand_h) const{
 }
 
 
-void Canvas::write_pixel(unsigned int cand_w, unsigned int cand_h, Color c){
+void Canvas::write_pixel(unsigned int cand_w, unsigned int cand_h, const Color& c){
     int i  = get_index(cand_w, cand_h);
     pixels[i] = c;
 }
