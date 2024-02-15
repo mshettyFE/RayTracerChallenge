@@ -103,3 +103,17 @@ TEST(TupleTests, TupleCopyMove){
   Tuple b = a;
   EXPECT_EQ(a,b);
 }
+
+TEST(TupleTests, Reflections){
+  Tuple v({1,-1,0});
+  Tuple n({0,1,0});
+  Tuple e({1,1,0});
+  Tuple o = v.reflect(n);
+  EXPECT_EQ(e,o);
+  v = Tuple({0,-1,0});
+  n = Tuple({std::sqrt(2)/2.0,std::sqrt(2)/2.0,0});
+  e = Tuple({1,0,0});
+  o = v.reflect(n);
+  EXPECT_EQ(e,o);
+
+}

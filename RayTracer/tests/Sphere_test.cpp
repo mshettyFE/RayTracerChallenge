@@ -60,3 +60,17 @@ TEST(TestImage, Sphere){
     }
     canvas.save_ppm("RedSphere");
 }
+
+TEST(SphereTest, Normals){
+    // Simple Translation
+    Sphere s(MatTranslation(0,1,0));
+    Tuple cand({0,1.70711,-0.70711}, TupType::POINT);
+    Tuple n = s.normal_at(cand);
+    Tuple true_norm({0,.70711, -0.70711});
+    EXPECT_EQ(n,true_norm);
+    // Combination
+    Matrix combo = MatRotateZ(acos(-1)/5.0)*MatScaling(1,0.5,1);
+    s = Sphere(combo);
+    cand = Tuple({0,std::sqrt(2)/2.0,-std::sqrt(2)/2.0}, TupType::POINT);
+    true_norm = Tuple({0,0.97014,-.24254});
+}

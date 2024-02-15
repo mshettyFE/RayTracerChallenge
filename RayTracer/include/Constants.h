@@ -7,5 +7,5 @@ enum TupType{
   POINT = 1, // corresponds to w component  of 1
 };
 
-const double glob_resolution = 1E-6;
+const double glob_resolution = 1E-3;
 #endif

@@ -2,16 +2,15 @@
 #include <iostream>
 #include <cmath>
 
-Sphere::Sphere() : Shape() {}
-
-Sphere::Sphere(Matrix Transformation) : Shape(Transformation){}
+Sphere::Sphere(Matrix Transformation, Material material) : Shape(Transformation, material){}
 
 
-Tuple Sphere::normal_at(Tuple world_pt){
-    Tuple obj = Transformation.Inverse()*world_pt;
-    obj.set_type(TupType::POINT);
-    Tuple world_normal = Transformation.Inverse().Transpose()* obj;
-    world_normal.set_type(TupType::VECTOR);
+Tuple Sphere::normal_at(Tuple world_pt) const{
+    Tuple obj = Transformation.Inverse()*world_pt; // Convert world point to object point
+    obj.set_type(TupType::POINT); // Sphere's normal at a point on the sphere is in the same direction as the vector of that point
+    Tuple world_normal = Transformation.Inverse().Transpose()* obj; 
+    world_normal.set_type(TupType::VECTOR); // The type of the tuple can get corrupted when Doing 4x4 matrix math. Set to vector to restore.
+    world_normal.normalize(); // Make a unit vector
     return world_normal;
 }
 

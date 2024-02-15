@@ -3,15 +3,14 @@
 
 unsigned long Shape::GlobalID = 0;
 
-Shape::Shape(){
-    Transformation = MatIdentity(4);
-    id = ++GlobalID;
-}
-Shape::Shape(Matrix a_Transformation){
+Shape::Shape(Matrix a_Transformation, Material material){
     Transformation = a_Transformation;
+    mat = material;
     id = ++GlobalID;
 }
 
 void Shape::set_transform(Matrix a_Tranformation){
     Transformation = a_Tranformation;
 }
+
+Material Shape::get_material() const{return mat;}

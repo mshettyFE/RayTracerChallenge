@@ -79,6 +79,8 @@ class Tuple{
     friend std::ostream& operator << (std::ostream &out, const Tuple& other);
     friend Tuple operator* (const Matrix& cur, const Tuple& other);
 
+    Tuple reflect(const Tuple& normal) const;
+
 };
 
 template <typename T>

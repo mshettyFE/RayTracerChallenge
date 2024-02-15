@@ -5,14 +5,14 @@
 #include "Matrix.h"
 #include "Tuple.h"
 #include "Ray.h"
+#include "Material.h"
 #include <vector>
 
 class Sphere: public Shape{
     public:
-        Sphere();
-        Sphere(Matrix Transformation);
+        Sphere(Matrix Transformation=MatIdentity(4), Material material=Material());
 
-        Tuple normal_at(Tuple pt);
+        Tuple normal_at(Tuple pt) const;
         std::vector<double> intersect(const Ray &other) const;
 
         void print() const;

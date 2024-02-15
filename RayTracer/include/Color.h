@@ -7,6 +7,8 @@
 #define RED Color(1,0,0)
 #define GREEN Color(0,1,0)
 #define BLUE Color(0,0,1)
+#define BLACK Color(0,0,0)
+#define WHITE Color(1,1,1)
 #define RED_CHANNEL(hex) ((hex >> 16)&0x0000FF)
 #define GREEN_CHANNEL(hex) ((hex >> 8)&0x0000FF)
 #define BLUE_CHANNEL(hex) hex & 0x0000FF
@@ -27,7 +29,18 @@ class Color : public Tuple{
         const double get_blue() const;
 
         // Effectively a Hadamard product between color channels
-        Color operator*(Color& other);
+        Color operator*(const Color& other) const;
+        Color operator+(const Color& other) const;
+
+        template <  typename T>
+        Color operator*(T scalar) const{
+        static_assert(std::is_arithmetic<T>::value,"Need to multiply color by a number");
+            double r = this->get_red()*scalar;
+            double g = this->get_green()*scalar;
+            double b = this->get_blue()*scalar;
+            return Color(r,g,b);
+        }
+
 
         // force rgb values to be between 0 or 1
         void clamp();
@@ -39,5 +52,11 @@ class Color : public Tuple{
         friend std::ostream& operator << (std::ostream &out, const Color& other);
 
 };
+
+template <typename T>
+Color operator*(T scalar, Color const & other) {
+    static_assert(std::is_arithmetic<T>::value,"Need to multiply color by a number");
+    return other * scalar;
+}
 
 #endif

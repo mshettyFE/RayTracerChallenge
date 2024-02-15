@@ -40,7 +40,12 @@ const double Color::get_red() const {return data[0];}
 const double Color::get_green() const {return data[1];}
 const double Color::get_blue() const {return data[2];}
 
-Color Color::operator*(Color& other){
+Color Color::operator+(const Color& other) const{
+    return Color(this->get_red()+other.get_red(),this->get_green()+other.get_green(),this->get_blue()+other.get_blue());
+}
+
+
+Color Color::operator*(const Color& other) const{
     if((this->dim != other.dim) && (other.dim !=4)){
         throw std::invalid_argument("Dimensions of color don't match");
     }

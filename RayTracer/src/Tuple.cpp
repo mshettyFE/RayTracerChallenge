@@ -233,3 +233,7 @@ Tuple normalize(const Tuple& other){
   out.normalize();
   return out;
 }
+
+Tuple Tuple::reflect(const Tuple& normal) const{
+  return *this-normal*2*this->dot(normal); // Subtracts of twice the component in the same direction of normal from the input
+}

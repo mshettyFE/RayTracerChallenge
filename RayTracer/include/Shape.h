@@ -3,6 +3,7 @@
 
 #include "Matrix.h"
 #include "Tuple.h"
+#include "Material.h"
 
 class Shape{
 private:
@@ -10,13 +11,16 @@ private:
 protected:
     unsigned long id;
     Matrix Transformation;
+    Material mat;
 public:
-    virtual Tuple normal_at(Tuple pt)=0;
+    virtual Tuple normal_at(Tuple pt) const =0;
     virtual void print() const=0;
 
-    Shape();
-    Shape(Matrix Transformation);
+    Shape(Matrix Transformation=MatIdentity(4), Material material=Material());
     void set_transform(Matrix Tranformation);
+
+    Material get_material() const;
+
 };
 
 #endif
