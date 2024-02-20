@@ -4,6 +4,7 @@
 #include "Matrix.h"
 #include "Tuple.h"
 #include "Material.h"
+#include "Ray.h"
 
 class Shape{
 private:
@@ -15,6 +16,7 @@ protected:
 public:
     virtual Tuple normal_at(Tuple pt) const =0;
     virtual void print() const=0;
+    virtual std::vector<double> intersect(const Ray &other) const =0;
 
     Shape(Matrix Transformation=MatIdentity(4), Material material=Material());
     void set_transform(Matrix Tranformation);
