@@ -30,10 +30,10 @@ std::vector<Intersection> World::intersect(const Ray& r){
     std::vector<Intersection> all_hits;
     for(auto shape: shapes){
         for(double hit: shape->intersect(r)){
-            all_hits.push_back(Intersection{hit,shape});
+            all_hits.push_back(Intersection(hit, shape, r));
         }
     }
-    std::sort(all_hits.begin(), all_hits.end(), [](const Intersection& a, const Intersection& b) -> bool{ return a.t < b.t;  });
+    std::sort(all_hits.begin(), all_hits.end(), [](const Intersection& a, const Intersection& b) -> bool{ return a.get_t() < b.get_t();  });
     return all_hits;
 }
 

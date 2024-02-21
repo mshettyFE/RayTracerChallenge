@@ -22,7 +22,7 @@ class Ray{
         Ray transform(const Matrix& other) const;
 
         // For a given time, return the point along the ray
-        Tuple position(double t);
+        Tuple position(double t) const;
 
         friend std::ostream& operator << (std::ostream &out, const Ray& other);
 

@@ -35,7 +35,7 @@ Tuple Ray::get_origin() const{return origin;};
 Tuple Ray::get_direction() const{return direction;};
 
 
-Tuple Ray::position(double t){
+Tuple Ray::position(double t) const{
     return origin+direction*t;
 }
 

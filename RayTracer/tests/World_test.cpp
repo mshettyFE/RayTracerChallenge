@@ -4,15 +4,37 @@
 #include "Constants.h"
 #include "Ray.h"
 #include "World.h"
+#include "Shape.h"
+#include "Sphere.h"
 #include "Tuple.h"
 
-TEST(WorldTest,Intersection){
+TEST(WorldTest,IntersectionTest){
     World w= default_world();
     Ray r = Ray(Tuple({0,0,-5}, TupType::POINT),Tuple({0,0,1}));
     std::vector<Intersection> hits = w.intersect(r);
     EXPECT_EQ(hits.size(), 4);
-    EXPECT_EQ(hits[0].t,4);
-    EXPECT_EQ(hits[1].t,4.5);
-    EXPECT_EQ(hits[2].t,5.5);
-    EXPECT_EQ(hits[3].t,6);
+    EXPECT_EQ(hits[0].get_t(),4);
+    EXPECT_EQ(hits[1].get_t(),4.5);
+    EXPECT_EQ(hits[2].get_t(),5.5);
+    EXPECT_EQ(hits[3].get_t(),6);
 }
+
+TEST(WorldTest, IntersectionInfo){
+    Ray r = Ray(Tuple({0,0,-5}, TupType::POINT),Tuple({0,0,1}));
+    std::shared_ptr<Sphere> s = std::make_shared<Sphere>(Sphere());
+    Intersection i (4, s, r);
+    EXPECT_EQ(i.get_t(), 4);
+    EXPECT_EQ(i.get_obj(), s);
+    EXPECT_EQ(i.get_pnt(), Tuple({0,0,-1},TupType::POINT));
+    EXPECT_EQ(i.get_eye(), Tuple({0,0,-1}));
+    EXPECT_EQ(i.get_normal(), Tuple({0,0,-1}));
+    EXPECT_EQ(i.is_inside(), false);
+    r = Ray(Tuple({0,0,0}, TupType::POINT),Tuple({0,0,1}));
+    i  = Intersection(1, s, r);
+    EXPECT_EQ(i.get_t(), 1);
+    EXPECT_EQ(i.get_obj(), s);
+    EXPECT_EQ(i.get_pnt(), Tuple({0,0,1},TupType::POINT));
+    EXPECT_EQ(i.get_eye(), Tuple({0,0,-1}));
+    EXPECT_EQ(i.get_normal(), Tuple({0,0,-1}));
+    EXPECT_EQ(i.is_inside(), true);
+ }

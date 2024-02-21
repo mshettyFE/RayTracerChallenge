@@ -14,6 +14,7 @@ public:
     Color get_intensity() const;
     Tuple get_position() const;
 
+    // position is where normal and color is to be shaded
     Color shade(const Material& mat, const Tuple& position,
         const Tuple& camera, const Tuple& normal) const;
 

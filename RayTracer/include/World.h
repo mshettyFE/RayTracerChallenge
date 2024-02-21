@@ -19,6 +19,7 @@ public:
 
     std::vector<Intersection> intersect(const Ray& r);
 
+
     int number_of_sources() const;
     int number_of_shapes() const;
 };
