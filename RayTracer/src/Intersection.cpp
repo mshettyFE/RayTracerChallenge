@@ -25,4 +25,3 @@ Tuple Intersection::get_pnt() const{return pnt;};
 Tuple Intersection::get_eye() const{return eye;};
 Tuple Intersection::get_normal() const{return normal;};
 bool Intersection::is_inside() const{return inside;};
-
