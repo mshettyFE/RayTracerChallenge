@@ -23,6 +23,7 @@ public:
     double get_shininess() const;
     Color get_color() const;
 
+    friend std::ostream& operator << (std::ostream &out, const Material& Material);
 };
 
 #endif

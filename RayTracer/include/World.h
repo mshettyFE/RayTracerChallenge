@@ -6,6 +6,7 @@
 #include "Shape.h"
 #include "Ray.h"
 #include "Intersection.h"
+#include "Color.h"
 #include <memory>
 
 class World{
@@ -19,9 +20,16 @@ public:
 
     std::vector<Intersection> intersect(const Ray& r);
 
+    Color  shade_hit(const Intersection& hit);
 
     int number_of_sources() const;
     int number_of_shapes() const;
+
+    std::shared_ptr<Shape> get_shape(int i) const ;
+    std::shared_ptr<PointSource> get_source(int i) const;
+
+    friend std::ostream& operator <<(std::ostream& out, const World& w);
+
 };
 
 World default_world();

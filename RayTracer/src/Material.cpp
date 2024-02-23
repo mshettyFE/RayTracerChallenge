@@ -46,3 +46,9 @@ double Material::get_diffuse() const{return diffuse;}
 double Material::get_specular() const{return specular;}
 double Material::get_shininess() const{return shininess;}
 Color Material::get_color() const{return mat_color;}
+
+std::ostream& operator << (std::ostream &out, const Material& Mat){
+    out <<"Material:" << "\n\tAmbient: " << Mat.get_ambient() << " Diffuse: " << Mat.get_diffuse() << " Specular: " << Mat.get_specular() << " Shininess: " << Mat.get_shininess() << std::endl;
+    out << "\t" << Mat.get_color();
+    return out;
+}

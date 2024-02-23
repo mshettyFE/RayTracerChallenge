@@ -15,8 +15,6 @@ class Sphere: public Shape{
         Tuple normal_at(Tuple pt) const override;
         std::vector<double> intersect(const Ray &other) const override;
         void print() const override;
-
-        friend std::ostream& operator << (std::ostream &out, const Sphere& other);
 };
 
 #endif

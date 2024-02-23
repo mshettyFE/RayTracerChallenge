@@ -25,3 +25,9 @@ Tuple Intersection::get_pnt() const{return pnt;};
 Tuple Intersection::get_eye() const{return eye;};
 Tuple Intersection::get_normal() const{return normal;};
 bool Intersection::is_inside() const{return inside;};
+
+std::ostream& operator << (std::ostream &out, const Intersection& other){
+    out <<"Intersection:"<<  "\n\tTime: " << other.get_t() <<  "\t\nPosition: " << other.get_pnt() << "\tEye: " << other.get_eye();
+    out << "\tNormal: " << other.get_normal() << "\tInside: " << other.is_inside() << std::endl; 
+    return out;
+}

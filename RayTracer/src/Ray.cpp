@@ -44,7 +44,8 @@ Ray Ray::transform(const Matrix& other) const{
 }
 
 std::ostream& operator << (std::ostream &out, const Ray& other){
-    out << "Origin: " << other.origin;
-    out << "Direction: " << other.direction << std::endl;
+    out << "Ray:\n";
+    out << "\tOrigin: " << other.origin;
+    out << "\tDirection: " << other.direction << std::endl;
     return out;
 }

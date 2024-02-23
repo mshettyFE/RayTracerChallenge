@@ -7,7 +7,7 @@
 #include "Canvas.h"
 
 TEST(SphereTest,Init){
-    std::cout << Sphere() << std::endl;
+    Sphere().print();
 }
 
 TEST(SphereTest, Intersection){

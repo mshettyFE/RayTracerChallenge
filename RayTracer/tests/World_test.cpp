@@ -38,3 +38,14 @@ TEST(WorldTest, IntersectionInfo){
     EXPECT_EQ(i.get_normal(), Tuple({0,0,-1}));
     EXPECT_EQ(i.is_inside(), true);
  }
+
+ TEST(WorldTest, Lighting){
+    World w = default_world();
+    Ray r = Ray(Tuple({0,0,-5}, TupType::POINT), Tuple({0,0,1}));
+    Intersection i(4, w.get_shape(0),r);
+    std::cout << w << std::endl;
+    std::cout << r << std::endl;
+    std::cout << i << std::endl;
+    Color c = w.shade_hit(i);
+    EXPECT_EQ(c,Color({0.38066, 0.47583, 0.2855}));
+ }

@@ -52,6 +52,6 @@ const Tuple& camera, const Tuple& normal) const{
 
 
 std::ostream& operator << (std::ostream &out, const PointSource& cur){
-    out << cur.get_intensity() << cur.get_position();
+    out << "Intensity: " << cur.get_intensity() << '\n\t' << "Position: " << cur.get_position();
     return out;
 }

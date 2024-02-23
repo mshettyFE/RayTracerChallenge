@@ -23,6 +23,8 @@ public:
     Tuple get_normal() const;
     bool is_inside() const;
 
+    friend std::ostream& operator << (std::ostream &out, const Intersection& other);
+
 };
 
 #endif
