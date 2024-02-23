@@ -80,11 +80,13 @@ World default_world(){
 }
 
 std::ostream& operator << (std::ostream &out, const World& w){
+    out << "Sources" << std::endl;
     for(int source=0; source<w.number_of_sources(); source++){
-        std::cout <<"Source " << source << "\n\t" <<  *(w.get_source(source)) << std::endl;
+        out <<"Source:" << source << "\n\t" <<  *(w.get_source(source)) << std::endl;
     }
+    out <<"Shapes" << "\n";
     for(int shape=0; shape<w.number_of_shapes(); shape++){
-        std::cout <<"Shape " << shape << "\n\n";
+        out <<"Shape:" << shape << "\n";
         w.get_shape(shape)->print();
     }
     return out;

@@ -22,6 +22,7 @@ public:
     void set_transform(Matrix Tranformation);
 
     Material get_material() const;
+    unsigned long get_id() const;
 
 };
 
