@@ -34,7 +34,8 @@ std::vector<Intersection> World::intersect(const Ray& r){
             all_hits.push_back(Intersection(hit, shape, r));
         }
     }
-    std::sort(all_hits.begin(), all_hits.end(), [](const Intersection& a, const Intersection& b) -> bool{ return a.get_t() < b.get_t();  });
+    
+    std::sort(all_hits.begin(), all_hits.end(), [](const Intersection& a, const Intersection& b) -> bool{ return (a.get_t() < b.get_t());  });
     return all_hits;
 }
 
@@ -66,9 +67,33 @@ std::shared_ptr<PointSource> World::get_source(int i) const {
     return this->sources[i];
 }
 
+Color World::color_at(const Ray& r){
+    std::vector<Intersection> hits = intersect(r);
+    Color out = BLACK;
+    if (hits.size() > 0){
+        int lowest_positive_index=-1;
+        for(int i=0; i<hits.size(); ++i){
+            std::cout << "Index" << i << " " << hits[i] << std::endl;
+            if(hits[i].get_t() >= 0){
+                lowest_positive_index = i;
+                break;
+            }
+        }
+        // If all of the hits are negative, there is nothing in front of the array, so return BLACK
+        if(lowest_positive_index==-1){
+            return out;
+        }
+        for(auto source : sources){
+            out += shade_hit(hits[lowest_positive_index]);
+        }
+    }
+    return out;
+}
+
+
 World default_world(){
-    Material mat(0.1,0.7,0.2,200.0,Color({0.8,1.0,0.6}));
-    std::shared_ptr<Sphere> s1 = std::make_shared<Sphere>(Sphere(MatIdentity(4),mat));
+//    Material mat(0.1,0.7,0.2,200.0,Color({0.8,1.0,0.6}));
+    std::shared_ptr<Sphere> s1 = std::make_shared<Sphere>(Sphere(MatIdentity(4)));
     std::shared_ptr<Sphere> s2 = std::make_shared<Sphere>(Sphere(MatScaling(0.5,0.5,0.5)));
     std::vector<std::shared_ptr<Shape>> shapes;
     shapes.push_back(s1);

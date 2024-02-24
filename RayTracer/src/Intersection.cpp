@@ -8,14 +8,14 @@ Intersection::Intersection(double time,const std::shared_ptr<Shape>& obj, const 
     this->time = time;
     this->obj = obj;
     this->pnt =  ray.position(time);
-    this->eye = -ray.get_direction();
+    this->eye = -1.0*ray.get_direction();
     this->normal = obj->normal_at(pnt);
     if(eye.dot(normal) < 0){
-        inside = true;
-        this->normal = -this->normal;
+        this->inside = true;
+        this->normal = -1.0*this->normal;
     }
     else{
-        inside = false;
+        this->inside = false;
     }
 }
 

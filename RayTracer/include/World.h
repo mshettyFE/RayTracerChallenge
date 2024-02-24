@@ -22,6 +22,8 @@ public:
 
     Color  shade_hit(const Intersection& hit);
 
+    Color color_at(const Ray& r);
+
     int number_of_sources() const;
     int number_of_shapes() const;
 

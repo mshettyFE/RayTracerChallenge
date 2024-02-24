@@ -18,9 +18,14 @@ Tuple PointSource::get_position() const{return SourceLoc;};
 
 Color PointSource::shade(const Material& mat, const Tuple& position,
 const Tuple& camera, const Tuple& normal) const{
+    std::cout << "Point Source" << std::endl;
     if(position.type() != TupType::POINT){throw std::invalid_argument("position must be a point");}
     if(camera.type() != TupType::VECTOR){throw std::invalid_argument("camera must be a vector");}
     if(normal.type() != TupType::VECTOR){throw std::invalid_argument("normal must be a vector");}
+    std::cout << mat << std::endl;
+    std::cout << position << std::endl;
+    std::cout << camera << std::endl;
+    std::cout << normal << std::endl;
     Color eff_color = mat.get_color()*this->get_intensity(); // Get effective color from light color and material color overlapping
     Tuple light_v = SourceLoc;
     light_v.set_type(TupType::VECTOR); // Cast Position from Point to Vector
@@ -29,7 +34,10 @@ const Tuple& camera, const Tuple& normal) const{
     Color specular;
     Color diffuse;
     double light_dot_normal = light_v.dot(normal);
-    // Light is on other side of surface, so there is no specular or diffuse
+    std::cout << "Eff Color: " << eff_color << std::endl;
+    std::cout << "Light: "<< light_v << std::endl;
+    std::cout << "Normal: "<< normal << std::endl;
+    std::cout << mat << std::endl;
     if(light_dot_normal<0){
         specular = BLACK;
         diffuse = BLACK;
@@ -42,11 +50,12 @@ const Tuple& camera, const Tuple& normal) const{
             specular = BLACK;
         }
         else{
-//            std::cout << Intensity << " " << mat.get_specular() << " " << reflected_dot_camera << " " << mat.get_shininess() <<  std::endl;
             specular = Intensity*mat.get_specular()*pow(reflected_dot_camera, mat.get_shininess());
-//            std::cout << specular << std::endl;
         }
     }
+    std::cout <<"Ambient: " <<  ambient << std::endl;
+    std::cout <<"Specular: "<< specular << std::endl;
+    std::cout <<"Diffuse: "<< diffuse << std::endl;
     return ambient+specular+diffuse;
 }
 
