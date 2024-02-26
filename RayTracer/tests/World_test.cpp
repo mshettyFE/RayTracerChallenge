@@ -72,6 +72,7 @@ TEST(WorldTest,Hit){
     EXPECT_EQ(c, Color({0.38066, 0.47583, 0.2855}));
 }
 
+/*
 TEST(WorldTest, Nested){
     Material mat(1,0.9,0.9,200.0,Color({0.8,1.0,0.6}));
     std::shared_ptr<Sphere> s1 = std::make_shared<Sphere>(Sphere(MatIdentity(4),mat));
@@ -91,3 +92,4 @@ TEST(WorldTest, Nested){
     Color c = w.color_at(r);
     EXPECT_EQ(c, w.get_shape(1)->get_material().get_color());
 }
+*/

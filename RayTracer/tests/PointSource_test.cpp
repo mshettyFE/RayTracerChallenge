@@ -10,7 +10,7 @@ TEST(PointSourceTest,Init){
     PointSource(Color({1,1,1}),Tuple({0,0,0}));
 }
 
-TEST(PointSourceTest, Lighting){
+TEST(PointSourceTest, StraightOn){
     Tuple position({0,0,0}, TupType::POINT);
     Sphere s;
     PointSource ps(Color({1,1,1}),Tuple({0,0,-10}));
@@ -19,23 +19,47 @@ TEST(PointSourceTest, Lighting){
     Tuple normal({0,0,-1});
     Color result = ps.shade(s.get_material(), position, camera, normal);
     EXPECT_EQ(result, Color(1.9,1.9,1.9));
-    // Angled camera
-    camera = Tuple({0,std::sqrt(2)/2.0,-std::sqrt(2)/2.0});
-    result = ps.shade(s.get_material(), position, camera, normal);
+}
+
+TEST(PointSourceTest, AngledCamera){
+    Tuple position({0,0,0}, TupType::POINT);
+    Sphere s;
+    Tuple normal({0,0,-1});
+    PointSource ps(Color({1,1,1}),Tuple({0,0,-10}));
+    Tuple camera = Tuple({0,std::sqrt(2)/2.0,-std::sqrt(2)/2.0});
+    Tuple result = ps.shade(s.get_material(), position, camera, normal);
     EXPECT_EQ(result,Color(1,1,1));
-    // Angled Light
-    camera = Tuple({0,0,-1});
-    ps =  PointSource(Color({1,1,1}),Tuple({0,10,-10}));
-    result = ps.shade(s.get_material(), position, camera, normal);
+}
+
+TEST(PointSourceTest, AngledLight){
+    Tuple position({0,0,0}, TupType::POINT);
+    Sphere s;
+    Tuple normal({0,0,-1});
+    Tuple camera = Tuple({0,0,-1});
+    PointSource ps =  PointSource(Color({1,1,1}),Tuple({0,10,-10}));
+    Color result = ps.shade(s.get_material(), position, camera, normal);
     EXPECT_EQ(result, Color(.7364,.7364,.7364));
-    // The light! It burns (eye directly in line of sight of light)
-    camera = Tuple({0,-std::sqrt(2)/2,-std::sqrt(2)/2});
-    result = ps.shade(s.get_material(), position, camera, normal);
-    EXPECT_EQ(result, Color(1.6364,1.6364,1.6364));
-    // Obscured light
-    ps =  PointSource(Color({1,1,1}),Tuple({0,0,10}));
-    result = ps.shade(s.get_material(),position, camera,normal);
+}
+
+TEST(PointSourceTest, Obscured){
+    Tuple position({0,0,0}, TupType::POINT);
+    Sphere s;
+    Tuple normal({0,0,-1});
+    PointSource ps =  PointSource(Color({1,1,1}),Tuple({0,0,10}));
+    Tuple camera = Tuple({0,0,-1});
+    Color result = ps.shade(s.get_material(),position, camera,normal);
     EXPECT_EQ(result, Color(0.1,0.1,0.1));
+}
+
+TEST(PointSourceTest, DirectLight){
+// The light! It burns (camera directly in line of sight of light reflection)
+    Tuple position({0,0,0}, TupType::POINT);
+    Sphere s;
+    Tuple normal({0,0,-1});
+    PointSource ps(Color({1,1,1}),Tuple({0,10,-10}));
+    Tuple camera = Tuple({0,-std::sqrt(2)/2.0,-std::sqrt(2)/2.0});
+    Color result = ps.shade(s.get_material(), position, camera, normal);
+    EXPECT_EQ(result, Color(1.6364,1.6364,1.6364));
 }
 
 TEST(TestImage, ShadedSphere){
@@ -44,10 +68,10 @@ TEST(TestImage, ShadedSphere){
     // Place light source up, behind and left the camera
     PointSource light_loc(Color(1,1,1), Tuple({-10,10,-10}, TupType::POINT));
     // place origin of rays
-    double origin_z = -10;
+    double origin_z = -1000;
     Tuple origin({0,0, origin_z}, TupType::POINT);
     // Place wall location
-    double wall_location = 30;
+    double wall_location = 200;
     // define how big the wall is in X and Y in world space
     double slope = 1.0/origin_z;
     double wall_size = std::ceil(slope*(wall_location-origin_z));
@@ -72,7 +96,7 @@ TEST(TestImage, ShadedSphere){
                 Tuple position = r.position(intersections[0]);
                 // Calculate what color the pixel should be, given the light source, material, current position, ray direction and normal vector at position
                 Color p = light_loc.shade(s.get_material(),
-                position,r.get_direction() , s.normal_at(position));
+                position,-r.get_direction() , s.normal_at(position));
                 canvas.write_pixel(row,col,p);
             }
         }

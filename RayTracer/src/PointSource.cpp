@@ -22,10 +22,6 @@ const Tuple& camera, const Tuple& normal) const{
     if(position.type() != TupType::POINT){throw std::invalid_argument("position must be a point");}
     if(camera.type() != TupType::VECTOR){throw std::invalid_argument("camera must be a vector");}
     if(normal.type() != TupType::VECTOR){throw std::invalid_argument("normal must be a vector");}
-    std::cout << mat << std::endl;
-    std::cout << position << std::endl;
-    std::cout << camera << std::endl;
-    std::cout << normal << std::endl;
     Color eff_color = mat.get_color()*this->get_intensity(); // Get effective color from light color and material color overlapping
     Tuple light_v = SourceLoc;
     light_v.set_type(TupType::VECTOR); // Cast Position from Point to Vector
@@ -34,10 +30,12 @@ const Tuple& camera, const Tuple& normal) const{
     Color specular;
     Color diffuse;
     double light_dot_normal = light_v.dot(normal);
+    std::cout << "Material: " << mat<< std::endl;
+    std::cout << "Light Col: " << this->get_intensity() << std::endl;
     std::cout << "Eff Color: " << eff_color << std::endl;
     std::cout << "Light: "<< light_v << std::endl;
     std::cout << "Normal: "<< normal << std::endl;
-    std::cout << mat << std::endl;
+    std::cout << "Light Dot Normal: " <<  light_dot_normal << std::endl;
     if(light_dot_normal<0){
         specular = BLACK;
         diffuse = BLACK;
@@ -50,7 +48,7 @@ const Tuple& camera, const Tuple& normal) const{
             specular = BLACK;
         }
         else{
-            specular = Intensity*mat.get_specular()*pow(reflected_dot_camera, mat.get_shininess());
+            specular = Intensity*mat.get_specular()*std::pow(reflected_dot_camera, mat.get_shininess());
         }
     }
     std::cout <<"Ambient: " <<  ambient << std::endl;

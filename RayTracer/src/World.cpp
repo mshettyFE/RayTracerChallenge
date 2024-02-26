@@ -83,6 +83,8 @@ Color World::color_at(const Ray& r){
         if(lowest_positive_index==-1){
             return out;
         }
+        std::cout << "Selected Hit: " << lowest_positive_index << " " << hits[lowest_positive_index] << std::endl;
+        std::cout << hits[lowest_positive_index].get_obj()->get_material()  <<  std::endl;
         for(auto source : sources){
             out += shade_hit(hits[lowest_positive_index]);
         }
@@ -92,8 +94,8 @@ Color World::color_at(const Ray& r){
 
 
 World default_world(){
-//    Material mat(0.1,0.7,0.2,200.0,Color({0.8,1.0,0.6}));
-    std::shared_ptr<Sphere> s1 = std::make_shared<Sphere>(Sphere(MatIdentity(4)));
+    Material mat(0.1,0.7,0.2,200.0,Color({0.8,1.0,0.6}));
+    std::shared_ptr<Sphere> s1 = std::make_shared<Sphere>(Sphere(MatIdentity(4),mat));
     std::shared_ptr<Sphere> s2 = std::make_shared<Sphere>(Sphere(MatScaling(0.5,0.5,0.5)));
     std::vector<std::shared_ptr<Shape>> shapes;
     shapes.push_back(s1);

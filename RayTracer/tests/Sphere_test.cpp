@@ -26,6 +26,9 @@ TEST(SphereTest, Intersection){
 }
 
 TEST(TestImage, Sphere){
+    // Define canvas
+    int dim = 100;
+    Canvas canvas(dim, dim);
     // Place Sphere at origin
     Sphere s(MatScaling(0.25,0.25,0.25));
     // Set sphere color
@@ -38,9 +41,6 @@ TEST(TestImage, Sphere){
     // define how big the wall is in X and Y in world space
     double slope = 1.0/origin_z;
     double wall_size = std::ceil(slope*(wall_location-origin_z));
-    // Define canvas
-    int dim = 100;
-    Canvas canvas(dim, dim);
     // Map how big a pixel is in world coordinate units
     double pixel_size = wall_size/(double) dim;
     double half = pixel_size/2.0;
