@@ -16,9 +16,6 @@ TEST(ColorTests, Arithmetic){
     Color ScalarMul(0.4, 0.6, 0.8);
     EXPECT_EQ(2*Init,ScalarMul);
     Color ColorMul(0.63, 0.06, 0.1875);
-    std::cout << a << std::endl;
-    std::cout << b << std::endl;
-    std::cout << a*b << std::endl;
     EXPECT_EQ(a*b,ColorMul);
 }
 

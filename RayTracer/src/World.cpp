@@ -9,12 +9,12 @@
 #include <memory>
 #include <stdexcept>
 
-World::World(std::vector<std::shared_ptr<PointSource>> light_sources, std::vector<std::shared_ptr<Shape>> all_shapes){
+World::World(std::vector<std::shared_ptr<LightSource>> light_sources, std::vector<std::shared_ptr<Shape>> all_shapes){
     sources = light_sources;
     shapes = all_shapes;
 }
 
-World::World(std::shared_ptr<PointSource> light_source, std::shared_ptr<Shape>  shape){
+World::World(std::shared_ptr<LightSource> light_source, std::shared_ptr<Shape>  shape){
     sources.push_back(light_source);
     shapes.push_back(shape);    
 }
@@ -57,7 +57,7 @@ std::shared_ptr<Shape> World::get_shape(int i) const{
     return this->shapes[i];
 }
 
-std::shared_ptr<PointSource> World::get_source(int i) const {
+std::shared_ptr<LightSource> World::get_source(int i) const {
     if(i<0){
         throw std::invalid_argument("Index is negative");
     }
@@ -73,7 +73,6 @@ Color World::color_at(const Ray& r){
     if (hits.size() > 0){
         int lowest_positive_index=-1;
         for(int i=0; i<hits.size(); ++i){
-            std::cout << "Index" << i << " " << hits[i] << std::endl;
             if(hits[i].get_t() >= 0){
                 lowest_positive_index = i;
                 break;
@@ -99,7 +98,7 @@ World default_world(){
     shapes.push_back(s1);
     shapes.push_back(s2);
     std::shared_ptr<PointSource> source = std::make_shared<PointSource>(PointSource(Color(1,1,1), Tuple({-10,10,-10}, TupType::POINT)));
-    std::vector<std::shared_ptr<PointSource>> sources;
+    std::vector<std::shared_ptr<LightSource>> sources;
     sources.push_back(source);
     return World(sources, shapes);
 }
@@ -107,7 +106,7 @@ World default_world(){
 std::ostream& operator << (std::ostream &out, const World& w){
     out << "Sources" << std::endl;
     for(int source=0; source<w.number_of_sources(); source++){
-        out <<"Source:" << source << "\n\t" <<  *(w.get_source(source)) << std::endl;
+        w.get_source(source)->print();
     }
     out <<"Shapes" << "\n";
     for(int shape=0; shape<w.number_of_shapes(); shape++){

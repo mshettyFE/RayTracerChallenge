@@ -26,17 +26,13 @@ TEST(WorldTest,IntersectionTest){
     World w = default_world();
     Ray r = Ray(Tuple({0,0,-5}, TupType::POINT), Tuple({0,0,1}));
     Intersection i(4, w.get_shape(0),r);
-    std::cout << "World" << std::endl;
-    std::cout << w << std::endl;
-    std::cout << i << std::endl;
-    std::cout << r << std::endl;
     Color c = w.shade_hit(i);
     EXPECT_EQ(c,Color({0.38066, 0.47583, 0.2855}));
  }
 
  TEST(WorldTest, InsideLight){
-    std::shared_ptr<PointSource> source = std::make_shared<PointSource>(PointSource(Color(1,1,1), Tuple({0,0.25,0}, TupType::POINT)));
-    std::vector<std::shared_ptr<PointSource>> sources;
+    std::shared_ptr<LightSource> source = std::make_shared<PointSource>(PointSource(Color(1,1,1), Tuple({0,0.25,0}, TupType::POINT)));
+    std::vector<std::shared_ptr<LightSource>> sources;
     sources.push_back(source);
     Material mat1(0.1,0.7,0.2,200.0,Color({0.8,1.0,0.6}));
     Material mat2(0.1,0.9,0.9,200.0, WHITE);
@@ -48,10 +44,6 @@ TEST(WorldTest,IntersectionTest){
     World w = World(sources, shapes);
     Ray r(Tuple({0,0,0}, TupType::POINT), Tuple({0,0,1}));
     Intersection i(0.5, w.get_shape(1),r);
-    std::cout << "World" << std::endl;
-    std::cout << w << std::endl;
-    std::cout << i << std::endl;
-    std::cout << r << std::endl;
     Color c = w.shade_hit(i);
     EXPECT_EQ(c,Color({0.90498, 0.90498, 0.90498}));
  }
@@ -66,9 +58,6 @@ TEST(WorldTest,IntersectionTest){
 TEST(WorldTest,Hit){
     World w =  default_world();
     Ray r  = Ray(Tuple({0, 0, -5}, TupType::POINT), Tuple({0, 0, 1}));
-    std::cout << "World" << std::endl;
-    std::cout << w << std::endl;
-    std::cout << r << std::endl;
     Color c = w.color_at(r);
     EXPECT_EQ(c, Color({0.38066, 0.47583, 0.2855}));
 }
@@ -83,13 +72,10 @@ TEST(WorldTest, Nested){
     shapes.push_back(s1);
     shapes.push_back(s2);
     std::shared_ptr<PointSource> source = std::make_shared<PointSource>(PointSource(Color(1,1,1), Tuple({-10,10,-10}, TupType::POINT)));
-    std::vector<std::shared_ptr<PointSource>> sources;
+    std::vector<std::shared_ptr<LightSource>> sources;
     sources.push_back(source);
     World w = World(sources, shapes);
     Ray r =  Ray(Tuple({0, 0, 0.75}, TupType::POINT), Tuple({0, 0, -1}));
-    std::cout << "World" << std::endl;
-    std::cout << w << std::endl;
-    std::cout << r << std::endl;
     Color c = w.color_at(r);
     EXPECT_EQ(c, w.get_shape(1)->get_material().get_color());
 }

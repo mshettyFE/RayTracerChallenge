@@ -18,6 +18,9 @@ public:
     // position is where normal and color is to be shaded
     Color shade(const Material& mat, const Tuple& position,
         const Tuple& camera, const Tuple& normal) const override;
+    
+    void print() const override;
+
 
     friend std::ostream& operator << (std::ostream &out, const PointSource& other);
 };
