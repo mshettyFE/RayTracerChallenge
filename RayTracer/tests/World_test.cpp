@@ -35,12 +35,13 @@ TEST(WorldTest,IntersectionTest){
  }
 
  TEST(WorldTest, InsideLight){
-    std::shared_ptr<PointSource> source = std::make_shared<PointSource>(PointSource(Color(1,1,1), Tuple({0,0,0.25}, TupType::POINT)));
+    std::shared_ptr<PointSource> source = std::make_shared<PointSource>(PointSource(Color(1,1,1), Tuple({0,0.25,0}, TupType::POINT)));
     std::vector<std::shared_ptr<PointSource>> sources;
     sources.push_back(source);
-    Material mat(0.1,0.65,0.2,200.0,Color({0.8,1.0,0.6}));
-    std::shared_ptr<Sphere> s1 = std::make_shared<Sphere>(Sphere(MatIdentity(4),mat));
-    std::shared_ptr<Sphere> s2 = std::make_shared<Sphere>(Sphere(MatScaling(0.5,0.5,0.5)));
+    Material mat1(0.1,0.7,0.2,200.0,Color({0.8,1.0,0.6}));
+    Material mat2(0.1,0.9,0.9,200.0, WHITE);
+    std::shared_ptr<Sphere> s1 = std::make_shared<Sphere>(Sphere(MatIdentity(4),mat1));
+    std::shared_ptr<Sphere> s2 = std::make_shared<Sphere>(Sphere(MatScaling(0.5,0.5,0.5),mat2));
     std::vector<std::shared_ptr<Shape>> shapes;
     shapes.push_back(s1);
     shapes.push_back(s2);
