@@ -4,8 +4,9 @@
 #include "Color.h"
 #include "Tuple.h"
 #include "Shape.h"
+#include "LightSource.h"
 
-class PointSource{
+class PointSource: public LightSource{
 private:
     Color Intensity;
     Tuple SourceLoc;
@@ -16,7 +17,7 @@ public:
 
     // position is where normal and color is to be shaded
     Color shade(const Material& mat, const Tuple& position,
-        const Tuple& camera, const Tuple& normal) const;
+        const Tuple& camera, const Tuple& normal) const override;
 
     friend std::ostream& operator << (std::ostream &out, const PointSource& other);
 };
