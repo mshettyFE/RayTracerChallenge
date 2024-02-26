@@ -38,7 +38,7 @@ TEST(WorldTest,IntersectionTest){
     std::shared_ptr<PointSource> source = std::make_shared<PointSource>(PointSource(Color(1,1,1), Tuple({0,0,0.25}, TupType::POINT)));
     std::vector<std::shared_ptr<PointSource>> sources;
     sources.push_back(source);
-    Material mat(0.1,0.7,0.2,200.0,Color({0.8,1.0,0.6}));
+    Material mat(0.1,0.65,0.2,200.0,Color({0.8,1.0,0.6}));
     std::shared_ptr<Sphere> s1 = std::make_shared<Sphere>(Sphere(MatIdentity(4),mat));
     std::shared_ptr<Sphere> s2 = std::make_shared<Sphere>(Sphere(MatScaling(0.5,0.5,0.5)));
     std::vector<std::shared_ptr<Shape>> shapes;
@@ -72,7 +72,7 @@ TEST(WorldTest,Hit){
     EXPECT_EQ(c, Color({0.38066, 0.47583, 0.2855}));
 }
 
-/*
+
 TEST(WorldTest, Nested){
     Material mat(1,0.9,0.9,200.0,Color({0.8,1.0,0.6}));
     std::shared_ptr<Sphere> s1 = std::make_shared<Sphere>(Sphere(MatIdentity(4),mat));
@@ -92,4 +92,3 @@ TEST(WorldTest, Nested){
     Color c = w.color_at(r);
     EXPECT_EQ(c, w.get_shape(1)->get_material().get_color());
 }
-*/

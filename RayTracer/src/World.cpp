@@ -94,7 +94,7 @@ Color World::color_at(const Ray& r){
 
 
 World default_world(){
-    Material mat(0.1,0.7,0.2,200.0,Color({0.8,1.0,0.6}));
+    Material mat(0.1,0.65,0.2,200.0,Color({0.8,1.0,0.6}));
     std::shared_ptr<Sphere> s1 = std::make_shared<Sphere>(Sphere(MatIdentity(4),mat));
     std::shared_ptr<Sphere> s2 = std::make_shared<Sphere>(Sphere(MatScaling(0.5,0.5,0.5)));
     std::vector<std::shared_ptr<Shape>> shapes;

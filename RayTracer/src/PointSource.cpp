@@ -41,10 +41,11 @@ const Tuple& camera, const Tuple& normal) const{
         diffuse = BLACK;
     }
     else{
-        diffuse = eff_color*mat.get_diffuse()*light_dot_normal;
+        double dif_prefactor = (mat.get_diffuse()*light_dot_normal);
+        diffuse = eff_color*dif_prefactor;
         Tuple reflected = (-1*light_v).reflect(normal);
         double reflected_dot_camera = camera.dot(reflected);
-        if(reflected_dot_camera <=0){
+        if(reflected_dot_camera <0){
             specular = BLACK;
         }
         else{
