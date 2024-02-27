@@ -121,7 +121,7 @@ Tuple Tuple::operator-(const Tuple& other) const{
   return out;
 }
 
-double Tuple::operator[](int index){
+double Tuple::operator[](int index) const{
     if(index < 0){
         throw std::invalid_argument("Argument below 0");
     }
