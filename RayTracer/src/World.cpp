@@ -2,7 +2,8 @@
 #include "Sphere.h"
 #include "Color.h"
 #include "Tuple.h"
-#include "Intersection.h"
+#include "Impact.h"
+#include "CollisionInfo.h"
 #include "Ray.h"
 #include <algorithm>
 #include <vector>
@@ -27,22 +28,22 @@ int World::number_of_shapes() const{
     return shapes.size();
 }
 
-std::vector<Intersection> World::intersect(const Ray& r){
-    std::vector<Intersection> all_hits;
+std::vector<Impact> World::intersect(const Ray& r){
+    std::vector<Impact> all_hits;
     for(auto shape: shapes){
         for(double hit: shape->intersect(r)){
-            all_hits.push_back(Intersection(hit, shape, r));
+            all_hits.push_back(Impact(hit, shape));
         }
     }
     
-    std::sort(all_hits.begin(), all_hits.end(), [](const Intersection& a, const Intersection& b) -> bool{ return (a.get_t() < b.get_t());  });
+    std::sort(all_hits.begin(), all_hits.end(), [](const Impact& a, const Impact& b) -> bool{ return (a.get_t() < b.get_t());  });
     return all_hits;
 }
 
-Color  World::shade_hit(const Intersection& hit){
+Color  World::shade_hit(const CollisionInfo& hit){
     Color c = BLACK;
     for(auto source: sources){
-        c += source->shade(hit.get_obj()->get_material(),hit.get_pnt(),hit.get_eye(), hit.get_normal() );
+        c += source->shade(hit.get_impact().get_obj()->get_material(),hit.get_pnt(),hit.get_eye(), hit.get_normal() );
     }
     return c;
 }
@@ -68,7 +69,7 @@ std::shared_ptr<LightSource> World::get_source(int i) const {
 }
 
 Color World::color_at(const Ray& r){
-    std::vector<Intersection> hits = intersect(r);
+    std::vector<Impact> hits = intersect(r);
     Color out = BLACK;
     if (hits.size() > 0){
         int lowest_positive_index=-1;
@@ -83,7 +84,7 @@ Color World::color_at(const Ray& r){
             return out;
         }
         for(auto source : sources){
-            out += shade_hit(hits[lowest_positive_index]);
+            out += shade_hit(CollisionInfo(hits[lowest_positive_index],r));
         }
     }
     return out;

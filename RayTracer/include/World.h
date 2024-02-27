@@ -5,7 +5,8 @@
 #include "PointSource.h"
 #include "Shape.h"
 #include "Ray.h"
-#include "Intersection.h"
+#include "Impact.h"
+#include "CollisionInfo.h"
 #include "Color.h"
 #include <memory>
 
@@ -18,9 +19,9 @@ public:
     World(std::vector<std::shared_ptr<LightSource>> light_sources, std::vector<std::shared_ptr<Shape>> all_shapes);
     World(std::shared_ptr<LightSource> light_sources, std::shared_ptr<Shape>  shape);
 
-    std::vector<Intersection> intersect(const Ray& r);
+    std::vector<Impact> intersect(const Ray& r);
 
-    Color  shade_hit(const Intersection& hit);
+    Color  shade_hit(const CollisionInfo& hit);
 
     Color color_at(const Ray& r);
 
