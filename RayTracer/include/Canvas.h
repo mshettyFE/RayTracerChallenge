@@ -24,7 +24,7 @@ class Canvas{
         // write a pixel to the canvas with color C
         void write_pixel(unsigned int x, unsigned int y, const Color& c);
         // output current state of canvas to ppm format
-        void save_ppm(std::string fname);
+        void save_ppm(std::string fname) const;
 
         // print state of canvas
         friend std::ostream& operator << (std::ostream &out, const Canvas& other);

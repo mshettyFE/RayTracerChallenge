@@ -114,7 +114,7 @@ Ray Camera::ray_for_pixel(int px, int py) const{
     return Ray(origin, direction);
 }
 
-Canvas Camera::render(World w) const{
+std::unique_ptr<Canvas> Camera::render(World w) const{
     Canvas image = Canvas(this->hsize, this->vsize);
     for(int y=0; y<this->vsize-1; ++y){
         for(int x=0; x<this->hsize-1; ++x){
@@ -123,5 +123,5 @@ Canvas Camera::render(World w) const{
             image.write_pixel(x,y,c);
         }
     }
-    return image;
+    return std::make_unique<Canvas>(image);
 }

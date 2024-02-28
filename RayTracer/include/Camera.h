@@ -6,6 +6,7 @@
 #include "Canvas.h"
 #include "World.h"
 #include "Ray.h"
+#include <memory>
 
 class Camera{
 private:
@@ -31,7 +32,7 @@ public:
 
     Ray ray_for_pixel(int x, int y) const;
 
-    Canvas render(World w) const;
+    std::unique_ptr<Canvas> render(World w) const;
 
     bool operator==(const Camera& other) const;
     bool operator!=(const Camera& other) const;

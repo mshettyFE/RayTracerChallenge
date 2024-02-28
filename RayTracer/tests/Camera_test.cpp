@@ -75,11 +75,10 @@ TEST(CameraTests, Render){
     Tuple to =  Tuple({0,0,0}, TupType::POINT);
     Tuple up = Tuple({0,1,0});
     Camera c(11,11,std::acos(-1)/2.0, from, to, up);
-    Canvas img = c.render(w);
-    EXPECT_EQ(img(5,5), Color({0.38066, 0.47583, 0.2855}));
+    std::unique_ptr<Canvas> img = c.render(w);
+    EXPECT_EQ((*img)(5,5), Color({0.38066, 0.47583, 0.2855}));
 }
 
-/*
 TEST(TestImage, OnlySpheres){
 // floor
     Material floor_mat = Material();
@@ -128,7 +127,6 @@ TEST(TestImage, OnlySpheres){
     std::vector<std::shared_ptr<LightSource>> sources;
     sources.push_back(std::make_shared<PointSource>(ps));
     World w(sources,shapes);
-    Canvas img = c.render(w);
-    img.save_ppm("Scene");
+    std::unique_ptr<Canvas> img = c.render(w);
+    img->save_ppm("Scene");
 }
-*/
