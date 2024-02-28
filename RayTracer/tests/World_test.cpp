@@ -82,3 +82,16 @@ TEST(WorldTest, Nested){
     Color c = w.color_at(r);
     EXPECT_EQ(c, w.get_shape(1)->get_material().get_color());
 }
+
+TEST(WorldTest, InShadow){
+    World w = default_world();
+    Tuple p = Tuple({0,10,0}, TupType::POINT);
+    EXPECT_EQ(false,w.is_shadowed(p));
+    p = Tuple({10,-10,10}, TupType::POINT);
+    EXPECT_EQ(true,w.is_shadowed(p));
+    p = Tuple({-2,2,-2}, TupType::POINT);
+    EXPECT_EQ(false,w.is_shadowed(p));
+    p = Tuple({-20,20,-20}, TupType::POINT);
+    EXPECT_EQ(false,w.is_shadowed(p));
+
+}

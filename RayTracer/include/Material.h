@@ -18,10 +18,19 @@ public:
     Material(Color a_material_color);
 
     double get_ambient() const;
+    void set_ambient(double other);
+
     double get_diffuse() const;
+    void set_diffuse(double other);
+
     double get_specular() const;
+    void set_specular(double other);
+
     double get_shininess() const;
+    void set_shininess(double other);
+
     Color get_color() const;
+    void set_color(Color c);
 
     friend std::ostream& operator << (std::ostream &out, const Material& Material);
 };

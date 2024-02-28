@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include "Matrix.h"
+#include "Color.h"
 #include "Constants.h"
 #include <stdexcept>
 #include <cmath>
@@ -111,4 +112,16 @@ Ray Camera::ray_for_pixel(int px, int py) const{
     Tuple direction = pixel-origin;
     direction.normalize();
     return Ray(origin, direction);
+}
+
+Canvas Camera::render(World w) const{
+    Canvas image = Canvas(this->hsize, this->vsize);
+    for(int y=0; y<this->vsize-1; ++y){
+        for(int x=0; x<this->hsize-1; ++x){
+            Ray r = ray_for_pixel(x,y);
+            Color c = w.color_at(r);
+            image.write_pixel(x,y,c);
+        }
+    }
+    return image;
 }

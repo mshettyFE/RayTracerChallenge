@@ -7,17 +7,11 @@
 #include "LightSource.h"
 
 class PointSource: public LightSource{
-private:
-    Color Intensity;
-    Tuple SourceLoc;
 public:
-    PointSource(Color a_intensity, Tuple a_position);
-    Color get_intensity() const;
-    Tuple get_position() const;
-
+    PointSource(const Color& a_intensity,const Tuple& a_position);
     // position is where normal and color is to be shaded
     Color shade(const Material& mat, const Tuple& position,
-        const Tuple& camera, const Tuple& normal) const override;
+        const Tuple& camera, const Tuple& normal, bool in_shadow=false) const override;
     
     void print() const override;
 

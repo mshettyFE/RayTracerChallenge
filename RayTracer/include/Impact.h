@@ -20,4 +20,6 @@ public:
 
 };
 
+Impact first_hit(std::vector<Impact> intersections);
+
 #endif

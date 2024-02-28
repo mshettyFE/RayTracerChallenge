@@ -28,7 +28,7 @@ int World::number_of_shapes() const{
     return shapes.size();
 }
 
-std::vector<Impact> World::intersect(const Ray& r){
+std::vector<Impact> World::intersect(const Ray& r) const{
     std::vector<Impact> all_hits;
     for(auto shape: shapes){
         for(double hit: shape->intersect(r)){
@@ -115,4 +115,23 @@ std::ostream& operator << (std::ostream &out, const World& w){
         w.get_shape(shape)->print();
     }
     return out;
+}
+
+
+bool World::is_shadowed(const Tuple& pt) const{
+    for(auto source: sources){
+        Tuple v = source->get_position()-pt;
+        double distance = v.L2Norm();
+        v.normalize();
+        Ray ray = Ray(pt,v);
+        std::vector<Impact> hits =  intersect(ray);
+        Impact first = first_hit(hits);
+        if(first.get_obj() == nullptr){
+            continue;
+        }
+        if (first.get_t()*first.get_t() < distance){
+            return true;
+        }
+    }
+    return false;
 }

@@ -23,3 +23,14 @@ std::ostream& operator << (std::ostream &out, const Impact& other){
     other.get_obj()->print();
     return out;
 }
+
+// helper function to get first hit with positive time. Return t=-1 if nothing found
+Impact first_hit(std::vector<Impact> intersections){
+    Impact out;
+    for(auto hit: intersections){
+        if(hit.get_t() > 0){
+            out = hit;
+        }
+    }
+    return out;
+}

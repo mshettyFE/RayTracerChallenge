@@ -10,6 +10,18 @@ TEST(PointSourceTest,Init){
     PointSource(Color({1,1,1}),Tuple({0,0,0}));
 }
 
+TEST(PointSourceTest, InShadow){
+    Tuple position({0,0,0}, TupType::POINT);
+    Sphere s;
+    PointSource ps(Color({1,1,1}),Tuple({0,0,-10}));
+    // Straight on
+    Tuple camera({0,0,-1});
+    Tuple normal({0,0,-1});
+    Color result = ps.shade(s.get_material(), position, camera, normal, true);
+    EXPECT_EQ(result, Color(0.1,0.1,0.1));
+
+}
+
 TEST(PointSourceTest, StraightOn){
     Tuple position({0,0,0}, TupType::POINT);
     Sphere s;

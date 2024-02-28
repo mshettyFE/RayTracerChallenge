@@ -4,6 +4,7 @@
 #include "Matrix.h"
 #include "Tuple.h"
 #include "Canvas.h"
+#include "World.h"
 #include "Ray.h"
 
 class Camera{
@@ -29,6 +30,8 @@ public:
     void set_view(const Matrix& new_view);
 
     Ray ray_for_pixel(int x, int y) const;
+
+    Canvas render(World w) const;
 
     bool operator==(const Camera& other) const;
     bool operator!=(const Camera& other) const;

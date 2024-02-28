@@ -19,7 +19,7 @@ public:
     World(std::vector<std::shared_ptr<LightSource>> light_sources, std::vector<std::shared_ptr<Shape>> all_shapes);
     World(std::shared_ptr<LightSource> light_sources, std::shared_ptr<Shape>  shape);
 
-    std::vector<Impact> intersect(const Ray& r);
+    std::vector<Impact> intersect(const Ray& r) const;
 
     Color  shade_hit(const CollisionInfo& hit);
 
@@ -30,6 +30,8 @@ public:
 
     std::shared_ptr<Shape> get_shape(int i) const ;
     std::shared_ptr<LightSource> get_source(int i) const;
+
+    bool is_shadowed(const Tuple& pt) const;
 
     friend std::ostream& operator <<(std::ostream& out, const World& w);
 

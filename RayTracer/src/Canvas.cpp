@@ -61,6 +61,7 @@ std::ostream& operator << (std::ostream &out, const Canvas& other){
 
 void Canvas::save_ppm(std::string fname){
     std::string out_fname =  fname+".ppm";
+    std::cout << "Saving " << out_fname << std::endl;
     std::ofstream output_file (out_fname);
     std::string cur_line;
     if (output_file.is_open()){
