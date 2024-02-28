@@ -87,10 +87,10 @@ TEST(TestImage, OnlySpheres){
     Sphere floor = Sphere(MatScaling(10,0.01,10), floor_mat);
 // left wall
     Material wall_mat = floor_mat;
-    Matrix left_wall_transformation = MatTranslation(0,0,5)*MatRotateY(-pi/4.0)*MatRotateX(pi/2.0)*MatScaling(10,0.01,10);
+    Matrix left_wall_transformation = MatTranslation(0,0,5)*MatRotateY(-pi/2.0)*MatRotateX(pi/2.0)*MatScaling(10,0.01,10);
     Sphere lwall = Sphere(left_wall_transformation, wall_mat);
 // right wall
-    Matrix right_wall_transformation = MatTranslation(0,0,5)*MatRotateY(pi/4.0)*MatRotateX(pi/2.0)*MatScaling(10,0.01,10);
+    Matrix right_wall_transformation = MatTranslation(0,0,5)*MatRotateY(pi/2.0)*MatRotateX(pi/2.0)*MatScaling(10,0.01,10);
     Sphere rwall = Sphere(right_wall_transformation, wall_mat);
 // middle sphere
     Matrix middle_transform = MatTranslation(-0.5,1,0.5);
@@ -116,7 +116,7 @@ TEST(TestImage, OnlySpheres){
     Tuple from = Tuple({0,1.5,-5}, TupType::POINT);
     Tuple to = Tuple({0,1,0}, TupType::POINT);
     Tuple up = Tuple({0,1,0});
-    Camera c(100,50, pi/3.0, from, to, up );
+    Camera c(50,50, pi/3.0, from, to, up );
     std::vector<std::shared_ptr<Shape>> shapes;
     shapes.push_back(std::make_shared<Sphere>(floor));
 //    shapes.push_back(std::make_shared<Sphere>(lwall));

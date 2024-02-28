@@ -244,6 +244,18 @@ Matrix MatShear(double x_y, double x_z, double y_x, double y_z, double z_x, doub
     return Matrix({{1,x_y,x_z,0},{y_x,1,y_z,0},{z_x,z_y,1,0},{0,0,0,1}});
 }
 
+Matrix Chain(std::vector<Matrix> transformations){
+// Given a sequence of in order transformations, chains matrices in reverse order
+    Matrix out = MatIdentity(4);
+    if(transformations.size() ==0){
+        throw std::invalid_argument("Length of chained transformations is 0!");
+    }
+    for(auto matrix: transformations){
+        out = matrix*out;
+    }
+    return out;
+}
+
 std::ostream& operator << (std::ostream &out, const Matrix& other){
     for(int i=0; i<other.get_dim(); ++i){
         for(int j=0; j<other.get_dim(); ++j){
