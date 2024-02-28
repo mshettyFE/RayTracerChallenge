@@ -47,22 +47,22 @@ TEST(CameraTests, ViewTransformations){
 }
 
 TEST(CameraTests, PixelSize){
-    Camera  c(200, 125, std::acos(-1)/2.0);
+    Camera  c(200, 125, pi/2.0);
     double expected = 0.01;
     EXPECT_DOUBLE_EQ(c.get_pixel_size(),expected);
-    Camera  d(125, 200, std::acos(-1)/2.0);
+    Camera  d(125, 200, pi/2.0);
     EXPECT_DOUBLE_EQ(c.get_pixel_size(),expected);
 }
 
 TEST(CameraTests, ShootRay){
-    Camera c(201,101, std::acos(-1)/2.0);
+    Camera c(201,101, pi/2.0);
     Ray r = c.ray_for_pixel(100,50);
     Ray expected = Ray(Tuple({0,0,0}, TupType::POINT), Tuple({0,0,-1}));
     EXPECT_EQ(r, expected);
     r = c.ray_for_pixel(0,0);
     expected = Ray(Tuple({0,0,0}, TupType::POINT), Tuple({0.66519, 0.33259, -0.66851}));
     EXPECT_EQ(r, expected);
-    Matrix new_view = MatRotateY(std::acos(-1)/4.0)* MatTranslation(0,-2,5);
+    Matrix new_view = MatRotateY(pi/4.0)* MatTranslation(0,-2,5);
     c.set_view(new_view);
     r = c.ray_for_pixel(100,50);
     expected = Ray(Tuple({0,2,-5}, TupType::POINT), Tuple({std::pow(2,0.5)/2.0,0,-std::pow(2,0.5)/2.0}));
@@ -74,7 +74,7 @@ TEST(CameraTests, Render){
     Tuple from = Tuple({0,0,-5}, TupType::POINT);
     Tuple to =  Tuple({0,0,0}, TupType::POINT);
     Tuple up = Tuple({0,1,0});
-    Camera c(11,11,std::acos(-1)/2.0, from, to, up);
+    Camera c(11,11,pi/2.0, from, to, up);
     std::unique_ptr<Canvas> img = c.render(w);
     EXPECT_EQ((*img)(5,5), Color({0.38066, 0.47583, 0.2855}));
 }
@@ -87,10 +87,10 @@ TEST(TestImage, OnlySpheres){
     Sphere floor = Sphere(MatScaling(10,0.01,10), floor_mat);
 // left wall
     Material wall_mat = floor_mat;
-    Matrix left_wall_transformation = MatTranslation(0,0,5)*MatRotateY(-std::acos(-1)/4.0)*MatRotateX(std::acos(-1)/2.0)*MatScaling(10,0.01,10);
+    Matrix left_wall_transformation = MatTranslation(0,0,5)*MatRotateY(-pi/4.0)*MatRotateX(pi/2.0)*MatScaling(10,0.01,10);
     Sphere lwall = Sphere(left_wall_transformation, wall_mat);
 // right wall
-    Matrix right_wall_transformation = MatTranslation(0,0,5)*MatRotateY(std::acos(-1)/4.0)*MatRotateX(std::acos(-1)/2.0)*MatScaling(10,0.01,10);
+    Matrix right_wall_transformation = MatTranslation(0,0,5)*MatRotateY(pi/4.0)*MatRotateX(pi/2.0)*MatScaling(10,0.01,10);
     Sphere rwall = Sphere(right_wall_transformation, wall_mat);
 // middle sphere
     Matrix middle_transform = MatTranslation(-0.5,1,0.5);
@@ -113,17 +113,17 @@ TEST(TestImage, OnlySpheres){
 // Light source
     PointSource ps(WHITE, Tuple({-10,10,-10}, TupType::POINT));
 // camera
-    Tuple from = Tuple({0,1.5,-50}, TupType::POINT);
+    Tuple from = Tuple({0,1.5,-5}, TupType::POINT);
     Tuple to = Tuple({0,1,0}, TupType::POINT);
     Tuple up = Tuple({0,1,0});
-    Camera c(100,50, std::acos(-1)/3.0, from, to, up );
+    Camera c(100,50, pi/3.0, from, to, up );
     std::vector<std::shared_ptr<Shape>> shapes;
     shapes.push_back(std::make_shared<Sphere>(floor));
-    shapes.push_back(std::make_shared<Sphere>(lwall));
-    shapes.push_back(std::make_shared<Sphere>(rwall));
-    shapes.push_back(std::make_shared<Sphere>(middle));
-    shapes.push_back(std::make_shared<Sphere>(right));
-    shapes.push_back(std::make_shared<Sphere>(smallest));
+//    shapes.push_back(std::make_shared<Sphere>(lwall));
+//    shapes.push_back(std::make_shared<Sphere>(rwall));
+//    shapes.push_back(std::make_shared<Sphere>(middle));
+//    shapes.push_back(std::make_shared<Sphere>(right));
+//    shapes.push_back(std::make_shared<Sphere>(smallest));
     std::vector<std::shared_ptr<LightSource>> sources;
     sources.push_back(std::make_shared<PointSource>(ps));
     World w(sources,shapes);
