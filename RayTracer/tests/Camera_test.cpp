@@ -70,13 +70,13 @@ TEST(CameraTests, ShootRay){
 }
 
 TEST(CameraTests, Render){
-    World w = default_world();
+    World wrd = default_world();
     Tuple from = Tuple({0,0,-5}, TupType::POINT);
     Tuple to =  Tuple({0,0,0}, TupType::POINT);
     Tuple up = Tuple({0,1,0});
-    Camera c(11,11,pi/2.0, from, to, up);
-    std::unique_ptr<Canvas> img = c.render(w);
-    EXPECT_EQ((*img)(5,5), Color({0.38066, 0.47583, 0.2855}));
+    Camera cam(11,11,pi/5.0, from, to, up);
+    std::unique_ptr<Canvas> img2 = cam.render(wrd);
+    EXPECT_EQ((*img2)(5,5), Color({0.38066, 0.47583, 0.2855}));
 }
 
 TEST(TestImage, OnlySpheres){
@@ -87,10 +87,10 @@ TEST(TestImage, OnlySpheres){
     Sphere floor = Sphere(MatScaling(10,0.01,10), floor_mat);
 // left wall
     Material wall_mat = floor_mat;
-    Matrix left_wall_transformation = MatTranslation(0,0,5)*MatRotateY(-pi/2.0)*MatRotateX(pi/2.0)*MatScaling(10,0.01,10);
+    Matrix left_wall_transformation = MatTranslation(0,0,5)*MatRotateY(-pi/4.0)*MatRotateX(pi/2.0)*MatScaling(10,0.01,10);
     Sphere lwall = Sphere(left_wall_transformation, wall_mat);
 // right wall
-    Matrix right_wall_transformation = MatTranslation(0,0,5)*MatRotateY(pi/2.0)*MatRotateX(pi/2.0)*MatScaling(10,0.01,10);
+    Matrix right_wall_transformation = MatTranslation(0,0,5)*MatRotateY(pi/4.0)*MatRotateX(pi/2.0)*MatScaling(10,0.01,10);
     Sphere rwall = Sphere(right_wall_transformation, wall_mat);
 // middle sphere
     Matrix middle_transform = MatTranslation(-0.5,1,0.5);
@@ -102,6 +102,9 @@ TEST(TestImage, OnlySpheres){
 // right sphere
     Matrix right_transform = MatTranslation(1.5,0.5,-0.5)*MatScaling(0.5,0.5,0.5);
     Material right_mat = middle_mat;
+    right_mat.set_color(Color({0.5,1,0.1}));
+    right_mat.set_diffuse(0.7);
+    right_mat.set_specular(0.3);
     Sphere right = Sphere(right_transform, right_mat);
 // smallest sphere
     Matrix smallest_trans = MatTranslation(-1.5,0.33,-0.75)*MatScaling(0.33,0.33,0.33);
@@ -115,18 +118,36 @@ TEST(TestImage, OnlySpheres){
 // camera
     Tuple from = Tuple({0,1.5,-5}, TupType::POINT);
     Tuple to = Tuple({0,1,0}, TupType::POINT);
-    Tuple up = Tuple({0,1,0});
-    Camera c(50,50, pi/3.0, from, to, up );
+    Tuple up = Tuple({1,0,0});
+    Camera c(1000,1000, pi/3.0, from, to, up );
     std::vector<std::shared_ptr<Shape>> shapes;
     shapes.push_back(std::make_shared<Sphere>(floor));
-//    shapes.push_back(std::make_shared<Sphere>(lwall));
-//    shapes.push_back(std::make_shared<Sphere>(rwall));
-//    shapes.push_back(std::make_shared<Sphere>(middle));
-//    shapes.push_back(std::make_shared<Sphere>(right));
-//    shapes.push_back(std::make_shared<Sphere>(smallest));
+    shapes.push_back(std::make_shared<Sphere>(lwall));
+    shapes.push_back(std::make_shared<Sphere>(rwall));
+    shapes.push_back(std::make_shared<Sphere>(middle));
+    shapes.push_back(std::make_shared<Sphere>(right));
+    shapes.push_back(std::make_shared<Sphere>(smallest));
     std::vector<std::shared_ptr<LightSource>> sources;
     sources.push_back(std::make_shared<PointSource>(ps));
     World w(sources,shapes);
     std::unique_ptr<Canvas> img = c.render(w);
     img->save_ppm("Scene");
+}
+
+TEST(TestImage,ShadedSphereRedux){
+    // unit sphere at origin
+    Sphere s(MatIdentity(4), Material(Color(1,0.2,1)));
+    // Place light source up, behind and left the camera
+    PointSource light_loc(Color(1,1,1), Tuple({-10,10,-10}, TupType::POINT));
+    Tuple from = Tuple({0,0,-3}, TupType::POINT);
+    Tuple to = Tuple({0,0,0}, TupType::POINT);
+    Tuple up = Tuple({0,1,0});
+    Camera c(100,100, pi/4.0, from, to, up );
+    std::vector<std::shared_ptr<LightSource>> sources;
+    sources.push_back(std::make_shared<PointSource>(light_loc));
+    std::vector<std::shared_ptr<Shape>> shapes;
+    shapes.push_back(std::make_shared<Sphere>(s));
+    World w(sources ,shapes);
+    std::unique_ptr<Canvas> img = c.render(w);
+    img->save_ppm("ShadedSphereCamera");
 }

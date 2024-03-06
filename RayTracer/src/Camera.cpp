@@ -21,10 +21,10 @@ Camera::Camera(int hsize, int vsize, double field_of_view){
     this->field_of_view = field_of_view;
     this->view_trans = MatIdentity(4);
     double half_view = std::tan(this->field_of_view/2.0);
-    this->aspect_ratio = ((double)  this->hsize)/( (double) this->vsize);
+    this->aspect_ratio = (static_cast<double>(this->hsize))/( static_cast<double>(this->vsize));
     if(this->aspect_ratio >= 1){
         this->half_width =  half_view;
-        this->half_height = half_view / this->aspect_ratio;
+        this->half_height = static_cast<double>(half_view) / static_cast<double>(this->aspect_ratio);
     }
     else{
         this->half_width = half_view * this->aspect_ratio;
@@ -55,6 +55,18 @@ Camera::Camera(int hsize, int vsize, double field_of_view, const Tuple& camera_l
     if(upwards.type() != TupType::VECTOR){
         throw std::invalid_argument("The upwards direction must be a vector");
     }
+    // Assume that canvas is 1 pixel away from camera
+    double half_view = std::tan(this->field_of_view/2.0);
+    this->aspect_ratio = (static_cast<double>(this->hsize))/( static_cast<double>(this->vsize));
+    if(this->aspect_ratio >= 1){
+        this->half_width =  half_view;
+        this->half_height = static_cast<double>(half_view) / static_cast<double>(this->aspect_ratio);
+    }
+    else{
+        this->half_width = half_view * this->aspect_ratio;
+        this->half_height = half_view;
+    }
+    this->pixel_size = (this->half_width*2.0)/ (double) this->hsize;
     Tuple forward = pointed_at-camera_loc;
     forward.normalize();
     Tuple upwards_dir = upwards;
@@ -73,11 +85,42 @@ Camera::Camera(int hsize, int vsize, double field_of_view, const Tuple& camera_l
     this->view_trans = orientation*trans;
 }
 
-int Camera::get_hsize() const{return hsize;}
-int Camera::get_vsize() const{return vsize;}
-double Camera::get_pixel_size() const{return pixel_size;};
-double Camera::get_field_of_view() const{return field_of_view;}
-Matrix Camera::get_view() const{return view_trans;}
+int Camera::get_hsize() const{return this->hsize;}
+int Camera::get_vsize() const{return this->vsize;}
+double Camera::get_pixel_size() const{return this->pixel_size;};
+double Camera::get_field_of_view() const{return this->field_of_view;}
+double Camera::get_aspect_ratio() const{return this->aspect_ratio;};
+double Camera::get_half_width() const{return this->half_width;};
+double Camera::get_half_height() const{return this->half_height;};
+Matrix Camera::get_view() const{return this->view_trans;}
+
+void Camera::set_view(const Tuple& camera_loc,const Tuple& pointed_at, const Tuple& upwards){
+    if(camera_loc.type() != TupType::POINT){
+        throw std::invalid_argument("Camera location must be a point");
+    }
+    if(pointed_at.type() != TupType::POINT){
+        throw std::invalid_argument("World location camera is aimed at must be a point");
+    }
+    if(upwards.type() != TupType::VECTOR){
+        throw std::invalid_argument("The upwards direction must be a vector");
+    }
+    Tuple forward = pointed_at-camera_loc;
+    forward.normalize();
+    Tuple upwards_dir = upwards;
+    upwards_dir.normalize();
+    Tuple left = forward.cross(upwards_dir);
+    Tuple true_up = left.cross(forward);
+    Matrix orientation(
+    {
+        {left[0],left[1],left[2],0},
+        {true_up[0],true_up[1],true_up[2],0},
+        {-forward[0],-forward[1],-forward[2],0},
+        {0,0,0,1}
+    }
+    );
+    Matrix trans = MatTranslation(-1.0*camera_loc[0],-1.0*camera_loc[1],-1.0*camera_loc[2]);
+    this->view_trans = orientation*trans;
+}
 
 void Camera::set_view(const Matrix& new_view){
     this->view_trans = new_view;
@@ -124,4 +167,16 @@ std::unique_ptr<Canvas> Camera::render(World w) const{
         }
     }
     return std::make_unique<Canvas>(image);
+}
+
+std::ostream& operator << (std::ostream& out, const Camera& c){
+    out << "\nHsize: "<<   c.get_hsize() << '\n';
+    out << "Vsize: "<<   c.get_vsize() << '\n';
+    out << "FOV: "<<   c.get_field_of_view() << '\n';
+    out << "Pixel Size: "<<   c.get_pixel_size() << '\n';
+    out << "Aspect Ratio: "<<   c.get_aspect_ratio() << '\n';
+    out << "Half Width: "<<   c.get_half_width() << '\n';
+    out << "Half Height: "<<   c.get_half_height() << '\n';
+    out << "View: " << c.get_view() << std::endl;
+    return out;
 }

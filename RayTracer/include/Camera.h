@@ -26,7 +26,12 @@ public:
     int get_vsize() const;
     double get_pixel_size() const;
     double get_field_of_view() const;
+    double get_aspect_ratio() const;
+    double get_half_width() const;
+    double get_half_height() const;
     Matrix get_view() const;
+
+    void set_view(const Tuple& from,const Tuple& to, const Tuple& up);
 
     void set_view(const Matrix& new_view);
 
@@ -37,6 +42,7 @@ public:
     bool operator==(const Camera& other) const;
     bool operator!=(const Camera& other) const;
 
+    friend std::ostream& operator << (std::ostream& out, const Camera& c);
 };
 
 #endif

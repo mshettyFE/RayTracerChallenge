@@ -93,5 +93,4 @@ TEST(WorldTest, InShadow){
     EXPECT_EQ(false,w.is_shadowed(p));
     p = Tuple({-20,20,-20}, TupType::POINT);
     EXPECT_EQ(false,w.is_shadowed(p));
-
 }
