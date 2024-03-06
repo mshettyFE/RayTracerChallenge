@@ -4,7 +4,7 @@
 #include "CollisionInfo.h"
 #include "Constants.h"
 
-CollisionInfo::CollisionInfo(const Impact& impact, const Ray& ray){
+CollisionInfo::CollisionInfo(const Impact& impact, const Ray& ray, double resolution){
     this->impact = impact;
     this->pnt =  ray.position(impact.get_t());
     this->eye = -1.0*ray.get_direction();
@@ -16,10 +16,12 @@ CollisionInfo::CollisionInfo(const Impact& impact, const Ray& ray){
     else{
         this->inside = false;
     }
+    this->over_pnt = this->pnt+this->normal*resolution;
 }
 
 Impact CollisionInfo::get_impact() const{return impact;};
 Tuple CollisionInfo::get_pnt() const{return pnt;};
+Tuple CollisionInfo::get_over_pnt() const{return over_pnt;};
 Tuple CollisionInfo::get_eye() const{return eye;};
 Tuple CollisionInfo::get_normal() const{return normal;};
 bool CollisionInfo::is_inside() const{return inside;};

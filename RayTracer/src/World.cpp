@@ -43,7 +43,8 @@ std::vector<Impact> World::intersect(const Ray& r) const{
 Color  World::shade_hit(const CollisionInfo& hit){
     Color c = BLACK;
     for(auto source: sources){
-        c += source->shade(hit.get_impact().get_obj()->get_material(),hit.get_pnt(),hit.get_eye(), hit.get_normal() );
+        bool shadowed = is_shadowed(hit.get_over_pnt());
+        c += source->shade(hit.get_impact().get_obj()->get_material(),hit.get_pnt(),hit.get_eye(), hit.get_normal(), shadowed );
     }
     return c;
 }

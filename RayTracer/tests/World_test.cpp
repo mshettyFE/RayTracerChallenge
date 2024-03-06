@@ -94,3 +94,20 @@ TEST(WorldTest, InShadow){
     p = Tuple({-20,20,-20}, TupType::POINT);
     EXPECT_EQ(false,w.is_shadowed(p));
 }
+
+TEST(WorldTest, Shadows){
+    PointSource ps(WHITE, Tuple({0,0,-10}, TupType::POINT));
+    std::vector<std::shared_ptr<LightSource>> sources;
+    std::vector<std::shared_ptr<Shape>> shapes;
+    sources.push_back(std::make_shared<PointSource> (ps));
+    Sphere s1;
+    Sphere s2(MatTranslation(0,0,10));
+    shapes.push_back(std::make_shared<Sphere> (s1));
+    shapes.push_back(std::make_shared<Sphere> (s2));
+    Ray r  = Ray(Tuple({0, 0, 5}, TupType::POINT), Tuple({0, 0, 1}));
+    Impact i(4,shapes[1]);
+    CollisionInfo c(i,r);
+    World w(sources, shapes);
+    Color out = w.shade_hit(c);
+    EXPECT_EQ(out, Color({0.1,0.1,0.1}));
+}

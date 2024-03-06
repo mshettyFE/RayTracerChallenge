@@ -25,7 +25,7 @@ TEST(SphereTest, Intersection){
     EXPECT_EQ(intersections.size(), 0);
 }
 
-TEST(TestImage, Sphere){
+TEST(TestImage, Spheres){
     // Define canvas
     int dim = 100;
     Canvas canvas(dim, dim);

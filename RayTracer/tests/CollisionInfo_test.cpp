@@ -30,3 +30,12 @@ TEST(CollisionInfoTest, CollisionInfoInit){
     EXPECT_EQ(i.get_normal(), Tuple({0,0,-1}));
     EXPECT_EQ(i.is_inside(), true);
  }
+
+ TEST(CollisionInfoTest, Over){
+    Ray r = Ray(Tuple({0,0,-5}, TupType::POINT),Tuple({0,0,1}));
+    std::shared_ptr<Sphere> s = std::make_shared<Sphere>(Sphere());
+    Impact hit(4,s);
+    CollisionInfo i (hit, r);
+    EXPECT_LE(i.get_over_pnt()[2], -glob_resolution/2.0);
+    EXPECT_GE(i.get_pnt()[2],i.get_over_pnt()[2]);
+}
