@@ -1,5 +1,7 @@
 #include "Material.h"
+#include "Pattern.h"
 #include <stdexcept>
+#include <memory>
 
 bool Material::is_between(double value, double min, double max){
     if(value < min){
@@ -20,7 +22,7 @@ Material::Material(){
 }
 
 Material::Material(double a_ambient, double a_diffuse, double a_specular,
-double a_shiny, Color a_material_color){
+double a_shiny, Color a_material_color, std::shared_ptr<Pattern> pat){
     if(!is_between(a_ambient,0,1)){throw std::invalid_argument("ambient must be between 0 and 1");}
     if(!is_between(a_diffuse,0,1)){throw std::invalid_argument("diffuse must be between 0 and 1");}
     if(!is_between(a_specular,0,1)){throw std::invalid_argument("specular must be between 0 and 1");}
@@ -30,6 +32,7 @@ double a_shiny, Color a_material_color){
     specular = a_specular;
     shininess =a_shiny;
     mat_color = a_material_color;
+    pattern = pat;
 }
 
 Material::Material(Color a_material_color){
@@ -46,15 +49,14 @@ double Material::get_diffuse() const{return diffuse;}
 double Material::get_specular() const{return specular;}
 double Material::get_shininess() const{return shininess;}
 Color Material::get_color() const{return mat_color;}
+std::shared_ptr<Pattern> Material::get_pattern() const{return pattern;}
 
-void Material::set_color(Color c){
-    this->mat_color = c;
-}
-
+void Material::set_color(Color c){this->mat_color = c;}
 void Material::set_specular(double other){ this->specular = other;}
 void Material::set_ambient(double other){ this->ambient = other;}
 void Material::set_diffuse(double other){ this->diffuse = other;}
 void Material::set_shininess(double other){ this->shininess = other;}
+void Material::set_pattern(const std::shared_ptr<Pattern> new_pat){this->pattern = new_pat;}
 
 
 

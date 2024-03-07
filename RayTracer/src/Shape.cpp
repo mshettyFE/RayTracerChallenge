@@ -17,5 +17,7 @@ void Shape::set_transform(Matrix a_Tranformation){
     Transformation = a_Tranformation;
 }
 
+Matrix Shape::get_transform() const{return Transformation;}
+
 Material Shape::get_material() const{return mat;}
 unsigned long Shape::get_id() const{return id;}

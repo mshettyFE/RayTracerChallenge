@@ -1,3 +1,5 @@
+#ifndef PLANE_H
+#define PLANE_H
 #include "Shape.h"
 #include "Tuple.h"
 #include "Matrix.h"
@@ -16,3 +18,4 @@ class Plane: public Shape{
 
 
 };
+#endif
