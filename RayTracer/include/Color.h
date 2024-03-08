@@ -31,6 +31,7 @@ class Color : public Tuple{
         // Effectively a Hadamard product between color channels
         Color operator*(const Color& other) const;
         Color operator+(const Color& other) const;
+        Color operator-(const Color& other) const;
 
         template <  typename T>
         Color operator*(T scalar) const{

@@ -11,7 +11,6 @@ private:
 public:
     Stripes(const Color& a, const Color& b, Matrix trans=MatIdentity(4));
     Color at(const Tuple& pt) const override;
-    Color at_object(const Tuple& pt, const std::shared_ptr<Shape> obj) const override;
 };
 
 #endif

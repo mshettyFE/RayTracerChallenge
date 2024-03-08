@@ -19,13 +19,3 @@ Color Stripes::at(const Tuple& pt) const{
     }
     return color_b;
 }
-
-
-Color Stripes::at_object(const Tuple& world_pt, const std::shared_ptr<Shape> obj) const{
-    if(world_pt.type() != TupType::POINT){
-        throw std::invalid_argument("pt must be a point in Stripes");
-    }
-    Tuple obj_pt = obj->get_transform().Inverse()*world_pt;
-    Tuple pattern_pt = transformation.Inverse()*obj_pt;
-    return at(pattern_pt);
-}

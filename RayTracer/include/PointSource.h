@@ -10,8 +10,6 @@
 class PointSource: public LightSource{
 public:
     PointSource(const Color& a_intensity,const Tuple& a_position);
-    Color shade(const Material& mat, const Tuple& position,
-        const Tuple& camera, const Tuple& normal, bool in_shadow=false) const override;
     Color shade(const std::shared_ptr<Shape> obj, const Tuple& position,
         const Tuple& camera, const Tuple& normal, bool in_shadow=false) const override;
     

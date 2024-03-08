@@ -44,6 +44,9 @@ Color Color::operator+(const Color& other) const{
     return Color(this->get_red()+other.get_red(),this->get_green()+other.get_green(),this->get_blue()+other.get_blue());
 }
 
+Color Color::operator-(const Color& other) const{
+    return Color(this->get_red()-other.get_red(),this->get_green()-other.get_green(),this->get_blue()-other.get_blue());
+}
 
 Color Color::operator*(const Color& other) const{
     if((this->dim != other.dim) && (other.dim !=4)){

@@ -3,7 +3,7 @@
 #include <cmath>
 #include "Constants.h"
 #include "Ray.h"
-#include "Stripes.h"
+#include "GradientPattern.h"
 #include "Canvas.h"
 #include "Material.h"
 #include "PointSource.h"
@@ -12,36 +12,19 @@
 #include "Camera.h"
 #include "World.h"
 
-TEST(StripeTest,ProperSetup){
-    Stripes s(WHITE, BLACK);
-    EXPECT_EQ(s.at(Tuple({0,0,0},TupType::POINT)), WHITE);
-    EXPECT_EQ(s.at(Tuple({0,1,0},TupType::POINT)), WHITE);
-    EXPECT_EQ(s.at(Tuple({0,2,0},TupType::POINT)), WHITE);
-    EXPECT_EQ(s.at(Tuple({0,0,1},TupType::POINT)), WHITE);
-    EXPECT_EQ(s.at(Tuple({0,0,2},TupType::POINT)), WHITE);
-    EXPECT_EQ(s.at(Tuple({0.9,0,0},TupType::POINT)), WHITE);
-    EXPECT_EQ(s.at(Tuple({1,0,0},TupType::POINT)), BLACK);
-    EXPECT_EQ(s.at(Tuple({-0.1,0,0},TupType::POINT)), BLACK);
-    EXPECT_EQ(s.at(Tuple({-1,0,0},TupType::POINT)), BLACK);
-    EXPECT_EQ(s.at(Tuple({-1.1,0,0},TupType::POINT)), WHITE);
+TEST(GradPattern,Smooth){
+    GradientPattern gp(WHITE, BLACK);
+    Tuple pt({0,0,0}, TupType::POINT);
+    EXPECT_EQ(gp.at(pt), WHITE);
+    pt = Tuple({0.25,0,0}, TupType::POINT);
+    EXPECT_EQ(gp.at(pt), Color({0.75,0.75,0.75}));
+    pt = Tuple({0.5,0,0}, TupType::POINT);
+    EXPECT_EQ(gp.at(pt), Color({0.5,0.5,0.5}));
+    pt = Tuple({0.75,0,0}, TupType::POINT);
+    EXPECT_EQ(gp.at(pt), Color({0.25,0.25,0.25}));
 }
 
-TEST(StripeTest, ObjTransform){
-    Sphere s;
-    s.set_transform(MatScaling(2,2,2));
-    Stripes pat(WHITE,BLACK);
-    Color c = pat.at_object(Tuple({1.5,0,0},TupType::POINT), std::make_shared<Sphere>(s));
-    EXPECT_EQ(c,WHITE);
-    pat.set_transformation(MatScaling(2,2,2));
-    c = pat.at_object(Tuple({1.5,0,0},TupType::POINT), std::make_shared<Sphere>(s));
-    EXPECT_EQ(c,WHITE);
-    s.set_transform(MatScaling(2,2,2));
-    pat.set_transformation(MatTranslation(0.5,0,0));
-    c = pat.at_object(Tuple({2.5,0,0},TupType::POINT), std::make_shared<Sphere>(s));
-    EXPECT_EQ(c,WHITE);
-}
-
-TEST(TestImage, PatternTests){
+TEST(TestImage, GradPatternTest){
 // floor
     Material floor_mat = Material();
     floor_mat.set_color(Color({1, 0.9, 0.9}));
@@ -53,7 +36,7 @@ TEST(TestImage, PatternTests){
     middle_mat.set_diffuse(0.7);
     middle_mat.set_specular(0.3);
     middle_mat.set_color(Color({0.1,1,0.5}));
-    middle_mat.set_pattern(std::make_shared<Stripes>(Stripes(WHITE,BLACK, MatScaling(0.5,0.5,0.5))));
+    middle_mat.set_pattern(std::make_shared<GradientPattern>(GradientPattern(WHITE,BLACK, MatScaling(2,2,2))));
     Sphere middle = Sphere(middle_transform, middle_mat);
 // right sphere
     Matrix right_transform = MatTranslation(1.5,0.5,-0.5)*MatScaling(0.5,0.5,0.5);
@@ -85,5 +68,5 @@ TEST(TestImage, PatternTests){
     sources.push_back(std::make_shared<PointSource>(ps));
     World w(sources,shapes);
     std::unique_ptr<Canvas> img = c.render(w);
-    img->save_ppm("StripePlaneScene");
+    img->save_ppm("GradPlaneScene");
 }
