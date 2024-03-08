@@ -54,6 +54,7 @@ TEST(TestImage, PatternTests){
     middle_mat.set_specular(0.3);
     middle_mat.set_color(Color({0.1,1,0.5}));
     middle_mat.set_pattern(std::make_shared<Stripes>(Stripes(WHITE,BLACK, MatScaling(0.5,0.5,0.5))));
+    middle_mat.set_cast_shadow(false);
     Sphere middle = Sphere(middle_transform, middle_mat);
 // right sphere
     Matrix right_transform = MatTranslation(1.5,0.5,-0.5)*MatScaling(0.5,0.5,0.5);

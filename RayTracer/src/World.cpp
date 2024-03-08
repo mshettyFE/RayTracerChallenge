@@ -43,8 +43,8 @@ std::vector<Impact> World::intersect(const Ray& r) const{
 
 Color  World::shade_hit(const CollisionInfo& hit){
     Color c = BLACK;
+    bool shadowed = is_shadowed(hit.get_over_pnt());
     for(auto source: sources){
-        bool shadowed = is_shadowed(hit.get_over_pnt());
         c += source->shade(hit.get_impact().get_obj(),hit.get_pnt(),hit.get_eye(), hit.get_normal(), shadowed );
     }
     return c;
@@ -132,7 +132,7 @@ bool World::is_shadowed(const Tuple& pt) const{
             continue;
         }
         if (first.get_t()*first.get_t() < distance){
-            return true;
+            return first.get_obj()->get_material().is_casting_shadow(); // if inbetween object is casting a shadow (for instance, plane of water above rocks shouldnt cast a shadow)
         }
     }
     return false;

@@ -13,13 +13,14 @@ private:
     double diffuse;
     double specular;
     double shininess;
+    bool cast_shadow;
     Color mat_color;
     std::shared_ptr<Pattern> pattern;
     bool is_between(double value, double min, double max);
 public:
     Material();
     Material(double a_ambient, double a_diffuse, double a_specular,
-    double a_shiny, Color a_material_color,    std::shared_ptr<Pattern> pattern=nullptr);
+    double a_shiny, Color a_material_color,    std::shared_ptr<Pattern> pattern=nullptr, bool cast_shadow=true);
     Material(Color a_material_color);
 
     double get_ambient() const;
@@ -33,6 +34,9 @@ public:
 
     double get_shininess() const;
     void set_shininess(double other);
+
+    bool is_casting_shadow() const;
+    void set_cast_shadow(bool cs);
 
     Color get_color() const;
     void set_color(Color c);
