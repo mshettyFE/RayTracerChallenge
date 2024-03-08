@@ -5,6 +5,8 @@
 #include "Color.h"
 #include <memory>
 
+class Pattern;
+
 class Material{
 private:
     double ambient;

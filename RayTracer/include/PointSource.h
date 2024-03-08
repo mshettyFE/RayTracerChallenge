@@ -5,12 +5,14 @@
 #include "Tuple.h"
 #include "Shape.h"
 #include "LightSource.h"
+#include <memory>
 
 class PointSource: public LightSource{
 public:
     PointSource(const Color& a_intensity,const Tuple& a_position);
-    // position is where normal and color is to be shaded
     Color shade(const Material& mat, const Tuple& position,
+        const Tuple& camera, const Tuple& normal, bool in_shadow=false) const override;
+    Color shade(const std::shared_ptr<Shape> obj, const Tuple& position,
         const Tuple& camera, const Tuple& normal, bool in_shadow=false) const override;
     
     void print() const override;

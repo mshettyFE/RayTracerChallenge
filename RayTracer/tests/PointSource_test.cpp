@@ -5,6 +5,8 @@
 #include "Sphere.h"
 #include "Canvas.h"
 #include "PointSource.h"
+#include "Stripes.h"
+#include <memory>
 
 TEST(PointSourceTest,Init){
     PointSource(Color({1,1,1}),Tuple({0,0,0}));
@@ -72,6 +74,20 @@ TEST(PointSourceTest, DirectLight){
     Tuple camera = Tuple({0,-std::sqrt(2)/2.0,-std::sqrt(2)/2.0});
     Color result = ps.shade(s.get_material(), position, camera, normal);
     EXPECT_EQ(result, Color(1.6364,1.6364,1.6364));
+}
+
+TEST(PointSourceTest,PatternedObj){
+    Stripes s(WHITE,BLACK);
+    Material mat(1,0,0,200,RED, std::make_shared<Stripes>(s));
+    Tuple camera({0,0,-1});
+    Tuple normal({0,0,-1});
+    PointSource ps(Color({1,1,1}),Tuple({0,0,-10}));
+    Tuple pos({0.9,0,0},TupType::POINT);
+    Color c1 = ps.shade(mat, pos, camera, normal ,false);
+    pos =  Tuple({1.1,0,0},TupType::POINT);
+    Color c2 = ps.shade(mat, pos, camera, normal ,false);
+    EXPECT_EQ(c1, WHITE);
+    EXPECT_EQ(c2, BLACK);
 }
 
 TEST(TestImage, ShadedSphere){

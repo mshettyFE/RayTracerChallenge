@@ -1,4 +1,5 @@
 #include "World.h"
+#include "Shape.h"
 #include "Sphere.h"
 #include "Color.h"
 #include "Tuple.h"
@@ -44,7 +45,12 @@ Color  World::shade_hit(const CollisionInfo& hit){
     Color c = BLACK;
     for(auto source: sources){
         bool shadowed = is_shadowed(hit.get_over_pnt());
-        c += source->shade(hit.get_impact().get_obj()->get_material(),hit.get_pnt(),hit.get_eye(), hit.get_normal(), shadowed );
+        if(hit.get_impact().get_obj()->get_material().get_pattern()==nullptr){
+            c += source->shade(hit.get_impact().get_obj()->get_material(),hit.get_pnt(),hit.get_eye(), hit.get_normal(), shadowed );
+        }
+        else{
+            c += source->shade(hit.get_impact().get_obj(),hit.get_pnt(),hit.get_eye(), hit.get_normal(), shadowed );
+        }
     }
     return c;
 }

@@ -1,9 +1,10 @@
 #include "Stripes.h"
 #include "Constants.h"
+#include "Shape.h"
 #include <math.h>
 #include <stdexcept>
 
-Stripes::Stripes(const Color& a, const Color& b, Matrix trans=MatIdentity(4)){
+Stripes::Stripes(const Color& a, const Color& b, Matrix trans){
     this->color_a = a;
     this->color_b = b;
     transformation = trans;
