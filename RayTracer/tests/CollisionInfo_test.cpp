@@ -77,3 +77,14 @@ TEST(CollisionInfoTest, IndexInfo){
     EXPECT_EQ(comps[4].get_n1(), 2.5); EXPECT_EQ(comps[4].get_n2(), 1.5);
     EXPECT_EQ(comps[5].get_n1(), 1.5); EXPECT_EQ(comps[5].get_n2(), 1.0);
 }
+
+TEST(CollisionInfoTest, UnderPnt){
+    Ray r({0,0,-5},{0,0,1});
+    Sphere s = glass_sphere();
+    s.set_transform(MatTranslation(0,0,1));
+    Impact i(5.0,std::make_shared<Sphere>(s));
+    CollisionInfo comps(i,r);
+    EXPECT_GE(comps.get_under_pnt()[2] , glob_resolution/2.0);
+    EXPECT_GE(comps.get_under_pnt()[2], comps.get_pnt()[2]);
+
+}

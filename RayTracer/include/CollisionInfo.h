@@ -13,6 +13,7 @@ private:
     Impact impact;
     Tuple pnt;
     Tuple over_pnt;
+    Tuple under_pnt;
     Tuple eye;
     Tuple normal;
     Tuple reflect_v;
@@ -26,6 +27,7 @@ public:
     Impact get_impact() const;
     Tuple get_pnt() const;
     Tuple get_over_pnt() const;
+    Tuple get_under_pnt() const;
     Tuple get_eye() const;
     Tuple get_normal() const;
     Tuple get_reflect() const;

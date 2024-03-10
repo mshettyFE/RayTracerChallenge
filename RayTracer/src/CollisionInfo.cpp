@@ -20,6 +20,7 @@ CollisionInfo::CollisionInfo(const Impact& impt, const Ray& ray, const std::vect
     }
     this->reflect_v = ray.get_direction().reflect(this->normal);
     this->over_pnt = this->pnt+this->normal*glob_resolution;
+    this->under_pnt = this->pnt-this->normal*glob_resolution;
 
     if(all_hits.size() ==0){
         std::vector<Impact> xs;
@@ -82,6 +83,7 @@ void CollisionInfo::calculate_indices(const std::vector<Impact>& all_hits){
 Impact CollisionInfo::get_impact() const{return impact;}
 Tuple CollisionInfo::get_pnt() const{return pnt;}
 Tuple CollisionInfo::get_over_pnt() const{return over_pnt;}
+Tuple CollisionInfo::get_under_pnt() const{return under_pnt;}
 Tuple CollisionInfo::get_eye() const{return eye;}
 Tuple CollisionInfo::get_normal() const{return normal;}
 Tuple CollisionInfo::get_reflect() const{return reflect_v;}
