@@ -24,6 +24,20 @@ std::ostream& operator << (std::ostream &out, const Impact& other){
     return out;
 }
 
+bool Impact::operator==(const Impact& other) const{
+    if( (this->get_obj()->get_id() == other.get_obj()->get_id()) && (this->get_t()-other.get_t()) < glob_resolution){
+        return true;
+    }
+    return false;
+}
+bool Impact::operator!=(const Impact& other) const{
+    if( (this->get_obj()->get_id() == other.get_obj()->get_id()) && (this->get_t()-other.get_t()) < glob_resolution){
+        return false;
+    }
+    return true;
+}
+
+
 // helper function to get first hit with positive time. Return t=-1 if nothing found
 Impact first_hit(std::vector<Impact> intersections){
     Impact out;

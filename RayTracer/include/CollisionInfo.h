@@ -6,6 +6,7 @@
 #include "Impact.h"
 #include "Constants.h"
 #include <memory>
+#include <vector>
 
 class CollisionInfo{
 private:
@@ -16,8 +17,11 @@ private:
     Tuple normal;
     Tuple reflect_v;
     bool inside;
+    double n1;
+    double n2;
+    void calculate_indices(const std::vector<Impact>& all_hits);
 public:
-    CollisionInfo(const Impact& impt, const Ray& ray, double res=glob_resolution);
+    CollisionInfo(const Impact& impt, const Ray& ray, const std::vector<Impact>& all_hits= {});
     
     Impact get_impact() const;
     Tuple get_pnt() const;
@@ -26,6 +30,9 @@ public:
     Tuple get_normal() const;
     Tuple get_reflect() const;
     bool is_inside() const;
+
+    double get_n1() const;
+    double get_n2() const;
 
     friend std::ostream& operator << (std::ostream &out, const CollisionInfo& other);
 

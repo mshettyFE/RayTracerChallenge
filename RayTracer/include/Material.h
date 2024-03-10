@@ -28,6 +28,8 @@ public:
     double a_shiny, Color a_material_color, double reflectance, double tranparency, double refractive_index,
         std::shared_ptr<Pattern> pattern=nullptr, bool cast_shadow=true);
     Material(Color a_material_color);
+    Material(Color a_material_color, double reflectance, double tranparency, double refractive_index,std::shared_ptr<Pattern> pattern=nullptr, bool cast_shadow=true);
+
 
     double get_ambient() const;
     void set_ambient(double other);
@@ -57,8 +59,6 @@ public:
     void set_reflectance(double r);
     void set_transparency(double t);
     void set_refractive_index(double n_i);
-
-    void set_optics(double r, double t);
 
     friend std::ostream& operator << (std::ostream &out, const Material& Material);
 };

@@ -17,4 +17,6 @@ class Sphere: public Shape{
         void print() const override;
 };
 
+Sphere glass_sphere(double IOR=QUARTZ);
+
 #endif

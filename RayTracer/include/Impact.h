@@ -16,6 +16,9 @@ public:
     double get_t() const;
     std::shared_ptr<Shape> get_obj() const;
 
+    bool operator==(const Impact& other) const;
+    bool operator!=(const Impact& other) const;
+
     friend std::ostream& operator << (std::ostream &out, const Impact& other);
 
 };

@@ -43,3 +43,9 @@ void Sphere::print() const{
     std::cout << mat << std::endl;
     std::cout << "\tShape ID: " << id << std::endl;
 }
+
+Sphere glass_sphere(double IOR){
+    Material mat(WHITE,0,1.0,IOR);
+    Sphere s(MatIdentity(4), mat);
+    return s;
+}
