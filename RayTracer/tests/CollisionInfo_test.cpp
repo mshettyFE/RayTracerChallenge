@@ -8,6 +8,7 @@
 #include "Shape.h"
 #include "Sphere.h"
 #include "Tuple.h"
+#include "Plane.h"
 
 TEST(CollisionInfoTest, CollisionInfoInit){
     Ray r = Ray(Tuple({0,0,-5}, TupType::POINT),Tuple({0,0,1}));
@@ -38,4 +39,12 @@ TEST(CollisionInfoTest, CollisionInfoInit){
     CollisionInfo i (hit, r);
     EXPECT_LE(i.get_over_pnt()[2], -glob_resolution/2.0);
     EXPECT_GE(i.get_pnt()[2],i.get_over_pnt()[2]);
+}
+
+TEST(CollisionInfoTest, Reflect){
+    Plane p;
+    Ray r(Tuple({0,1,-1}, TupType::POINT), Tuple({0,-std::sqrt(2)/2.0,std::sqrt(2)/2.0}));
+    Impact i(std::sqrt(2), std::make_shared<Plane>(p));
+    CollisionInfo c(i,r);
+    EXPECT_EQ(c.get_reflect(),Tuple({0,std::sqrt(2)/2.0,std::sqrt(2)/2.0}));
 }

@@ -92,7 +92,6 @@ Color World::color_at(const Ray& r){
     return out;
 }
 
-
 World default_world(){
     Material mat(0.1,0.7,0.2,200.0,Color({0.8,1.0,0.6}));
     std::shared_ptr<Sphere> s1 = std::make_shared<Sphere>(Sphere(MatIdentity(4),mat));
@@ -136,4 +135,17 @@ bool World::is_shadowed(const Tuple& pt) const{
         }
     }
     return false;
+}
+
+void World::add_shape(std::shared_ptr<Shape> new_shape){
+    shapes.push_back(new_shape);
+};
+
+Color World::reflect_color(const CollisionInfo&  comps){
+    if(comps.get_impact().get_obj()->get_material().get_reflectance() < glob_resolution){
+        return BLACK;
+    }
+    Ray r = Ray(comps.get_over_pnt(), comps.get_reflect());
+    Color col = this->color_at(r);
+    return col*comps.get_impact().get_obj()->get_material().get_reflectance();
 }

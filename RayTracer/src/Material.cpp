@@ -18,7 +18,7 @@ Material::Material(){
     diffuse = 0.9;
     specular = 0.9;
     shininess = 200.0;
-    reflective = 1.0;
+    reflective = 0.0;
     transparency = 0.0;
     refractive_index = 1.00029; // defaults to air
     cast_shadow = true;
@@ -31,7 +31,7 @@ double a_shiny, Color a_material_color, std::shared_ptr<Pattern> pat, bool cast_
     set_diffuse(a_diffuse);
     set_specular(a_specular);
     set_shininess(a_shiny);
-    reflective = 1.0;
+    reflective = 0.0;
     transparency = 0.0;
     refractive_index = 1.00029; // defaults to air
     this->cast_shadow = cast_shadow;
@@ -44,7 +44,7 @@ Material::Material(Color a_material_color){
     diffuse = 0.9;
     specular = 0.9;
     shininess = 200.0;
-    reflective = 1.0;
+    reflective = 0.0;
     transparency = 0.0;
     refractive_index = 1.00029; // defaults to air
     mat_color = a_material_color;
@@ -104,15 +104,13 @@ void Material::set_pattern(const std::shared_ptr<Pattern> new_pat){this->pattern
 void Material::set_cast_shadow(bool cs){this->cast_shadow = cs;};
 
 void Material::set_reflectance(double r){
-    if(!is_between(r,0,1)){throw std::invalid_argument("reflectance must be between 0 and 1");}
+    if(r<0){throw std::invalid_argument("reflectance must be at least 0");}
     this->reflective = r;
-    this->transparency = 1-r;
 };
 
 void Material::set_transparency(double t){
-    if(!is_between(t,0,1)){throw std::invalid_argument("transparency must be between 0 and 1");}
+    if(t<0){throw std::invalid_argument("transparency must be at least 0");}
     this->transparency = t;
-    this->reflective = 1-t;
 };
 
 void Material::set_refractive_index(double n_i){
@@ -123,11 +121,8 @@ void Material::set_refractive_index(double n_i){
 };
 
 void Material::set_optics(double r, double t){
-    if(!is_between(r,0,1)){throw std::invalid_argument("reflectance must be between 0 and 1");}
-    if(!is_between(t,0,1)){throw std::invalid_argument("transparency must be between 0 and 1");}
-    if( (r+t-1) > glob_resolution ){
-        std::invalid_argument("reflectance and transparency must sum to 1");        
-    }
+    if(r<0){throw std::invalid_argument("reflectance must be at least 0");}
+    if(t<0){throw std::invalid_argument("transparency must be at least 0");}
     this->transparency = t;
     this->reflective = r;
 }

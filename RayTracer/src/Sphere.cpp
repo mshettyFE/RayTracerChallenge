@@ -37,6 +37,7 @@ std::vector<double> Sphere::intersect(const Ray &other) const{
 
 
 void Sphere::print() const{
+    std::cout << "Sphere" << std::endl;
     std::cout << "Transformation:" << std::endl;
     std::cout << Transformation << std::endl;
     std::cout << mat << std::endl;

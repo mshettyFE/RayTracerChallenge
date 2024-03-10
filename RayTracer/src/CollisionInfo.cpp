@@ -16,14 +16,18 @@ CollisionInfo::CollisionInfo(const Impact& impact, const Ray& ray, double resolu
     else{
         this->inside = false;
     }
+    this->reflect_v = ray.get_direction().reflect(this->normal);
     this->over_pnt = this->pnt+this->normal*resolution;
 }
 
-Impact CollisionInfo::get_impact() const{return impact;};
-Tuple CollisionInfo::get_pnt() const{return pnt;};
-Tuple CollisionInfo::get_over_pnt() const{return over_pnt;};
-Tuple CollisionInfo::get_eye() const{return eye;};
-Tuple CollisionInfo::get_normal() const{return normal;};
+Impact CollisionInfo::get_impact() const{return impact;}
+Tuple CollisionInfo::get_pnt() const{return pnt;}
+Tuple CollisionInfo::get_over_pnt() const{return over_pnt;}
+Tuple CollisionInfo::get_eye() const{return eye;}
+Tuple CollisionInfo::get_normal() const{return normal;}
+Tuple CollisionInfo::get_reflect() const{return reflect_v;}
+
+
 bool CollisionInfo::is_inside() const{return inside;};
 
 std::ostream& operator << (std::ostream &out, const CollisionInfo& other){

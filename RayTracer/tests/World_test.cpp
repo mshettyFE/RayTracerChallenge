@@ -9,7 +9,10 @@
 #include "Shape.h"
 #include "Sphere.h"
 #include "Tuple.h"
+#include "Plane.h"
 #include "PointSource.h"
+#include "Camera.h"
+#include "Canvas.h"
 #include <memory>
 
 TEST(WorldTest,IntersectionTest){
@@ -110,4 +113,36 @@ TEST(WorldTest, Shadows){
     World w(sources, shapes);
     Color out = w.shade_hit(c);
     EXPECT_EQ(out, Color({0.1,0.1,0.1}));
+}
+
+TEST(WorldTest, NonReflecting){
+    Material mat(1,0.7,0.2,200.0,Color({0.8,1.0,0.6}));
+    std::shared_ptr<Sphere> s1 = std::make_shared<Sphere>(Sphere(MatIdentity(4),mat));
+    std::shared_ptr<Sphere> s2 = std::make_shared<Sphere>(Sphere(MatScaling(0.5,0.5,0.5)));
+    std::vector<std::shared_ptr<Shape>> shapes;
+    shapes.push_back(s1);
+    shapes.push_back(s2);
+    std::shared_ptr<PointSource> source = std::make_shared<PointSource>(PointSource(Color(1,1,1), Tuple({-10,10,-10}, TupType::POINT)));
+    std::vector<std::shared_ptr<LightSource>> sources;
+    sources.push_back(source);
+    World w(sources, shapes);
+    Ray r = Ray(Tuple({0, 0, 0}, TupType::POINT), Tuple({0, 0, 1}));
+    Impact i(1,w.get_shape(1));
+    CollisionInfo c(i,r);
+    Color out =  w.reflect_color(c);
+    EXPECT_EQ(out, BLACK);
+}
+
+TEST(WorldTest, ReflectColor){
+    Material floor_mat = Material();
+    floor_mat.set_reflectance(0.5);
+    Plane p(MatTranslation(0,-1,0),floor_mat);
+    World w = default_world();
+    w.add_shape(std::make_shared<Plane>(p));
+    Ray r = Ray(Tuple({0, 0, -3}, TupType::POINT), Tuple({0, -std::sqrt(2)/2.0, std::sqrt(2)/2.0}));
+    Impact i = Impact(std::sqrt(2),w.get_shape(2));
+    CollisionInfo c  = CollisionInfo(i,r);
+    EXPECT_EQ(c.get_reflect(), Tuple({0, std::sqrt(2)/2.0, std::sqrt(2)/2.0}));
+    Color out =  w.reflect_color(c);
+    EXPECT_EQ(out, Color({0.19032, 0.2379, 0.14274}));
 }

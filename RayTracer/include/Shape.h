@@ -8,7 +8,7 @@
 
 class Shape{
 private:
-    static unsigned long GlobalID;
+    static inline unsigned long GlobalID{0};
 protected:
     unsigned long id;
     Matrix Transformation;

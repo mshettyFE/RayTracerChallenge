@@ -31,7 +31,11 @@ public:
     std::shared_ptr<Shape> get_shape(int i) const ;
     std::shared_ptr<LightSource> get_source(int i) const;
 
+    void add_shape(std::shared_ptr<Shape> new_shape);
+
     bool is_shadowed(const Tuple& pt) const;
+
+    Color reflect_color(const CollisionInfo& comps);
 
     friend std::ostream& operator <<(std::ostream& out, const World& w);
 

@@ -15,15 +15,18 @@ std::vector<double> Plane::intersect(const Ray &other) const{
     if(std::abs(other.get_direction()[1]) < glob_resolution){
         return out;
     }
-    double t = - other.get_origin()[1] / other.get_direction()[1];
+    Ray TransformedRay = other.transform(this->get_transform().Inverse());
+    Tuple origin_vec = TransformedRay.get_origin();
+    double t = - TransformedRay.get_origin()[1] / TransformedRay.get_direction()[1];
     out.push_back(t);
     return out;
 }
 
 void Plane::print() const{
+    std::cout << "Plane" << std::endl;
     std::cout << "Transformation:" << std::endl;
     std::cout << Transformation << std::endl;
     std::cout << mat << std::endl;
-    std::cout << "Normal" << normal_vector << std::endl;
+    std::cout << "Normal; " << normal_vector << std::endl;
     std::cout << "\tShape ID: " << id << std::endl;
 }

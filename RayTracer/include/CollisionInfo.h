@@ -14,6 +14,7 @@ private:
     Tuple over_pnt;
     Tuple eye;
     Tuple normal;
+    Tuple reflect_v;
     bool inside;
 public:
     CollisionInfo(const Impact& impt, const Ray& ray, double res=glob_resolution);
@@ -23,6 +24,7 @@ public:
     Tuple get_over_pnt() const;
     Tuple get_eye() const;
     Tuple get_normal() const;
+    Tuple get_reflect() const;
     bool is_inside() const;
 
     friend std::ostream& operator << (std::ostream &out, const CollisionInfo& other);
