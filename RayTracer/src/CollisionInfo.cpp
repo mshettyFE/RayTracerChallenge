@@ -53,15 +53,13 @@ void CollisionInfo::calculate_indices(const std::vector<Impact>& all_hits){
                 found = true;
                 break;
             }
-            else{
-                offset += 1;
-            }
+            offset += 1;
         }
 // we have entered the object before. Need to remove from containers
         if(found){
             containers.erase(containers.begin()+offset);
         }
-// The ray has never encountered this object, and thus needs to add it
+// The ray has never encountered this object, and thus needs to add to end of containers
         else{
             containers.push_back(current_obj);
         }
