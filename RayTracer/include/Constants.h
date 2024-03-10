@@ -20,6 +20,7 @@ const double ACETONE = 1.36;
 const double ALCOHOL = 1.38;
 const double  FLUORITE = 1.433;
 const double QUARTZ = 1.46;
+const double GLASS = 1.5;
 const double GLYCERINE = 1.473;
 const double  CROWN_GLASS = 1.52;
 const double POLYSTYRENE = 1.57;

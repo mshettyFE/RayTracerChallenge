@@ -14,6 +14,7 @@
 #include "Camera.h"
 #include "Canvas.h"
 #include "TestPattern.h"
+#include "Checkers.h"
 #include <memory>
 
 TEST(WorldTest,IntersectionTest){
@@ -284,4 +285,67 @@ TEST(WorldTest, ReflectiveTransparentAtOnce){
     Impact i(std::sqrt(2),w.get_shape(2));
     CollisionInfo comps(i,r);
     EXPECT_EQ(w.shade_hit(comps), Color({0.93391, 0.69643, 0.69243}));
+}
+
+TEST(TestImage, FresnelEffect){
+    PointSource ps(WHITE,Tuple({-100,0,0}, TupType::POINT));
+    Material base_mat;
+    base_mat.set_reflectance(1);
+    base_mat.set_pattern(std::make_shared<Checkers>(Checkers(RED, BLUE)));
+    Plane base(MatTranslation(0,-1,0), base_mat);
+    Material water_mat;
+    water_mat.set_reflectance(0);
+    water_mat.set_transparency(0.5);
+    water_mat.set_refractive_index(WATER);
+    Plane water(MatIdentity(4), water_mat);
+    Material background_mat;
+    background_mat.set_pattern(std::make_shared<Checkers>(Checkers(WHITE, BLACK)));
+    Plane back(MatTranslation(100,0,0)*MatRotateZ(pi/2.0));
+    std::vector<std::shared_ptr<Shape>> shapes;
+    std::vector<std::shared_ptr<LightSource>> sources;
+    sources.push_back(std::make_shared<PointSource>(ps));
+    shapes.push_back(std::make_shared<Plane>(base));
+    shapes.push_back(std::make_shared<Plane>(water));
+    shapes.push_back(std::make_shared<Plane>(back));    
+    World w(sources, shapes);
+    Tuple from({-10,1,0}, TupType::POINT);
+    Tuple to({0,1,0}, TupType::POINT);
+    Tuple up({0,0,-1});
+    Camera cam(100,100,pi/2.0, from, to, up);
+    auto img = cam.render(w);
+    img->save_ppm("Fresnel");
+}
+
+TEST(TestImage,NestedSpheres){
+    PointSource ps(WHITE,Tuple({-10,10,-10}, TupType::POINT));
+    Material glass;
+    glass.set_color(WHITE);
+    glass.set_reflectance(1);
+    glass.set_transparency(1);
+    glass.set_refractive_index(GLASS);
+    Sphere outer(MatScaling(2,2,2), glass);
+    Material air;
+    air.set_color(WHITE);
+    air.set_reflectance(0);
+    air.set_transparency(1);
+    air.set_refractive_index(AIR);
+    Sphere middle(MatIdentity(4), air);
+    Material wall_mat;
+    wall_mat.set_pattern(std::make_shared<Checkers>(Checkers(WHITE,BLACK)));
+    std::vector<Matrix> operations{MatRotateZ(pi/4.0),MatTranslation(7,0,0)};
+    Plane wall(Chain(operations),wall_mat);
+    std::vector<std::shared_ptr<Shape>> shapes;
+    std::vector<std::shared_ptr<LightSource>> sources;
+    Sphere ref(MatTranslation(0,5,0), glass);
+    sources.push_back(std::make_shared<PointSource>(ps));
+    shapes.push_back(std::make_shared<Sphere>(outer));
+    shapes.push_back(std::make_shared<Sphere>(middle));
+    shapes.push_back(std::make_shared<Plane>(wall));
+    World w(sources, shapes);
+    Tuple from({-10,0,0}, TupType::POINT);
+    Tuple to({0,0,0}, TupType::POINT);
+    Tuple up({0,0,-1});
+    Camera cam(100,100,pi/2.0, from, to, up);
+    auto img = cam.render(w);
+    img->save_ppm("NestedGlass");
 }

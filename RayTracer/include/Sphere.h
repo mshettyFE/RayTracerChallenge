@@ -17,6 +17,6 @@ class Sphere: public Shape{
         void print() const override;
 };
 
-Sphere glass_sphere(double IOR=1.5);
+Sphere glass_sphere(double IOR=GLASS);
 
 #endif
