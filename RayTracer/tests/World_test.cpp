@@ -13,6 +13,7 @@
 #include "PointSource.h"
 #include "Camera.h"
 #include "Canvas.h"
+#include "TestPattern.h"
 #include <memory>
 
 TEST(WorldTest,IntersectionTest){
@@ -181,8 +182,106 @@ TEST(WorldTest, CapRecursion){
     Plane p(MatTranslation(0,-1,0),floor_mat);
     World w = default_world();
     w.add_shape(std::make_shared<Plane>(p));
-    Ray r = Ray(Tuple({0, 0, -3}, TupType::POINT), Tuple({0, -std::sqrt(2)/2.0, std::sqrt(2)/2.0}));
+    Ray r = Ray({0, 0, -3}, {0, -std::sqrt(2)/2.0, std::sqrt(2)/2.0});
     Impact i = Impact(std::sqrt(2),w.get_shape(2));
     CollisionInfo c  = CollisionInfo(i,r);
     EXPECT_EQ(w.reflect_color(c,0), BLACK);
+}
+
+TEST(WorldTest, Opaque){
+    World w = default_world();
+    auto shape = w.get_shape(0);
+    Ray r({0,0,-5},{0,0,1});
+    Impact one(4,shape);
+    Impact two(6,shape);
+    std::vector<Impact> xs{one,two};
+    CollisionInfo comps(xs[0], r, xs);
+    EXPECT_EQ(w.refract_color(comps), BLACK);
+}
+
+TEST(WorldTest, MaxRecursionRefracted){
+    World w = default_world();
+    auto shape = w.get_shape(0);
+    Material mat = shape->get_material();
+    mat.set_transparency(1.0);
+    mat.set_refractive_index(1.5);
+    shape = std::make_shared<Sphere>(Sphere(shape->get_transform(), mat));
+    Ray r({0,0,-5},{0,0,1});
+    Impact one(4,shape);
+    Impact two(6,shape);
+    std::vector<Impact> xs{one,two};
+    CollisionInfo comps(xs[0], r, xs);
+    EXPECT_EQ(w.refract_color(comps,0), BLACK);
+}
+
+TEST(WorldTest, InternalReflect){
+    World w = default_world();
+    auto shape = w.get_shape(0);
+    Material mat = shape->get_material();
+    mat.set_transparency(1.0);
+    mat.set_refractive_index(1.5);
+    shape = std::make_shared<Sphere>(Sphere(shape->get_transform(), mat));
+    Ray r({0,0,std::sqrt(2)/2.0},{0,1,0});
+    Impact one(-std::sqrt(2)/2.0,shape);
+    Impact two(std::sqrt(2)/2.0,shape);
+    std::vector<Impact> xs{one,two};
+    CollisionInfo comps(xs[1], r, xs);
+    EXPECT_EQ(w.refract_color(comps,5), BLACK);
+}
+
+TEST(WorldTest, ColorRefracted){
+    World w = default_world();
+    auto A = w.get_shape(0);
+    Material mat = A->get_material();
+    mat.set_ambient(1.0);
+    mat.set_pattern(std::make_shared<TestPattern>(TestPattern()));
+    A = std::make_shared<Sphere>(Sphere(A->get_transform(), mat));
+    auto B = w.get_shape(1);
+    mat = B->get_material();
+    mat.set_transparency(1.0);
+    mat.set_refractive_index(1.5);
+    B = std::make_shared<Sphere>(Sphere(B->get_transform(), mat));
+    w.set_shape(0,A);
+    w.set_shape(1,B);
+    Ray r({0,0,0.1},{0,1,0});
+    std::vector<Impact> xs{Impact(-0.9899,A), Impact(-0.4899,B), Impact(0.4899,B), Impact(0.9899,A)};
+    CollisionInfo comps(xs[2],r, xs);
+    EXPECT_EQ(w.refract_color(comps,5), Color({0, 0.99888, 0.04725}));
+}
+
+TEST(WorldTest, ShadeWithRefraction){
+    World w = default_world();
+    Material plane_mat;
+    plane_mat.set_transparency(0.5);
+    plane_mat.set_refractive_index(1.5);
+    Plane p(MatTranslation(0,-1,0),plane_mat);
+    w.add_shape(std::make_shared<Plane>(p));
+    Material ball_mat;
+    ball_mat.set_color(Color({1,0,0}));
+    ball_mat.set_ambient(0.5);
+    Sphere ball(MatTranslation(0,-3.5,-0.5), ball_mat);
+    w.add_shape(std::make_shared<Sphere>(ball));
+    Ray r({0,0,-3},{0,-std::sqrt(2)/2.0,std::sqrt(2)/2.0});
+    Impact i(std::sqrt(2), w.get_shape(2));
+    CollisionInfo comps(i,r);
+    EXPECT_EQ(w.shade_hit(comps), Color({0.93642, 0.68642, 0.68642}));
+}
+
+TEST(WorldTest, ReflectiveTransparentAtOnce){
+    World w = default_world();
+    Material plane_mat;
+    plane_mat.set_transparency(0.5);
+    plane_mat.set_reflectance(0.5);
+    plane_mat.set_refractive_index(1.5);
+    Plane p(MatTranslation(0,-1,0),plane_mat);
+    w.add_shape(std::make_shared<Plane>(p));
+    Material ball_mat;
+    ball_mat.set_color(Color({1,0,0}));
+    ball_mat.set_ambient(0.5);
+    Sphere ball(MatTranslation(0,-3.5,-0.5), ball_mat);
+    w.add_shape(std::make_shared<Sphere>(ball));
+    Ray r({0,0,-3}, {0,-std::sqrt(2)/2.0,std::sqrt(2)/2.0});
+    Impact i(std::sqrt(2),w.get_shape(2));
+    CollisionInfo comps(i,r);
+    EXPECT_EQ(w.shade_hit(comps), Color({0.93391, 0.69643, 0.69243}));
 }

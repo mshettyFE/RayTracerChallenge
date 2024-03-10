@@ -36,6 +36,8 @@ public:
     double get_n1() const;
     double get_n2() const;
 
+    double schlick() const;
+
     friend std::ostream& operator << (std::ostream &out, const CollisionInfo& other);
 
 };

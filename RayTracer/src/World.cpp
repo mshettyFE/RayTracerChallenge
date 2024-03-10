@@ -42,13 +42,23 @@ std::vector<Impact> World::intersect(const Ray& r) const{
 }
 
 Color  World::shade_hit(const CollisionInfo& hit, unsigned int remaining){
-    Color c = BLACK;
+    Color total = BLACK;
     bool shadowed = is_shadowed(hit.get_over_pnt());
+    double mat_ref = hit.get_impact().get_obj()->get_material().get_reflectance();
+    double mat_transp = hit.get_impact().get_obj()->get_material().get_transparency();
     for(auto source: sources){
-        c += source->shade(hit.get_impact().get_obj(),hit.get_pnt(),hit.get_eye(), hit.get_normal(), shadowed );
-        c += reflect_color(hit, remaining);
+        Color surface =  source->shade(hit.get_impact().get_obj(),hit.get_pnt(),hit.get_eye(), hit.get_normal(), shadowed );
+        Color reflected_color = reflect_color(hit, remaining);
+        Color refracted_color = refract_color(hit,remaining);
+        if((mat_ref > 0) && (mat_transp >0)){
+            mat_ref = hit.schlick();
+            total += surface+ reflected_color*mat_ref+refracted_color*(1.0-mat_ref);
+        }
+        else{
+            total += surface+ reflected_color+refracted_color;
+        }
     }
-    return c;
+    return total;
 }
 
 std::shared_ptr<Shape> World::get_shape(int i) const{
@@ -152,4 +162,33 @@ Color World::reflect_color(const CollisionInfo&  comps, unsigned int remaining){
     Ray r = Ray(comps.get_over_pnt(), comps.get_reflect());
     Color col = this->color_at(r, remaining-1);
     return col*comps.get_impact().get_obj()->get_material().get_reflectance();
+}
+
+Color World::refract_color(const CollisionInfo& comps, unsigned int remaining){
+    if(remaining <=0){
+        return BLACK;
+    }
+    if(comps.get_impact().get_obj()->get_material().get_transparency() == 0){
+        return BLACK;
+    }
+    double n_ratio = comps.get_n1()/comps.get_n2();
+    double cos_i = comps.get_eye().dot(comps.get_normal());
+    double sin2_theta = n_ratio*n_ratio*(1-cos_i*cos_i);
+    if(sin2_theta > 1){
+        return BLACK;
+    }
+    double cos_t = std::sqrt(1.0-sin2_theta);
+    Tuple new_direction = comps.get_normal()*(n_ratio*cos_i-cos_t)- comps.get_eye()*n_ratio;
+    Ray refracted_ray(comps.get_under_pnt(), new_direction);
+    return color_at(refracted_ray,remaining-1)*comps.get_impact().get_obj()->get_material().get_transparency();
+}
+
+void World::set_shape(int i, std::shared_ptr<Shape> other){
+    if(i<0){
+        throw std::invalid_argument("Index is negative");
+    }
+    if(i >= this->number_of_shapes()){
+        throw std::invalid_argument("Index is out of bounds");
+    }
+    this->shapes[i] = other;
 }

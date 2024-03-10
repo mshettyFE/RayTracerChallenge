@@ -94,6 +94,22 @@ bool CollisionInfo::is_inside() const{return inside;};
 double CollisionInfo::get_n1() const{return n1;}
 double CollisionInfo::get_n2() const{return n2;}
 
+double CollisionInfo::schlick() const{
+// https://www.researchgate.net/publication/228959915_Reflections_and_Refractions_in_Ray_Tracing
+    double cosine = eye.dot(normal);
+    if(n1>n2){
+        double n = n1/n2;
+        double sin2_theta = n*n*(1-cosine*cosine);
+        if(sin2_theta > 1.0){
+            return 1.0;
+        }
+        double cos_theta = std::sqrt(1.0-sin2_theta);
+        cosine = cos_theta;
+    }
+    double r0 = std::pow((n1-n2)/(n1+n2),2.0);
+    return r0+(1.0-r0)*std::pow((1.0-cosine),5.0);
+}
+
 std::ostream& operator << (std::ostream &out, const CollisionInfo& other){
     out <<"Collision:";
     out << "\n\tImpact Info: " << other.get_impact() <<  "\t\nPosition: " << other.get_pnt() << "\tEye: " << other.get_eye();

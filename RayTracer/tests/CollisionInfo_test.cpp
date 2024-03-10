@@ -86,5 +86,36 @@ TEST(CollisionInfoTest, UnderPnt){
     CollisionInfo comps(i,r);
     EXPECT_GE(comps.get_under_pnt()[2] , glob_resolution/2.0);
     EXPECT_GE(comps.get_under_pnt()[2], comps.get_pnt()[2]);
+}
 
+TEST(CollisionInfoTest, InternalReflectanceSchlick){
+    Sphere s = glass_sphere();
+    Ray r({0,0,std::sqrt(2)/2.0},{0,1,0});
+    std::vector<Impact> xs{
+        Impact(-std::sqrt(2)/2.0,std::make_shared<Sphere>(s)),
+        Impact(std::sqrt(2)/2.0,std::make_shared<Sphere>(s))
+    };
+    CollisionInfo comps(xs[1],r, xs);
+    EXPECT_FLOAT_EQ(comps.schlick(), 1.0);
+}
+
+TEST(CollisionInfoTest, PerpendicularRayReflectanceSchlick){
+    Sphere s = glass_sphere();
+    Ray r({0,0,0},{0,1,0});
+    std::vector<Impact> xs{
+        Impact(-1,std::make_shared<Sphere>(s)),
+        Impact(1,std::make_shared<Sphere>(s))
+    };
+    CollisionInfo comps(xs[1],r, xs);
+    EXPECT_LE(comps.schlick()- 0.04, glob_resolution);
+}
+
+TEST(CollisionInfoTest, N2GEQN1Schlick){
+    Sphere s = glass_sphere();
+    Ray r({0,0.99,-2},{0,0,1});
+    std::vector<Impact> xs{
+        Impact(1.8589,std::make_shared<Sphere>(s))
+    };
+    CollisionInfo comps(xs[0],r);
+    EXPECT_LE(comps.schlick()- 0.48873, glob_resolution);
 }
