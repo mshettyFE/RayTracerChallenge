@@ -21,9 +21,9 @@ public:
 
     std::vector<Impact> intersect(const Ray& r) const;
 
-    Color  shade_hit(const CollisionInfo& hit);
+    Color  shade_hit(const CollisionInfo& hit, unsigned int remaining=5);
 
-    Color color_at(const Ray& r);
+    Color color_at(const Ray& r, unsigned int remaining=5);
 
     int number_of_sources() const;
     int number_of_shapes() const;
@@ -35,7 +35,7 @@ public:
 
     bool is_shadowed(const Tuple& pt) const;
 
-    Color reflect_color(const CollisionInfo& comps);
+    Color reflect_color(const CollisionInfo& comps, unsigned int remaining=5);
 
     friend std::ostream& operator <<(std::ostream& out, const World& w);
 

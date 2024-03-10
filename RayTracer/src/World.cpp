@@ -41,11 +41,12 @@ std::vector<Impact> World::intersect(const Ray& r) const{
     return all_hits;
 }
 
-Color  World::shade_hit(const CollisionInfo& hit){
+Color  World::shade_hit(const CollisionInfo& hit, unsigned int remaining){
     Color c = BLACK;
     bool shadowed = is_shadowed(hit.get_over_pnt());
     for(auto source: sources){
         c += source->shade(hit.get_impact().get_obj(),hit.get_pnt(),hit.get_eye(), hit.get_normal(), shadowed );
+        c += reflect_color(hit, remaining);
     }
     return c;
 }
@@ -70,7 +71,7 @@ std::shared_ptr<LightSource> World::get_source(int i) const {
     return this->sources[i];
 }
 
-Color World::color_at(const Ray& r){
+Color World::color_at(const Ray& r, unsigned int remaining){
     std::vector<Impact> hits = intersect(r);
     Color out = BLACK;
     if (hits.size() > 0){
@@ -86,7 +87,7 @@ Color World::color_at(const Ray& r){
             return out;
         }
         for(auto source : sources){
-            out += shade_hit(CollisionInfo(hits[lowest_positive_index],r));
+            out += shade_hit(CollisionInfo(hits[lowest_positive_index],r), remaining);
         }
     }
     return out;
@@ -141,11 +142,14 @@ void World::add_shape(std::shared_ptr<Shape> new_shape){
     shapes.push_back(new_shape);
 };
 
-Color World::reflect_color(const CollisionInfo&  comps){
+Color World::reflect_color(const CollisionInfo&  comps, unsigned int remaining){
+    if(remaining <= 0){
+        return BLACK;
+    }
     if(comps.get_impact().get_obj()->get_material().get_reflectance() < glob_resolution){
         return BLACK;
     }
     Ray r = Ray(comps.get_over_pnt(), comps.get_reflect());
-    Color col = this->color_at(r);
+    Color col = this->color_at(r, remaining-1);
     return col*comps.get_impact().get_obj()->get_material().get_reflectance();
 }

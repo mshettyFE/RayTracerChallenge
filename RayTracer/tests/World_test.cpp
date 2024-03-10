@@ -146,3 +146,43 @@ TEST(WorldTest, ReflectColor){
     Color out =  w.reflect_color(c);
     EXPECT_EQ(out, Color({0.19032, 0.2379, 0.14274}));
 }
+
+TEST(WorldTest, ShadeReflection){
+    Material floor_mat = Material();
+    floor_mat.set_reflectance(0.5);
+    Plane p(MatTranslation(0,-1,0),floor_mat);
+    World w = default_world();
+    w.add_shape(std::make_shared<Plane>(p));
+    Ray r = Ray(Tuple({0, 0, -3}, TupType::POINT), Tuple({0, -std::sqrt(2)/2.0, std::sqrt(2)/2.0}));
+    Impact i = Impact(std::sqrt(2),w.get_shape(2));
+    CollisionInfo c  = CollisionInfo(i,r);
+    EXPECT_EQ(w.shade_hit(c), Color({0.87677, 0.92436, 0.82918}));
+}
+
+TEST(WorldTest, InfiniteRecursion){
+    std::vector<std::shared_ptr<LightSource>> sources;
+    std::vector<std::shared_ptr<Shape>> shapes;
+    sources.push_back(std::make_shared<PointSource>(Color({1,1,1}), Tuple({0,0,0}, TupType::POINT)));
+    Material wall;
+    wall.set_reflectance(1);
+    Plane lower(MatTranslation(0,-1,0), wall);
+    Plane upper(MatTranslation(0,1,0), wall);
+    shapes.push_back(std::make_shared<Plane>(lower));
+    shapes.push_back(std::make_shared<Plane>(upper));
+    Ray r(Tuple({0,0,0}, TupType::POINT), Tuple({0,1,0}));
+    World world(sources, shapes);
+    std::cout << "Infinite Recursion" << std::endl;
+    world.color_at(r); // should terminate and not Segfault
+}
+
+TEST(WorldTest, CapRecursion){
+    Material floor_mat = Material();
+    floor_mat.set_reflectance(0.5);
+    Plane p(MatTranslation(0,-1,0),floor_mat);
+    World w = default_world();
+    w.add_shape(std::make_shared<Plane>(p));
+    Ray r = Ray(Tuple({0, 0, -3}, TupType::POINT), Tuple({0, -std::sqrt(2)/2.0, std::sqrt(2)/2.0}));
+    Impact i = Impact(std::sqrt(2),w.get_shape(2));
+    CollisionInfo c  = CollisionInfo(i,r);
+    EXPECT_EQ(w.reflect_color(c,0), BLACK);
+}
