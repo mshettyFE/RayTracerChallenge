@@ -67,4 +67,81 @@ TEST(CylinderTest, Normal){
     EXPECT_EQ(c.normal_at(pnt), Tuple({-1,0,0}));
 }
 
+TEST(CylinderTest, Truncate){
+    Cylinder c;
+    c.set_max(2);
+    c.set_min(1);
+    Tuple direction({0.1,1,0});
+    direction.normalize();
+    Tuple origin({0,1.5,0}, TupType::POINT);
+    Ray r(origin, direction);
+    EXPECT_EQ(c.intersect(r).size(), 0);
+    direction = Tuple({0,0,1});
+    direction.normalize();
+    origin = Tuple({0,3,-5}, TupType::POINT);
+    r = Ray(origin, direction);
+    EXPECT_EQ(c.intersect(r).size(), 0);
+    origin = Tuple({0,0,-5}, TupType::POINT);
+    r = Ray(origin, direction);
+    EXPECT_EQ(c.intersect(r).size(), 0);
+    origin = Tuple({0,2,-5}, TupType::POINT);
+    r = Ray(origin, direction);
+    EXPECT_EQ(c.intersect(r).size(), 0);
+    origin = Tuple({0,1,-5}, TupType::POINT);
+    r = Ray(origin, direction);
+    EXPECT_EQ(c.intersect(r).size(), 0);
+    origin = Tuple({0,1.5,-2}, TupType::POINT);
+    r = Ray(origin, direction);
+    EXPECT_EQ(c.intersect(r).size(), 2);
+}
 
+TEST(CylinderTest, CappedIntersection){
+    Cylinder c;
+    c.set_max(2);
+    c.set_min(1);
+    c.set_closed(true);
+    Tuple direction({0,-1,0});
+    direction.normalize();
+    Tuple origin({0,3,0}, TupType::POINT);
+    Ray r(origin, direction);
+    EXPECT_EQ(c.intersect(r).size(), 2);
+    direction = Tuple({0,-1,2});
+    direction.normalize();
+    origin = Tuple({0,3,-2}, TupType::POINT);
+    r = Ray(origin, direction);
+    EXPECT_EQ(c.intersect(r).size(), 2);
+    direction = Tuple({0,-1,1});
+    direction.normalize();
+    origin = Tuple({0,4,-2}, TupType::POINT);
+    r = Ray(origin, direction);
+    EXPECT_EQ(c.intersect(r).size(), 2);
+    direction = Tuple({0,1,2});
+    direction.normalize();
+    origin = Tuple({0,0,-2}, TupType::POINT);
+    r = Ray(origin, direction);
+    EXPECT_EQ(c.intersect(r).size(), 2);
+    direction = Tuple({0,1,1});
+    direction.normalize();
+    origin = Tuple({0,-1,-2}, TupType::POINT);
+    r = Ray(origin, direction);
+    EXPECT_EQ(c.intersect(r).size(), 2);
+}
+
+TEST(CylinderTest, CappedNormal){
+    Cylinder c;
+    c.set_max(2);
+    c.set_min(1);
+    c.set_closed(true);
+    Tuple pnt({0,1,0}, TupType::POINT);
+    EXPECT_EQ(c.normal_at(pnt), Tuple({0,-1,0}));
+    pnt = Tuple({0.5,1,0}, TupType::POINT);
+    EXPECT_EQ(c.normal_at(pnt), Tuple({0,-1,0}));
+    pnt = Tuple({0,1,0.5}, TupType::POINT);
+    EXPECT_EQ(c.normal_at(pnt), Tuple({0,-1,0}));
+    pnt = Tuple({0,2,0}, TupType::POINT);
+    EXPECT_EQ(c.normal_at(pnt), Tuple({0,1,0}));
+    pnt = Tuple({0.5,2,0}, TupType::POINT);
+    EXPECT_EQ(c.normal_at(pnt), Tuple({0,1,0}));
+    pnt = Tuple({0,2,0.5}, TupType::POINT);
+    EXPECT_EQ(c.normal_at(pnt), Tuple({0,1,0}));
+}
