@@ -14,9 +14,13 @@ Shape::Shape(Matrix a_Transformation, Material material, std::shared_ptr<Shape> 
     this->name = name;
 }
 
-int Shape::get_total_children() const{
-    return this->children.size();
+void Shape::set_nst(NestedShapeType new_nst){
+    this->nested_shape_type  = new_nst;
 }
+NestedShapeType Shape::get_nst() const{
+    return this->nested_shape_type;
+}
+
 
 void Shape::set_transform(Matrix a_Tranformation){
     Transformation = a_Tranformation;

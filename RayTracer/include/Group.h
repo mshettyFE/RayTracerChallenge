@@ -15,10 +15,13 @@ class Group : public Shape{
 private:
     std::shared_ptr<Group> this_group;
     void indent_print(unsigned int tabs=0) const;
+    std::vector<std::shared_ptr<Shape>> children;
 public:
     Tuple normal_at(const Tuple& pt) const override;
     void verbose_print() const override;
     std::vector<double> intersect(const Ray &other) const override;
+
+    int get_total_children() const;
 
     Group(Matrix Transformation=MatIdentity(4), Material material=Material(), std::shared_ptr<Shape> parent=nullptr);
 
