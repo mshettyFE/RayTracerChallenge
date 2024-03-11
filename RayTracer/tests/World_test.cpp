@@ -43,6 +43,10 @@ TEST(WorldTest,IntersectionTest){
     sources.push_back(source);
     Material mat1(0.1,0.7,0.2,200.0,Color({0.8,1.0,0.6}));
     Material mat2(0.1,0.9,0.9,200.0, WHITE);
+    mat1.set_reflectance(0);
+    mat1.set_transparency(0);
+    mat2.set_reflectance(0);
+    mat2.set_transparency(0);
     std::shared_ptr<Sphere> s1 = std::make_shared<Sphere>(Sphere(MatIdentity(4),mat1));
     std::shared_ptr<Sphere> s2 = std::make_shared<Sphere>(Sphere(MatScaling(0.5,0.5,0.5),mat2));
     std::vector<std::shared_ptr<Shape>> shapes;
@@ -52,9 +56,10 @@ TEST(WorldTest,IntersectionTest){
     Ray r(Tuple({0,0,0}, TupType::POINT), Tuple({0,0,1}));
     Impact hit(0.5,w.get_shape(1));
     CollisionInfo i(hit,r);
+    std::cout << i << std::endl;
     Color c = w.shade_hit(i);
     EXPECT_EQ(c,Color({0.90498, 0.90498, 0.90498}));
- }
+}
  
  TEST(WorldTest, Miss){
     World w =  default_world();

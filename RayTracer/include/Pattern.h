@@ -8,8 +8,9 @@
 class Shape;
 
 class Pattern{
-protected:
+private:
     Matrix transformation;
+protected:
     std::string name;
 public:
     Pattern(Matrix trans=MatIdentity(4), std::string name="PLACEHOLDER");
@@ -17,7 +18,9 @@ public:
 
     virtual Color at(const Tuple& pt) const = 0;
     Color at_object(const Tuple& pt, const std::shared_ptr<Shape>& obj) const;
+
     void set_transformation(const Matrix& new_mat);
+    Matrix get_transformation() const;
 
     std::string get_name() const;
 

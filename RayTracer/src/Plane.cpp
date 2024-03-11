@@ -6,7 +6,7 @@ Plane::Plane( Matrix Transformation, Material material, std::shared_ptr<Shape> p
 }
 
 
-Tuple Plane::normal_at(const Tuple& pt) const {
+Tuple Plane::local_normal_at(const Tuple& pt) const {
     return normal_vector;
 }
 

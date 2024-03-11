@@ -12,7 +12,7 @@ class Cube : public Shape{
 private:
     std::vector<double> check_axis(double origin, double direction) const;
 public:
-    Tuple normal_at(const Tuple& pt) const override;
+    Tuple local_normal_at(const Tuple& pt) const override;
     void verbose_print() const override;
     std::vector<Impact> intersect(const Ray &other) const override;
 

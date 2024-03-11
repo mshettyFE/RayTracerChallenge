@@ -44,4 +44,6 @@ std::vector<Impact> Group::intersect(const Ray &r) const {
     return out;
 }
 
-Tuple Group::normal_at(const Tuple& pt) const{}
+Tuple Group::local_normal_at(const Tuple& pt) const{
+    throw std::invalid_argument("Group has no local normal");
+}

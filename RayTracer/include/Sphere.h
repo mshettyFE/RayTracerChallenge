@@ -13,7 +13,7 @@ class Sphere: public Shape{
     public:
         Sphere(Matrix Transformation=MatIdentity(4), Material material=Material(), std::shared_ptr<Shape> parent=nullptr);
 
-        Tuple normal_at(const Tuple& pt) const override;
+        Tuple local_normal_at(const Tuple& pt) const override;
         std::vector<Impact> intersect(const Ray &other) const override;
         void verbose_print() const override;
 };

@@ -18,7 +18,7 @@ private:
     void indent_print(unsigned int tabs=0) const;
     std::vector<std::shared_ptr<Shape>> children;
 public:
-    Tuple normal_at(const Tuple& pt) const override;
+    Tuple local_normal_at(const Tuple& pt) const override;
     void verbose_print() const override;
     std::vector<Impact> intersect(const Ray &other) const override;
 

@@ -154,7 +154,7 @@ void Tuple::normalize(){
   }
 }
 
-double Tuple::L2Norm(){
+double Tuple::L2Norm() const{
   // Return L2Norm
   double scaling = 0.0;
   for(int i=0; i< this->dim; ++i){

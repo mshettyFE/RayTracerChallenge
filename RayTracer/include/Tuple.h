@@ -65,7 +65,7 @@ class Tuple{
     // Does in place normalization of vector
     void normalize();
     // Returns Euclidean length squared
-    double L2Norm();
+    double L2Norm() const;
 
     double dot(const Tuple& other) const;
     Tuple cross(const Tuple& other) const;

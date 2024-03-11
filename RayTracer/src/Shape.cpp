@@ -56,3 +56,13 @@ void Shape::print(unsigned int indent){
     auto indentation = std::string(indent,'\t');
     std::cout << indentation << "Shape: " << name  << " ID: " << id << std::endl;
 }
+
+Tuple Shape::normal_at(const Tuple& world_pt) const{
+    Tuple local_point = get_transform().Inverse()*world_pt;
+    local_point.set_type(TupType::POINT);
+    Tuple local_normal  = local_normal_at(local_point);
+    Tuple output = get_transform().Inverse().Transpose()*local_normal;
+    output.set_type(TupType::VECTOR);
+    output.normalize();
+    return output;
+}
