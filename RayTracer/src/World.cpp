@@ -35,8 +35,7 @@ std::vector<Impact> World::intersect(const Ray& r) const{
         for(double hit: shape->intersect(r)){
             all_hits.push_back(Impact(hit, shape));
         }
-    }
-    
+    }    
     std::sort(all_hits.begin(), all_hits.end(), [](const Impact& a, const Impact& b) -> bool{ return (a.get_t() < b.get_t());  });
     return all_hits;
 }
