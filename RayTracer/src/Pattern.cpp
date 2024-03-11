@@ -2,12 +2,17 @@
 #include "Matrix.h"
 #include "Shape.h"
 
-Pattern::Pattern(Matrix trans){
+Pattern::Pattern(Matrix trans, std::string name){
     transformation = trans;
+    this->name = name;
 }
 
 void Pattern::set_transformation(const Matrix& new_mat){
     transformation = new_mat;
+}
+
+std::string Pattern::get_name() const{
+    return name;
 }
 
 Color Pattern::at_object(const Tuple& world_pt, const std::shared_ptr<Shape>& obj) const{

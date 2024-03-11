@@ -16,17 +16,22 @@ protected:
     Material mat;
     std::shared_ptr<Shape> parent;
     std::vector<std::shared_ptr<Shape>> children;
+    std::string name;
 public:
     virtual Tuple normal_at(const Tuple& pt) const =0;
-    virtual void print(unsigned int indent=0) const=0;
     virtual std::vector<double> intersect(const Ray &other) const =0;
 
-    Shape(Matrix Transformation=MatIdentity(4), Material material=Material(), std::shared_ptr<Shape> parent=nullptr);
+    virtual void verbose_print() const=0;
+    void print(unsigned int indent=0);
+
+    Shape(Matrix Transformation=MatIdentity(4), Material material=Material(), std::shared_ptr<Shape> parent=nullptr, std::string="PLACEHOLDER");
 
     int get_total_children() const;
 
     Matrix get_transform() const;
     void set_transform(Matrix Tranformation);
+
+    std::string get_name() const;
 
     void set_material(Material new_mat);
     Material get_material() const;

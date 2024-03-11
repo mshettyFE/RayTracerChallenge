@@ -2,7 +2,7 @@
 #include "Matrix.h"
 #include <stdexcept>
 
-Shape::Shape(Matrix a_Transformation, Material material, std::shared_ptr<Shape> parent){
+Shape::Shape(Matrix a_Transformation, Material material, std::shared_ptr<Shape> parent,std::string name){
     if (a_Transformation.get_dim() != 4){
         throw std::invalid_argument("Invalid Transformation Matrix");
     }
@@ -11,6 +11,7 @@ Shape::Shape(Matrix a_Transformation, Material material, std::shared_ptr<Shape> 
     this->parent = parent;
     id = GlobalID;
     GlobalID += 1;
+    this->name = name;
 }
 
 int Shape::get_total_children() const{
@@ -37,3 +38,12 @@ void Shape::set_parent(std::shared_ptr<Shape> new_parent){
 }
 
 unsigned long Shape::get_id() const{return id;}
+
+std::string Shape::get_name() const{
+    return name;
+}
+
+void Shape::print(unsigned int indent){
+    auto indentation = std::string(indent,'\t');
+    std::cout << indentation << "Shape: " << name  << " ID: " << id << std::endl;
+}

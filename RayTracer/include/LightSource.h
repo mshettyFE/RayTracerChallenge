@@ -9,11 +9,14 @@ class LightSource{
     protected:
         Color Intensity;
         Tuple SourceLoc;
+        std::string name;
     public:
-        LightSource(const Color& intensity,const Tuple& position);
+        LightSource(const Color& intensity,const Tuple& position, std::string light_type="PLACEHOLDER");
 
         Color get_intensity() const;
         Tuple get_position() const;
+
+        std::string get_name() const;
 
         virtual void print() const=0;
         // This assumes that you want to apply the pattern to conform to some object

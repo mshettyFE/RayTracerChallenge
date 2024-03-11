@@ -1,7 +1,7 @@
 #include "Plane.h"
 #include <stdexcept>
 
-Plane::Plane( Matrix Transformation, Material material, std::shared_ptr<Shape> parent) : Shape(Transformation, material, parent){
+Plane::Plane( Matrix Transformation, Material material, std::shared_ptr<Shape> parent) : Shape(Transformation, material, parent, "Plane"){
     normal_vector = Tuple({0,1,0},TupType::VECTOR);
 }
 
@@ -22,8 +22,8 @@ std::vector<double> Plane::intersect(const Ray &other) const{
     return out;
 }
 
-void Plane::print(unsigned int indent) const{
-    std::cout << "Plane" << std::endl;
+void Plane::verbose_print() const{
+    std::cout << name << std::endl;
     std::cout << "Transformation:" << std::endl;
     std::cout << Transformation << std::endl;
     std::cout << mat << std::endl;

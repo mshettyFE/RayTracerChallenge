@@ -5,7 +5,7 @@
 #include <limits>
 #include <algorithm>
 
-Cube::Cube(Matrix Transformation, Material material, std::shared_ptr<Shape> parent) : Shape(Transformation, material, parent){}
+Cube::Cube(Matrix Transformation, Material material, std::shared_ptr<Shape> parent) : Shape(Transformation, material, parent, "Cube"){}
 
 std::vector<double> Cube::check_axis(double origin, double direction) const{
     double tmin_num = (-1-origin);
@@ -43,7 +43,7 @@ Tuple Cube::normal_at(const Tuple& pt) const{
     return Tuple({0,0,pt[2]});
 }
 
-void Cube::print(unsigned int indent) const {
+void Cube::verbose_print() const {
     std::cout << "Cube" << std::endl;
     std::cout << this->get_id() << std::endl;
     std::cout << this->get_transform() << std::endl;

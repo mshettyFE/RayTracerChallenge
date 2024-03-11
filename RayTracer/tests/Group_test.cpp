@@ -28,5 +28,5 @@ TEST(GroupTest, Printing){
     Sphere s4;
     g2.add_child<Sphere>(s4);
     g1.add_child<Group>(g2);
-    g1.print();
+    g1.verbose_print();
 }

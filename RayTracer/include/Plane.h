@@ -14,7 +14,7 @@ class Plane: public Shape{
 
         Tuple normal_at(const Tuple& pt) const override;
         std::vector<double> intersect(const Ray &other) const override;
-        void print(unsigned int indent=0) const override;
+        void verbose_print() const override;
 
 
 };

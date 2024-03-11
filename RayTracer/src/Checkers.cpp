@@ -8,10 +8,9 @@
 
 
 
-Checkers::Checkers(const Color& a, const Color& b, Matrix trans){
+Checkers::Checkers(const Color& a, const Color& b, Matrix trans) : Pattern(trans, "Checkers"){
     color_a = a;
     color_b = b;
-    transformation = trans;
 }
 Color Checkers::at(const Tuple& pt) const {
     if(pt.type() != TupType::POINT){

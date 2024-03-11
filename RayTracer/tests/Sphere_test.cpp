@@ -6,10 +6,6 @@
 #include "Sphere.h"
 #include "Canvas.h"
 
-TEST(SphereTest,Init){
-    Sphere().print();
-}
-
 TEST(SphereTest, Intersection){
     Ray r(Tuple({0,0,-5}, TupType::POINT),Tuple({0,0,1}));
     Matrix Trans = MatScaling(2,2,2);

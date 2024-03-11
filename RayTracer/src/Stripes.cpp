@@ -4,10 +4,9 @@
 #include <math.h>
 #include <stdexcept>
 
-Stripes::Stripes(const Color& a, const Color& b, Matrix trans){
+Stripes::Stripes(const Color& a, const Color& b, Matrix trans) : Pattern(trans,"Stripes"){
     this->color_a = a;
     this->color_b = b;
-    transformation = trans;
 }
 
 Color Stripes::at(const Tuple& pt) const{

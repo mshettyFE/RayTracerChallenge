@@ -2,7 +2,7 @@
 #include <iostream>
 #include <cmath>
 
-Sphere::Sphere(Matrix Transformation, Material material, std::shared_ptr<Shape> parent) : Shape(Transformation, material, parent){}
+Sphere::Sphere(Matrix Transformation, Material material, std::shared_ptr<Shape> parent) : Shape(Transformation, material, parent, "Sphere"){}
 
 
 Tuple Sphere::normal_at(const Tuple& world_pt) const{
@@ -35,9 +35,8 @@ std::vector<double> Sphere::intersect(const Ray &other) const{
     return output;
 }
 
-
-void Sphere::print(unsigned int indent) const{
-    std::cout << "Sphere" << std::endl;
+void Sphere::verbose_print() const{
+    std::cout << name << std::endl;
     std::cout << "Transformation:" << std::endl;
     std::cout << Transformation << std::endl;
     std::cout << mat << std::endl;

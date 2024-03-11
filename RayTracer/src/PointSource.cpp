@@ -6,7 +6,7 @@
 #include "Shape.h"
 #include <cmath>
 
-PointSource::PointSource(const Color& a_intensity,const Tuple& a_position)  : LightSource(a_intensity, a_position ){}
+PointSource::PointSource(const Color& a_intensity,const Tuple& a_position)  : LightSource(a_intensity, a_position, "PointSource" ){}
 
 Color PointSource::shade(const std::shared_ptr<Shape> obj, const Tuple& position,
         const Tuple& camera, const Tuple& normal, bool in_shadow) const{
