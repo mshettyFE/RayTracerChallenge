@@ -5,7 +5,7 @@
 #include <limits>
 #include <algorithm>
 
-Cube::Cube(Matrix Transformation, Material material) : Shape(Transformation, material){}
+Cube::Cube(Matrix Transformation, Material material, std::shared_ptr<Shape> parent) : Shape(Transformation, material, parent){}
 
 std::vector<double> Cube::check_axis(double origin, double direction) const{
     double tmin_num = (-1-origin);

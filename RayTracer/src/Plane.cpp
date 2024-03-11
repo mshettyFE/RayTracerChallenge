@@ -1,7 +1,7 @@
 #include "Plane.h"
 #include <stdexcept>
 
-Plane::Plane( Matrix Transformation, Material material) : Shape(Transformation, material){
+Plane::Plane( Matrix Transformation, Material material, std::shared_ptr<Shape> parent) : Shape(Transformation, material, parent){
     normal_vector = Tuple({0,1,0},TupType::VECTOR);
 }
 

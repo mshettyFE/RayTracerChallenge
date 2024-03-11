@@ -2,7 +2,7 @@
 #include <iostream>
 #include <cmath>
 
-Sphere::Sphere(Matrix Transformation, Material material) : Shape(Transformation, material){}
+Sphere::Sphere(Matrix Transformation, Material material, std::shared_ptr<Shape> parent) : Shape(Transformation, material, parent){}
 
 
 Tuple Sphere::normal_at(const Tuple& world_pt) const{

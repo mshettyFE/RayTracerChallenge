@@ -1,12 +1,13 @@
 #include "Cylinder.h"
 
-Cylinder::Cylinder(Matrix Transformation, Material material,
+Cylinder::Cylinder(Matrix Transformation, Material material, std::shared_ptr<Shape> parent,
      double min, double max,bool closed ){
     this->set_transform(Transformation);
     mat = material;
     this->minimum = min;
     this->maximum = max;
     this->closed = closed;
+    this->parent = parent;
 }
 
 void Cylinder::print() const{

@@ -20,7 +20,7 @@ public:
     void print() const override;
     std::vector<double> intersect(const Ray &other) const override;
 
-    Cylinder(Matrix Transformation=MatIdentity(4), Material material=Material(),
+    Cylinder(Matrix Transformation=MatIdentity(4), Material material=Material(), std::shared_ptr<Shape> parent=nullptr,
      double min= NEG_INFTY, double max= INFTY,bool closed = false);
 
     void set_min(double val) ;
