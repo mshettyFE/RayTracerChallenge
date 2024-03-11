@@ -25,7 +25,7 @@ std::vector<double> Plane::intersect(const Ray &other) const{
 void Plane::verbose_print() const{
     std::cout << name << std::endl;
     std::cout << "Transformation:" << std::endl;
-    std::cout << Transformation << std::endl;
+    std::cout << get_transform() << std::endl;
     std::cout << mat << std::endl;
     std::cout << "Normal; " << normal_vector << std::endl;
     std::cout << "\tShape ID: " << id << std::endl;

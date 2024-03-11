@@ -10,9 +10,9 @@
 class Shape{
 private:
     static inline unsigned long GlobalID{0};
+    Matrix Transformation;
 protected:
     unsigned long id;
-    Matrix Transformation;
     Material mat;
     std::shared_ptr<Shape> parent;
     std::string name;

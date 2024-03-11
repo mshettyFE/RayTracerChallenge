@@ -6,12 +6,12 @@ Shape::Shape(Matrix a_Transformation, Material material, std::shared_ptr<Shape> 
     if (a_Transformation.get_dim() != 4){
         throw std::invalid_argument("Invalid Transformation Matrix");
     }
-    Transformation = a_Transformation;
     mat = material;
     this->parent = parent;
     id = GlobalID;
     GlobalID += 1;
     this->name = name;
+    Transformation = a_Transformation;
 }
 
 void Shape::set_nst(NestedShapeType new_nst){
@@ -23,10 +23,15 @@ NestedShapeType Shape::get_nst() const{
 
 
 void Shape::set_transform(Matrix a_Tranformation){
-    Transformation = a_Tranformation;
+    this->Transformation = a_Tranformation;
 }
 
-Matrix Shape::get_transform() const{return Transformation;}
+Matrix Shape::get_transform() const{
+    if(this->parent == nullptr){
+        return Transformation;
+    }
+    return this->parent->get_transform()*this->Transformation;
+}
 
 void Shape::set_material(Material new_mat){
     this->mat = new_mat;

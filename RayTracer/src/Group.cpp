@@ -39,7 +39,8 @@ std::vector<double> Group::intersect(const Ray &r) const {
             out.push_back(hit);
         }
     }
-    std::sort(out.begin(), out.end(), [](double a, double b) -> bool{ return (a < b);  });
+//    std::sort(out.begin(), out.end(), [](double a, double b) -> bool{ return (a < b);  });
+    return out;
 }
 
 Tuple Group::normal_at(const Tuple& pt) const{}
