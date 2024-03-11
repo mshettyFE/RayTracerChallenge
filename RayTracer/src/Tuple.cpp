@@ -145,7 +145,12 @@ void Tuple::normalize(){
   double scaling = L2Norm();
   scaling = pow(scaling, 0.5);
   for(int i=0; i< this->dim; ++i){
-    this->data[i] = this->data[i]/scaling;
+    if(scaling< glob_resolution){
+      this->data[i] = 0;
+    }
+    else{
+      this->data[i] = this->data[i]/scaling;
+    }
   }
 }
 

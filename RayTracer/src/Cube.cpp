@@ -16,8 +16,8 @@ std::vector<double> Cube::check_axis(double origin, double direction) const{
         tmax = tmax_num/direction;
     }
     else{
-        tmin = tmin_num*std::numeric_limits<double>::infinity();
-        tmax = tmax_num*std::numeric_limits<double>::infinity();
+        tmin = tmin_num*INFTY;
+        tmax = tmax_num*INFTY;
     }
     if(tmin>tmax){
         double temp = tmin;
@@ -32,7 +32,7 @@ Tuple Cube::normal_at(const Tuple& pt) const{
     if(pt.get_dim() != 3){
         throw std::invalid_argument("pt must have dimension of 3");
     }
-    double max = -1.0*std::numeric_limits<double>::infinity();
+    double max = NEG_INFTY;
     for(int i=0; i< 3; ++i){
         if(std::abs(pt[i]) > max){
             max = std::abs(pt[i]);
@@ -62,13 +62,13 @@ std::vector<double> Cube::intersect(const Ray &other) const {
     bounds = check_axis(other.get_origin()[2],other.get_direction()[2]);
     minima.push_back(bounds[0]);
     maxima.push_back(bounds[1]);
-    double largest_min = -1.0*std::numeric_limits<double>::infinity();
+    double largest_min = NEG_INFTY;
     for(auto x: minima){
         if(x>largest_min){
             largest_min = x;
         }    
     }
-    double smallest_max = std::numeric_limits<double>::infinity();
+    double smallest_max = INFTY;
     for(auto x: maxima){
         if(x<smallest_max){
             smallest_max = x;

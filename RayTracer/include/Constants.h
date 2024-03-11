@@ -3,13 +3,17 @@
 // Named enum to delineate between Points and Vectors in homogeneous transformations
 // w component choosen such that transformations become nice
 #include <cmath>
+#include <limits>
 enum TupType{
   VECTOR = 0, // corresponds to w component (ie. last component) of 0
   POINT = 1, // corresponds to w component  of 1
 };
 
-const double glob_resolution = 1E-3;
+const double glob_resolution = 1E-4;
 const double pi = std::acos(-1);
+
+const double INFTY = std::numeric_limits<double>::infinity();
+const double NEG_INFTY = -1.0*std::numeric_limits<double>::infinity();
 
 // index of refractions
 const double VACUUM = 1.0;
