@@ -112,7 +112,7 @@ TEST(TestImage, ShadedSphere){
     double half = pixel_size/2.0;
     double half_wall = wall_size/2.0;
     // Aim Rays from ray_origin to centers of each pixel on the wall
-    std::vector<double> intersections;
+    std::vector<Impact> intersections;
     for(int row=0; row<dim; ++row){
         // Grab center of each pixel in world space, and shift to center of frame
         double world_y = half+pixel_size*row-half_wall;
@@ -122,7 +122,7 @@ TEST(TestImage, ShadedSphere){
             Ray r(origin, normalize(position-origin));
             intersections = s.intersect(r);
             if(intersections.size() != 0){
-                Tuple position = r.position(intersections[0]);
+                Tuple position = r.position(intersections[0].get_t());
                 // Calculate what color the pixel should be, given the light source, material, current position, ray direction and normal vector at position
                 Color p = light_loc.shade(std::make_shared<Sphere>(s),position,-r.get_direction() , s.normal_at(position));
                 canvas.write_pixel(row,col,p);

@@ -5,6 +5,7 @@
 #include "Tuple.h"
 #include "Material.h"
 #include "Ray.h"
+#include "Impact.h"
 #include <memory>
 
 class Shape{
@@ -19,7 +20,7 @@ protected:
     NestedShapeType nested_shape_type = NestedShapeType::UNNESTED;
 public:
     virtual Tuple normal_at(const Tuple& pt) const =0;
-    virtual std::vector<double> intersect(const Ray &other) const =0;
+    virtual std::vector<Impact> intersect(const Ray &other) const =0;
     virtual ~Shape(){}
 
     virtual void verbose_print() const=0;

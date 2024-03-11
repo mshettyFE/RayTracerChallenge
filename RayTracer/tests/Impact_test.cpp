@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
 #include <iostream>
 #include "Constants.h"
-#include "Impact.h"
 #include <memory>
 #include "Shape.h"
 #include "Sphere.h"
+#include "Impact.h"
 
 TEST(ImpactTest, InitImpact){
     auto shp = std::make_shared<Sphere>(Sphere());

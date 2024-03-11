@@ -14,8 +14,8 @@ Tuple Sphere::normal_at(const Tuple& world_pt) const{
     return world_normal;
 }
 
-std::vector<double> Sphere::intersect(const Ray &other) const{
-    std::vector<double> output;
+std::vector<Impact> Sphere::intersect(const Ray &other) const{
+    std::vector<Impact> output;
     Ray TransformedRay = other.transform(get_transform().Inverse());
     Tuple origin_vec = TransformedRay.get_origin();
     origin_vec.set_type(TupType::VECTOR);
@@ -28,10 +28,11 @@ std::vector<double> Sphere::intersect(const Ray &other) const{
     if(discriminant<0){
         return output;
     }
+    auto self = std::make_shared<Sphere>(*this);
     double t1 = (-b-std::sqrt(discriminant))/(2.0*a);
     double t2 = (-b+std::sqrt(discriminant))/(2.0*a);
-    output.push_back(t1);
-    output.push_back(t2);
+    output.push_back(Impact(t1,self));
+    output.push_back(Impact(t2,self));
     return output;
 }
 

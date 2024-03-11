@@ -32,8 +32,8 @@ int World::number_of_shapes() const{
 std::vector<Impact> World::intersect(const Ray& r) const{
     std::vector<Impact> all_hits;
     for(auto shape: shapes){
-        for(double hit: shape->intersect(r)){
-            all_hits.push_back(Impact(hit, shape));
+        for(auto hit: shape->intersect(r)){
+            all_hits.push_back(hit);
         }
     }    
     std::sort(all_hits.begin(), all_hits.end(), [](const Impact& a, const Impact& b) -> bool{ return (a.get_t() < b.get_t());  });

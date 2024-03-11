@@ -3,12 +3,12 @@
 #include <cmath>
 #include "Constants.h"
 #include "Ray.h"
-#include "Impact.h"
 #include "CollisionInfo.h"
 #include "Shape.h"
 #include "Sphere.h"
 #include "Tuple.h"
 #include "Plane.h"
+#include "Impact.h"
 
 TEST(CollisionInfoTest, CollisionInfoInit){
     Ray r = Ray(Tuple({0,0,-5}, TupType::POINT),Tuple({0,0,1}));

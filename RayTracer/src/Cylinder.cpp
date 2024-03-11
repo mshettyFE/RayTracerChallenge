@@ -22,25 +22,26 @@ bool Cylinder::check_cap(const Ray& r, double time) const{
     return (x*x+z*z) <= 1;
 }
 
-std::vector<double> Cylinder::intersect_cap(const Ray& r) const{
+std::vector<Impact> Cylinder::intersect_cap(const Ray& r) const{
     double dir_y = r.get_direction()[1];
     if(!(this->closed) || (std::abs(dir_y) < glob_resolution)){
         return {};        
     }
-    std::vector<double> out;
+    std::vector<Impact> out;
+    auto self = std::make_shared<Cylinder>(*this);
     double ori_y = r.get_origin()[1];
     double t = (minimum-ori_y)/dir_y;
     if(check_cap(r, t)){
-        out.push_back(t);
+        out.push_back(Impact(t,self));
     }
     t = (maximum-ori_y)/dir_y;
     if(check_cap(r, t)){
-        out.push_back(t);
+        out.push_back(Impact(t,self));
     }
     return out;
 }
 
-std::vector<double> Cylinder::intersect(const Ray &other) const {
+std::vector<Impact> Cylinder::intersect(const Ray &other) const {
     double origin_x =  other.get_origin()[0];
     double origin_y =  other.get_origin()[1];
     double origin_z =  other.get_origin()[2];
@@ -52,7 +53,9 @@ std::vector<double> Cylinder::intersect(const Ray &other) const {
     double c = origin_x*origin_x+origin_z*origin_z-1;
     double disc = b*b-4*a*c;
     if(disc<0){return {};}
-    std::vector<double> out;
+
+    std::vector<Impact> out;
+    auto self = std::make_shared<Cylinder>(*this);
     if(a> glob_resolution){
         double add_on = std::sqrt(disc);
         double t0 = (-b-add_on)/(2.0*a);
@@ -64,14 +67,14 @@ std::vector<double> Cylinder::intersect(const Ray &other) const {
         }
         double y0 = origin_y+t0*direction_y;
         if((y0 > minimum) && (y0 < maximum)){
-            out.push_back(t0);
+            out.push_back(Impact(t0,self));
         }
         double y1 = origin_y+t1*direction_y;
         if((y1 > minimum) && (y1 < maximum)){
-            out.push_back(t1);
+            out.push_back(Impact(t1,self));
         }
     }
-    for(double hit: intersect_cap(other)){
+    for(auto hit: intersect_cap(other)){
         out.push_back(hit);
     }
     return out;

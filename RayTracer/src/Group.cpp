@@ -1,4 +1,5 @@
 #include "Group.h"
+#include "Impact.h"
 #include <algorithm>
 
 Group::Group(Matrix Transformation, Material material, std::shared_ptr<Shape> parent): Shape(Transformation,material,parent,"Group"){
@@ -32,8 +33,8 @@ void Group::verbose_print() const{
     indent_print(0);
 }
 
-std::vector<double> Group::intersect(const Ray &r) const {
-    std::vector<double> out;
+std::vector<Impact> Group::intersect(const Ray &r) const {
+    std::vector<Impact> out;
     for(auto child: children){
         for(auto hit: child->intersect(r)){
             out.push_back(hit);

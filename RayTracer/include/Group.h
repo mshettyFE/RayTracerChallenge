@@ -7,6 +7,7 @@
 #include "Ray.h"
 #include "Shape.h"
 #include "Group.h"
+#include "Impact.h"
 #include <memory>
 #include <map>
 #include <type_traits>
@@ -19,7 +20,7 @@ private:
 public:
     Tuple normal_at(const Tuple& pt) const override;
     void verbose_print() const override;
-    std::vector<double> intersect(const Ray &other) const override;
+    std::vector<Impact> intersect(const Ray &other) const override;
 
     int get_total_children() const;
 

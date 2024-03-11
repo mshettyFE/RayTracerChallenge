@@ -1,8 +1,8 @@
 #include "Ray.h"
 #include <stdexcept>
-#include "Impact.h"
 #include "CollisionInfo.h"
 #include "Constants.h"
+#include "Impact.h"
 #include <map>
 #include <algorithm>
 

@@ -2,6 +2,7 @@
 #include "Cube.h"
 #include "Matrix.h"
 #include "Material.h"
+#include "Impact.h"
 #include <limits>
 #include <algorithm>
 
@@ -50,7 +51,7 @@ void Cube::verbose_print() const {
     std::cout << this->get_material() << std::endl;
 }
 
-std::vector<double> Cube::intersect(const Ray &other) const {
+std::vector<Impact> Cube::intersect(const Ray &other) const {
     std::vector<double> minima;
     std::vector<double> maxima;
     auto bounds = check_axis(other.get_origin()[0],other.get_direction()[0]);
@@ -77,5 +78,8 @@ std::vector<double> Cube::intersect(const Ray &other) const {
     if(largest_min > smallest_max){
         return {};
     }
-    return  {largest_min,smallest_max};
+    std::vector<Impact> out;
+    out.push_back(Impact(largest_min,std::make_shared<Cube>(*this)));
+    out.push_back(Impact(smallest_max,std::make_shared<Cube>(*this)));
+    return out;
 }

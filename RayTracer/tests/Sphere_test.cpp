@@ -10,10 +10,10 @@ TEST(SphereTest, Intersection){
     Ray r(Tuple({0,0,-5}, TupType::POINT),Tuple({0,0,1}));
     Matrix Trans = MatScaling(2,2,2);
     Sphere s(Trans);
-    std::vector<double> intersections = s.intersect(r);
+    std::vector<Impact> intersections = s.intersect(r);
     EXPECT_EQ(intersections.size(), 2);
-    EXPECT_EQ(intersections[0],3.0);
-    EXPECT_EQ(intersections[1],7.0);
+    EXPECT_EQ(intersections[0].get_t(),3.0);
+    EXPECT_EQ(intersections[1].get_t(),7.0);
     r = Ray(Tuple({0,0,-5}, TupType::POINT),Tuple({0,0,1}));
     Trans = MatTranslation(5,0,0);
     s = Sphere(Trans);

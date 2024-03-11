@@ -10,32 +10,32 @@ TEST(CubeTest, Intersection){
     Cube c;
     Ray r({5,0.5,0},{-1,0,0});
     auto hits = c.intersect(r);
-    EXPECT_EQ(hits[0], 4);
-    EXPECT_EQ(hits[1], 6);
+    EXPECT_EQ(hits[0].get_t(), 4);
+    EXPECT_EQ(hits[1].get_t(), 6);
     r = Ray({-5,0.5,0},{1,0,0});
     hits = c.intersect(r);
-    EXPECT_EQ(hits[0], 4);
-    EXPECT_EQ(hits[1], 6);
+    EXPECT_EQ(hits[0].get_t(), 4);
+    EXPECT_EQ(hits[1].get_t(), 6);
     r = Ray({0.5,5,0},{0,-1,0});
     hits = c.intersect(r);
-    EXPECT_EQ(hits[0], 4);
-    EXPECT_EQ(hits[1], 6);
+    EXPECT_EQ(hits[0].get_t(), 4);
+    EXPECT_EQ(hits[1].get_t(), 6);
     r = Ray({0.5,-5,0},{0,1,0});
     hits = c.intersect(r);
-    EXPECT_EQ(hits[0], 4);
-    EXPECT_EQ(hits[1], 6);
+    EXPECT_EQ(hits[0].get_t(), 4);
+    EXPECT_EQ(hits[1].get_t(), 6);
     r = Ray({0.5,0,5},{0,0,-1});
     hits = c.intersect(r);
-    EXPECT_EQ(hits[0], 4);
-    EXPECT_EQ(hits[1], 6);
+    EXPECT_EQ(hits[0].get_t(), 4);
+    EXPECT_EQ(hits[1].get_t(), 6);
     r = Ray({0.5,0,-5},{0,0,1});
     hits = c.intersect(r);
-    EXPECT_EQ(hits[0], 4);
-    EXPECT_EQ(hits[1], 6);
+    EXPECT_EQ(hits[0].get_t(), 4);
+    EXPECT_EQ(hits[1].get_t(), 6);
     r = Ray({0,0.5,0},{0,0,1});
     hits = c.intersect(r);
-    EXPECT_EQ(hits[0], -1);
-    EXPECT_EQ(hits[1], 1);
+    EXPECT_EQ(hits[0].get_t(), -1);
+    EXPECT_EQ(hits[1].get_t(), 1);
 }
 
 TEST(CubeTest,Misses){

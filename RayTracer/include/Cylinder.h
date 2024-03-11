@@ -6,6 +6,7 @@
 #include "Material.h"
 #include "Ray.h"
 #include "Shape.h"
+#include "Impact.h"
 #include <limits>
 
 class Cylinder : public Shape{
@@ -14,11 +15,11 @@ private:
     double maximum;
     bool closed;
     bool check_cap(const Ray& r, double time) const;
-    std::vector<double> intersect_cap(const Ray& r) const;
+    std::vector<Impact> intersect_cap(const Ray& r) const;
 public:
     Tuple normal_at(const Tuple& pt) const override;
     void verbose_print() const override;
-    std::vector<double> intersect(const Ray &other) const override;
+    std::vector<Impact> intersect(const Ray &other) const override;
 
     Cylinder(Matrix Transformation=MatIdentity(4), Material material=Material(), std::shared_ptr<Shape> parent=nullptr,
      double min= NEG_INFTY, double max= INFTY,bool closed = false);

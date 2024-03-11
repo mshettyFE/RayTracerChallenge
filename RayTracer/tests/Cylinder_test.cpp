@@ -34,24 +34,24 @@ TEST(CylinderTest, Hit){
     Ray r(origin, direction);
     auto hits= c.intersect(r);
     ASSERT_EQ(hits.size(), 2);
-    EXPECT_EQ(hits[0],5);
-    EXPECT_EQ(hits[1],5);
+    EXPECT_EQ(hits[0].get_t(),5);
+    EXPECT_EQ(hits[1].get_t(),5);
     direction = Tuple({0,0,1});
     direction.normalize();
     origin = Tuple({0,0,-5}, TupType::POINT);
     r = Ray(origin, direction);
     hits= c.intersect(r);
     EXPECT_EQ(hits.size(), 2);
-    EXPECT_EQ(hits[0],4);
-    EXPECT_EQ(hits[1],6);
+    EXPECT_EQ(hits[0].get_t(),4);
+    EXPECT_EQ(hits[1].get_t(),6);
     direction = Tuple({0.1,1,1});
     direction.normalize();
     origin = Tuple({0.5,0,-5}, TupType::POINT);
     r = Ray(origin, direction);
     hits= c.intersect(r);
     EXPECT_EQ(hits.size(), 2);
-    EXPECT_LE(hits[0]-6.80798,glob_resolution);
-    EXPECT_LE(hits[1]-7.08872,glob_resolution);
+    EXPECT_LE(hits[0].get_t()-6.80798,glob_resolution);
+    EXPECT_LE(hits[1].get_t()-7.08872,glob_resolution);
 }
 
 
