@@ -9,6 +9,7 @@
 #include "Group.h"
 #include <memory>
 #include <map>
+#include <type_traits>
 
 class Group : public Shape{
 private:
@@ -23,8 +24,10 @@ public:
 
     std::shared_ptr<Shape> get_group_pointer() const;
 
-    template <typename shp>
-    void add_child(shp& new_member){
+
+template<class shp>
+void add_child(shp& new_member){
+        static_assert(std::is_base_of<Shape,shp>::value, "shp must be derived from Shape");
         new_member.set_parent(this_group);
         this->children.push_back(std::make_shared<shp>(new_member));
     }
