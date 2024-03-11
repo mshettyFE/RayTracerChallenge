@@ -10,13 +10,13 @@ class Shape;
 class Pattern{
 private:
     Matrix transformation;
-protected:
+ protected:
     std::string name;
 public:
     Pattern(Matrix trans=MatIdentity(4), std::string name="PLACEHOLDER");
     virtual ~Pattern(){}
-
     virtual Color at(const Tuple& pt) const = 0;
+
     Color at_object(const Tuple& pt, const std::shared_ptr<Shape>& obj) const;
 
     void set_transformation(const Matrix& new_mat);

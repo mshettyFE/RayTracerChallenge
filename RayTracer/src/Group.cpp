@@ -3,12 +3,7 @@
 #include <algorithm>
 
 Group::Group(Matrix Transformation, Material material, std::shared_ptr<Shape> parent): Shape(Transformation,material,parent,"Group"){
-    this->this_group = std::make_shared<Group>(*this);
     this->nested_shape_type = NestedShapeType::GROUP;
-}
-
-std::shared_ptr<Shape> Group::get_group_pointer() const{
-    return this->this_group;
 }
 
 int Group::get_total_children() const{
@@ -17,7 +12,7 @@ int Group::get_total_children() const{
 
 void Group::indent_print(unsigned int tabs) const{
     auto indentation = std::string(tabs,'\t');
-    std::cout << indentation <<"Shape: " <<  name << " ID:" << get_id() << " Total Children: " << get_total_children() << std::endl;
+    this->print(tabs);
     tabs++;
     for(auto child: children){
         if(child->get_nst() == NestedShapeType::GROUP){

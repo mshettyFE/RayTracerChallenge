@@ -15,7 +15,7 @@ enum NestedShapeType{
   CSG = 2
 };
 
-const double glob_resolution = 1E-4;
+const double glob_resolution = 0.00001;
 const double pi = std::acos(-1);
 
 const double INFTY = std::numeric_limits<double>::infinity();

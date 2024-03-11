@@ -9,6 +9,7 @@
 #define BLUE Color(0,0,1)
 #define BLACK Color(0,0,0)
 #define WHITE Color(1,1,1)
+#define GRAY Color(0.5,0.5,0.5)
 #define RED_CHANNEL(hex) ((hex >> 16)&0x0000FF)
 #define GREEN_CHANNEL(hex) ((hex >> 8)&0x0000FF)
 #define BLUE_CHANNEL(hex) hex & 0x0000FF

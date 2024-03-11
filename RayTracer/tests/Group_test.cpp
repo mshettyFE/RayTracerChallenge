@@ -13,7 +13,7 @@ TEST(GroupTest,NewChild){
     EXPECT_EQ(g.get_total_children(), 0);
     Sphere s;
     g.add_child<Sphere>(s);
-    EXPECT_EQ(s.get_parent(), g.get_group_pointer());
+    EXPECT_EQ(s.get_parent()->get_id(),g.get_id());
 }
 
 TEST(GroupTest, Printing){
@@ -55,9 +55,16 @@ TEST(GroupTest, Transformation){
 
 TEST(GroupTest, WorldToObj){
     Group g1(MatRotateY(pi/2.0));
-    Group g2(MatScaling(2,2,2));
-    g1.add_child<Group>(g2);
+    Group g2(MatScaling(1,2,3));
     Sphere s(MatTranslation(5,0,0));
+    Group g3(MatScaling(1,2,3));
+    Sphere s2(MatTranslation(5,0,0));
+    std::cout << "Grouped " << std::endl;
+    g3.add_child<Sphere>(s2);
+    g2.add_child<Group>(g3);
     g2.add_child<Sphere>(s);
-    
+    g1.add_child<Group>(g2);
+    g1.verbose_print();
+    s2.get_transform();
+    EXPECT_EQ(s.normal_at(Tuple({1.7321, 1.1547, -5.5774}, TupType::POINT)),Tuple({0.2857, 0.4286, -0.8571}));
 }

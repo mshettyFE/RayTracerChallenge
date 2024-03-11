@@ -11,6 +11,7 @@
 #include "Plane.h"
 #include "Camera.h"
 #include "World.h"
+#include "PointSource.h"
 
 TEST(StripeTest,ProperSetup){
     Stripes s(WHITE, BLACK);
@@ -26,19 +27,45 @@ TEST(StripeTest,ProperSetup){
     EXPECT_EQ(s.at(Tuple({-1.1,0,0},TupType::POINT)), WHITE);
 }
 
-TEST(StripeTest, ObjTransform){
-    Sphere s;
-    s.set_transform(MatScaling(2,2,2));
-    Stripes pat(WHITE,BLACK);
-    Color c = pat.at_object(Tuple({1.5,0,0},TupType::POINT), std::make_shared<Sphere>(s));
-    EXPECT_EQ(c,WHITE);
-    pat.set_transformation(MatScaling(2,2,2));
-    c = pat.at_object(Tuple({1.5,0,0},TupType::POINT), std::make_shared<Sphere>(s));
-    EXPECT_EQ(c,WHITE);
-    s.set_transform(MatScaling(2,2,2));
-    pat.set_transformation(MatTranslation(0.5,0,0));
-    c = pat.at_object(Tuple({2.5,0,0},TupType::POINT), std::make_shared<Sphere>(s));
-    EXPECT_EQ(c,WHITE);
+TEST(StripeTest, Lighting){
+    Stripes s(WHITE, BLACK);
+    Material mat;
+    mat.set_ambient(1);
+    mat.set_diffuse(0);
+    mat.set_specular(0);
+    mat.set_pattern(std::make_shared<Stripes>(s));
+    Tuple eye({0,0,-1});
+    Tuple normal({0,0,-1});
+    PointSource ps(WHITE, Tuple({0,0,-10}, TupType::POINT));
+    Tuple point({0.9,0,0}, TupType::POINT);
+    Sphere sph(MatIdentity(4), mat);
+    EXPECT_EQ(ps.shade(std::make_shared<Sphere>(sph),point,eye,normal,false), WHITE);
+    point = Tuple({1.1,0,0}, TupType::POINT);
+    EXPECT_EQ(ps.shade(std::make_shared<Sphere>(sph),point,eye,normal,false), BLACK);
+}
+
+TEST(StripeTest, Transform1){
+    Material mat;
+    auto pat = Stripes(WHITE,BLACK);
+    mat.set_pattern(std::make_shared<Stripes>(pat));
+    Sphere s(MatScaling(2,2,2),mat);
+    EXPECT_EQ(pat.at_object(Tuple({1.5,0,0}, TupType::POINT), std::make_shared<Sphere>(s)),WHITE);
+}
+
+TEST(StripeTest, Transform2){
+    Material mat;
+    auto pat = Stripes(WHITE,BLACK,MatScaling(2,2,2));
+    mat.set_pattern(std::make_shared<Stripes>(pat));
+    Sphere s(MatIdentity(4),mat);
+    EXPECT_EQ(pat.at_object(Tuple({1.5,0,0}, TupType::POINT), std::make_shared<Sphere>(s)),WHITE);
+}
+
+TEST(StripeTest, Transform3){
+    Material mat;
+    auto pat = Stripes(WHITE,BLACK, MatTranslation(0.5,0,0));
+    mat.set_pattern(std::make_shared<Stripes>(pat));
+    Sphere s(MatScaling(2,2,2),mat);
+    EXPECT_EQ(pat.at_object(Tuple({2.5,0,0}, TupType::POINT), std::make_shared<Sphere>(s)),WHITE);
 }
 
 TEST(TestImage, PatternTests){

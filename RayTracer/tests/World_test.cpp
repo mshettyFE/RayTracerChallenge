@@ -151,7 +151,7 @@ TEST(WorldTest, ReflectColor){
     CollisionInfo c  = CollisionInfo(i,r);
     EXPECT_EQ(c.get_reflect(), Tuple({0, std::sqrt(2)/2.0, std::sqrt(2)/2.0}));
     Color out =  w.reflect_color(c);
-    EXPECT_EQ(out, Color({0.19032, 0.2379, 0.14274}));
+    EXPECT_EQ(out, Color({0.19033, 0.23791, 0.142749}));
 }
 
 TEST(WorldTest, ShadeReflection){
@@ -163,7 +163,7 @@ TEST(WorldTest, ShadeReflection){
     Ray r = Ray(Tuple({0, 0, -3}, TupType::POINT), Tuple({0, -std::sqrt(2)/2.0, std::sqrt(2)/2.0}));
     Impact i = Impact(std::sqrt(2),w.get_shape(2));
     CollisionInfo c  = CollisionInfo(i,r);
-    EXPECT_EQ(w.shade_hit(c), Color({0.87677, 0.92436, 0.82918}));
+    EXPECT_EQ(w.shade_hit(c), Color({0.87676, 0.92435, 0.829175}));
 }
 
 TEST(WorldTest, InfiniteRecursion){
@@ -252,7 +252,7 @@ TEST(WorldTest, ColorRefracted){
     Ray r({0,0,0.1},{0,1,0});
     std::vector<Impact> xs{Impact(-0.9899,A), Impact(-0.4899,B), Impact(0.4899,B), Impact(0.9899,A)};
     CollisionInfo comps(xs[2],r, xs);
-    EXPECT_EQ(w.refract_color(comps,5), Color({0, 0.99888, 0.04725}));
+    EXPECT_EQ(w.refract_color(comps,5), Color({0, 0.99888, 0.04721}));
 }
 
 TEST(WorldTest, ShadeWithRefraction){
@@ -324,7 +324,7 @@ TEST(TestImage, FresnelEffect){
 TEST(TestImage,NestedSpheres){
     PointSource ps(WHITE,Tuple({-10,10,-10}, TupType::POINT));
     Material glass;
-    glass.set_color(WHITE);
+    glass.set_color(GRAY);
     glass.set_reflectance(1);
     glass.set_transparency(1);
     glass.set_refractive_index(GLASS);
@@ -336,7 +336,10 @@ TEST(TestImage,NestedSpheres){
     air.set_refractive_index(AIR);
     Sphere middle(MatIdentity(4), air);
     Material wall_mat;
-    wall_mat.set_pattern(std::make_shared<Checkers>(Checkers(WHITE,BLACK)));
+    wall_mat.set_color(GREEN);
+    air.set_reflectance(0);
+    air.set_transparency(0);
+    wall_mat.set_pattern(std::make_shared<Checkers>(Checkers(WHITE,RED)));
     std::vector<Matrix> operations{MatRotateZ(pi/4.0),MatTranslation(7,0,0)};
     Plane wall(Chain(operations),wall_mat);
     std::vector<std::shared_ptr<Shape>> shapes;
@@ -347,7 +350,7 @@ TEST(TestImage,NestedSpheres){
     shapes.push_back(std::make_shared<Sphere>(middle));
     shapes.push_back(std::make_shared<Plane>(wall));
     World w(sources, shapes);
-    Tuple from({-10,0,0}, TupType::POINT);
+    Tuple from({-5,0,0}, TupType::POINT);
     Tuple to({0,0,0}, TupType::POINT);
     Tuple up({0,0,-1});
     Camera cam(100,100,pi/2.0, from, to, up);

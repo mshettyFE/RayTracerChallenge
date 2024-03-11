@@ -26,11 +26,25 @@ void Shape::set_transform(Matrix a_Tranformation){
     this->Transformation = a_Tranformation;
 }
 
-Matrix Shape::get_transform() const{
+Matrix Shape::get_only_this_transform() const{
+    return Transformation;
+}
+
+
+Matrix Shape::get_transform(int count, bool verbose) const{
+    if(verbose){
+        if(this->parent == nullptr){
+            std::cout << "Level: " <<count << " Current: " << this->get_id() <<   " Parent: NULL" << std::endl;
+        }
+        else{
+            std::cout << "Level: " <<count << " Current: " << this->get_id() <<  " Parent: " << this->parent->get_id() << std::endl;
+        }
+    }
     if(this->parent == nullptr){
         return Transformation;
     }
-    return this->parent->get_transform()*this->Transformation;
+        count++;
+        return Chain({this->Transformation,this->parent->get_transform(count)});
 }
 
 void Shape::set_material(Material new_mat){
@@ -52,9 +66,14 @@ std::string Shape::get_name() const{
     return name;
 }
 
-void Shape::print(unsigned int indent){
+void Shape::print(unsigned int indent) const{
     auto indentation = std::string(indent,'\t');
-    std::cout << indentation << "Shape: " << name  << " ID: " << id << std::endl;
+    if(parent == nullptr){
+        std::cout << indentation <<"Shape: " <<  name << " ID: " << get_id() << " Parent: NULL" << std::endl;
+    }
+    else{
+        std::cout << indentation <<"Shape: " <<  name << " ID: " << get_id() << " Parent " << parent->get_id() <<  std::endl;
+    }
 }
 
 Tuple Shape::normal_at(const Tuple& world_pt) const{
