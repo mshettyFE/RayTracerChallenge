@@ -6,7 +6,7 @@ Plane::Plane( Matrix Transformation, Material material) : Shape(Transformation, 
 }
 
 
-Tuple Plane::normal_at(Tuple pt) const {
+Tuple Plane::normal_at(const Tuple& pt) const {
     return normal_vector;
 }
 

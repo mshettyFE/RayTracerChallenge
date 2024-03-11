@@ -12,7 +12,7 @@ class Plane: public Shape{
     public:
         Plane(Matrix Transformation=MatIdentity(4), Material material=Material());
 
-        Tuple normal_at(Tuple pt) const override;
+        Tuple normal_at(const Tuple& pt) const override;
         std::vector<double> intersect(const Ray &other) const override;
         void print() const override;
 

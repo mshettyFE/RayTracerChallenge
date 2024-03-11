@@ -5,7 +5,7 @@
 Sphere::Sphere(Matrix Transformation, Material material) : Shape(Transformation, material){}
 
 
-Tuple Sphere::normal_at(Tuple world_pt) const{
+Tuple Sphere::normal_at(const Tuple& world_pt) const{
     Tuple obj = Transformation.Inverse()*world_pt; // Convert world point to object point
     obj.set_type(TupType::POINT); // Sphere's normal at a point on the sphere is in the same direction as the vector of that point
     Tuple world_normal = Transformation.Transpose().Inverse()* obj; 

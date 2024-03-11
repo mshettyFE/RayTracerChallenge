@@ -14,7 +14,7 @@ protected:
     Matrix Transformation;
     Material mat;
 public:
-    virtual Tuple normal_at(Tuple pt) const =0;
+    virtual Tuple normal_at(const Tuple& pt) const =0;
     virtual void print() const=0;
     virtual std::vector<double> intersect(const Ray &other) const =0;
 
