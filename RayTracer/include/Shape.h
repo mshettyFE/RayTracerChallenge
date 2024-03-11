@@ -20,6 +20,7 @@ protected:
 public:
     virtual Tuple normal_at(const Tuple& pt) const =0;
     virtual std::vector<double> intersect(const Ray &other) const =0;
+    virtual ~Shape(){}
 
     virtual void verbose_print() const=0;
     void print(unsigned int indent=0);

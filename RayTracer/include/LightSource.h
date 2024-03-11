@@ -12,6 +12,7 @@ class LightSource{
         std::string name;
     public:
         LightSource(const Color& intensity,const Tuple& position, std::string light_type="PLACEHOLDER");
+        virtual ~LightSource(){}
 
         Color get_intensity() const;
         Tuple get_position() const;
