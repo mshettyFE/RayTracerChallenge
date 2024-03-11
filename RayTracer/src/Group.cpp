@@ -4,16 +4,25 @@ Group::Group(Matrix Transformation, Material material, std::shared_ptr<Shape> pa
     this->mat = material;
     this->Transformation = Transformation;
     this->parent = parent;
-//    this->this_group = std::make_shared<Shape>(*this);
+    this->this_group = std::make_shared<Group>(*this);
+}
+
+std::shared_ptr<Shape> Group::get_group_pointer() const{
+    return this->this_group;
+}
+
+void Group::print(unsigned int indent) const{
+    auto tabs = std::string(indent,'\t');
+    std::cout << tabs << "Group" << std::endl;
+    indent++;
+    tabs = std::string(indent,'\t');
+    for(auto child: children){
+        std::cout << tabs << child->get_id() << std::endl;
+        if(child->get_total_children() != 0){
+            child->print(indent);
+        }
+    }
 }
 
 Tuple Group::normal_at(const Tuple& pt) const{}
-void Group::print() const {}
 std::vector<double> Group::intersect(const Ray &other) const {}
-int Group::get_total_members() const{
-    return this->members.size();
-}
-void Group::add_child(std::shared_ptr<Shape> new_member){
-//    new_member->set_parent(this_group);
-    this->members.push_back(new_member);
-}

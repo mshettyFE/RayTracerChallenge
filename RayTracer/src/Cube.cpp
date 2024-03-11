@@ -43,7 +43,7 @@ Tuple Cube::normal_at(const Tuple& pt) const{
     return Tuple({0,0,pt[2]});
 }
 
-void Cube::print() const {
+void Cube::print(unsigned int indent) const {
     std::cout << "Cube" << std::endl;
     std::cout << this->get_id() << std::endl;
     std::cout << this->get_transform() << std::endl;

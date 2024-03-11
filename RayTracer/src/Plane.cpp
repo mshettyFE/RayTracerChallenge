@@ -22,7 +22,7 @@ std::vector<double> Plane::intersect(const Ray &other) const{
     return out;
 }
 
-void Plane::print() const{
+void Plane::print(unsigned int indent) const{
     std::cout << "Plane" << std::endl;
     std::cout << "Transformation:" << std::endl;
     std::cout << Transformation << std::endl;

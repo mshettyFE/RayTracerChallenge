@@ -36,12 +36,12 @@ std::vector<double> Sphere::intersect(const Ray &other) const{
 }
 
 
-void Sphere::print() const{
+void Sphere::print(unsigned int indent) const{
     std::cout << "Sphere" << std::endl;
     std::cout << "Transformation:" << std::endl;
     std::cout << Transformation << std::endl;
     std::cout << mat << std::endl;
-    std::cout << "\tShape ID: " << id << std::endl;
+    std::cout << "Shape ID: " << id << std::endl;
 }
 
 Sphere glass_sphere(double IOR){

@@ -10,7 +10,7 @@ Cylinder::Cylinder(Matrix Transformation, Material material, std::shared_ptr<Sha
     this->parent = parent;
 }
 
-void Cylinder::print() const{
+void Cylinder::print(unsigned int indent) const{
     std::cout << "Cylinder" << std::endl;
     std::cout << this->get_transform() << std::endl;
     std::cout << mat;

@@ -13,6 +13,10 @@ Shape::Shape(Matrix a_Transformation, Material material, std::shared_ptr<Shape> 
     GlobalID += 1;
 }
 
+int Shape::get_total_children() const{
+    return this->children.size();
+}
+
 void Shape::set_transform(Matrix a_Tranformation){
     Transformation = a_Tranformation;
 }
