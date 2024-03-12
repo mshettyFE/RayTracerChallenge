@@ -17,6 +17,7 @@
 #include "Checkers.h"
 #include "Stripes.h"
 #include "GradientPattern.h"
+#include "RingPattern.h"
 #include <memory>
 
 TEST(WorldTest,IntersectionTest){
@@ -341,7 +342,7 @@ TEST(TestImage,AirBubble){
     wall_mat.set_color(GREEN);
     air.set_reflectance(0);
     air.set_transparency(0);
-    wall_mat.set_pattern(std::make_shared<Checkers>(Checkers(WHITE,RED)));
+    wall_mat.set_pattern(std::make_shared<RingPattern>(RingPattern(WHITE,RED)));
     std::vector<Matrix> operations{MatRotateZ(pi/4.0),MatTranslation(7,0,0)};
     Plane wall(Chain(operations),wall_mat);
     std::vector<std::shared_ptr<Shape>> shapes;
