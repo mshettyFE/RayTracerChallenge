@@ -321,18 +321,18 @@ TEST(TestImage, FresnelEffect){
     img->save_ppm("Fresnel");
 }
 
-TEST(TestImage,NestedSpheres){
+TEST(TestImage,AirBubble){
     PointSource ps(WHITE,Tuple({-10,10,-10}, TupType::POINT));
     Material glass;
     glass.set_color(GRAY);
-    glass.set_reflectance(1);
-    glass.set_transparency(1);
+    glass.set_reflectance(0);
+    glass.set_transparency(0);
     glass.set_refractive_index(GLASS);
     Sphere outer(MatScaling(2,2,2), glass);
     Material air;
     air.set_color(WHITE);
     air.set_reflectance(0);
-    air.set_transparency(1);
+    air.set_transparency(0);
     air.set_refractive_index(AIR);
     Sphere middle(MatIdentity(4), air);
     Material wall_mat;
@@ -353,7 +353,7 @@ TEST(TestImage,NestedSpheres){
     Tuple from({-5,0,0}, TupType::POINT);
     Tuple to({0,0,0}, TupType::POINT);
     Tuple up({0,0,-1});
-    Camera cam(100,100,pi/2.0, from, to, up);
+    Camera cam(1000,1000,pi/2.0, from, to, up);
     auto img = cam.render(w);
     img->save_ppm("NestedGlass");
 }
