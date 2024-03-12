@@ -51,7 +51,7 @@ void Cube::verbose_print() const {
     std::cout << this->get_material() << std::endl;
 }
 
-std::vector<Impact> Cube::intersect(const Ray &other) const {
+std::vector<Impact> Cube::local_intersect(const Ray &other) const {
     std::vector<double> minima;
     std::vector<double> maxima;
     auto bounds = check_axis(other.get_origin()[0],other.get_direction()[0]);

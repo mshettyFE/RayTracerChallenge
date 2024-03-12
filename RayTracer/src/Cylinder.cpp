@@ -41,7 +41,7 @@ std::vector<Impact> Cylinder::intersect_cap(const Ray& r) const{
     return out;
 }
 
-std::vector<Impact> Cylinder::intersect(const Ray &other) const {
+std::vector<Impact> Cylinder::local_intersect(const Ray &other) const {
     double origin_x =  other.get_origin()[0];
     double origin_y =  other.get_origin()[1];
     double origin_z =  other.get_origin()[2];

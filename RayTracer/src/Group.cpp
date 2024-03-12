@@ -28,7 +28,7 @@ void Group::verbose_print() const{
     indent_print(0);
 }
 
-std::vector<Impact> Group::intersect(const Ray &r) const {
+std::vector<Impact> Group::local_intersect(const Ray &r) const {
     std::vector<Impact> out;
     for(auto child: children){
         for(auto hit: child->intersect(r)){

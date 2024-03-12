@@ -17,9 +17,9 @@ private:
     bool check_cap(const Ray& r, double time) const;
     std::vector<Impact> intersect_cap(const Ray& r) const;
     Tuple local_normal_at(const Tuple& pt) const override;
+    std::vector<Impact> local_intersect(const Ray &other) const override;
 public:
     void verbose_print() const override;
-    std::vector<Impact> intersect(const Ray &other) const override;
 
     Cylinder(Matrix Transformation=MatIdentity(4), Material material=Material(), std::shared_ptr<Shape> parent=nullptr,
      double min= NEG_INFTY, double max= INFTY,bool closed = false);

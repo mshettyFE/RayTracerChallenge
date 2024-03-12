@@ -12,9 +12,9 @@ class Cube : public Shape{
 private:
     std::vector<double> check_axis(double origin, double direction) const;
     Tuple local_normal_at(const Tuple& pt) const override;
+    std::vector<Impact> local_intersect(const Ray &other) const override;
 public:
     void verbose_print() const override;
-    std::vector<Impact> intersect(const Ray &other) const override;
 
     Cube(Matrix Transformation=MatIdentity(4), Material material=Material(), std::shared_ptr<Shape> parent=nullptr);
 };

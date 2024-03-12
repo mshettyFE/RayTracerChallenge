@@ -10,12 +10,11 @@ Tuple Sphere::local_normal_at(const Tuple& pt) const{
     return pt;
 }
 
-std::vector<Impact> Sphere::intersect(const Ray &other) const{
+std::vector<Impact> Sphere::local_intersect(const Ray &other) const{
     std::vector<Impact> output;
-    Ray TransformedRay = other.transform(get_transform().Inverse());
-    Tuple origin_vec = TransformedRay.get_origin();
+    Tuple origin_vec = other.get_origin();
     origin_vec.set_type(TupType::VECTOR);
-    Tuple dir = TransformedRay.get_direction();
+    Tuple dir = other.get_direction();
     double a = dir.dot(dir);
     double b = 2.0*origin_vec.dot(dir);
     double c = origin_vec.dot(origin_vec)-1;

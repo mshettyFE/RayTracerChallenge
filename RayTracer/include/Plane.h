@@ -11,10 +11,10 @@ class Plane: public Shape{
     private:
         Tuple normal_vector;
         Tuple local_normal_at(const Tuple& pt) const override;
+        std::vector<Impact> local_intersect(const Ray &other) const override;
     public:
         Plane(Matrix Transformation=MatIdentity(4), Material material=Material(), std::shared_ptr<Shape> parent=nullptr);
 
-        std::vector<Impact> intersect(const Ray &other) const override;
         void verbose_print() const override;
 
 

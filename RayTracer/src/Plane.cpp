@@ -10,14 +10,13 @@ Tuple Plane::local_normal_at(const Tuple& pt) const {
     return normal_vector;
 }
 
-std::vector<Impact> Plane::intersect(const Ray &other) const{
+std::vector<Impact> Plane::local_intersect(const Ray &other) const{
     std::vector<Impact> out;
     if(std::abs(other.get_direction()[1]) < glob_resolution){
         return out;
     }
-    Ray TransformedRay = other.transform(this->get_transform().Inverse());
-    Tuple origin_vec = TransformedRay.get_origin();
-    double t = - TransformedRay.get_origin()[1] / TransformedRay.get_direction()[1];
+    Tuple origin_vec = other.get_origin();
+    double t = - origin_vec[1] / other.get_direction()[1];
     out.push_back(Impact(t, std::make_shared<Plane>(*this)));
     return out;
 }

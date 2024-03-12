@@ -32,19 +32,24 @@ Matrix Shape::get_only_this_transform() const{
 
 
 Matrix Shape::get_transform(int count, bool verbose) const{
+    Matrix output;
     if(verbose){
-        if(this->parent == nullptr){
+        if(get_parent() == nullptr){
             std::cout << "Level: " <<count << " Current: " << this->get_id() <<   " Parent: NULL" << std::endl;
         }
         else{
-            std::cout << "Level: " <<count << " Current: " << this->get_id() <<  " Parent: " << this->parent->get_id() << std::endl;
+            std::cout << "Level: " <<count << " Current: " << this->get_id() <<  " Parent: " << this->get_parent()->get_id() << std::endl;
         }
     }
-    if(this->parent == nullptr){
-        return Transformation;
+    if(get_parent() == nullptr){
+        output = Transformation;
     }
+    else{
         count++;
-        return Chain({this->Transformation,this->parent->get_transform(count)});
+        Matrix parent_matrix = get_parent()->get_transform(count,verbose);
+        output = parent_matrix*this->Transformation;
+    }
+    return output;
 }
 
 void Shape::set_material(Material new_mat){
@@ -84,4 +89,9 @@ Tuple Shape::normal_at(const Tuple& world_pt) const{
     output.set_type(TupType::VECTOR);
     output.normalize();
     return output;
+}
+
+std::vector<Impact> Shape::intersect(const Ray &other) const{
+    Ray TransformedRay = other.transform(get_transform().Inverse());
+    return local_intersect(TransformedRay);
 }
