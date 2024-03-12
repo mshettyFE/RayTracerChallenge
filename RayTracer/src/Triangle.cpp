@@ -21,12 +21,21 @@ Tuple Triangle::local_normal_at(const Tuple& pt) const {
 }
 
 std::vector<Impact> Triangle::local_intersect(const Ray &other) const {
-    auto crossed = other.get_direction().cross(edge2);
-    double det = edge1.dot(crossed);
+//www.tandfonline.com/doi/abs/10.1080/10867651.1997.10487468
+    auto crossed_e2 = other.get_direction().cross(edge2);
+    double det = edge1.dot(crossed_e2);
     if(std::abs(det) < glob_resolution){
         return {};
     }
-    return {Impact(1,std::make_shared<Triangle>(*this))};
+    double f = 1.0/det;
+    Tuple p1_to_origin = other.get_origin()-p1;
+    double u = f*p1_to_origin.dot(crossed_e2);
+    if((u <0) || (u>1)){return{};}
+    auto crossed_e1 = p1_to_origin.cross(edge1);
+    double v = f*other.get_direction().dot(crossed_e1);
+    if((v <0) || (u+v>1)){return{};}
+    double t = f*edge2.dot(crossed_e1);
+    return {Impact(t,std::make_shared<Triangle>(*this))};
 }
 
 void Triangle::verbose_print() const {

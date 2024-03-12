@@ -31,7 +31,19 @@ TEST(TriangleTest, Normals){
 }
 
 TEST(TriangleTest, Intersection){
+// misses
     Triangle t({0,1,0},{-1,0,0}, {1,0,0});
     Ray r({0,-1,2},{0,1,0});
-    t.intersect(r);
+    EXPECT_EQ(t.intersect(r).size(),0);
+    r = Ray({1,1,-2},{0,0,1});
+    EXPECT_EQ(t.intersect(r).size(),0);
+    r = Ray({-1,1,-2},{0,0,1});
+    EXPECT_EQ(t.intersect(r).size(),0);
+    r = Ray({0,-1,-2},{0,0,1});
+    EXPECT_EQ(t.intersect(r).size(),0);
+// hit
+    r = Ray({0,0.5,-2},{0,0,1});
+    auto hits = t.intersect(r);
+    EXPECT_EQ(hits.size(),1);
+    EXPECT_EQ(hits[0].get_t(), 2);
 }

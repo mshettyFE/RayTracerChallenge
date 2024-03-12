@@ -118,7 +118,7 @@ TEST(TestImage, OnlySpheres){
 // camera
     Tuple from = Tuple({0,1.5,-5}, TupType::POINT);
     Tuple to = Tuple({0,1,0}, TupType::POINT);
-    Tuple up = Tuple({1,0,0});
+    Tuple up = Tuple({0,1,0});
     Camera c(100,100, pi/3.0, from, to, up );
     std::vector<std::shared_ptr<Shape>> shapes;
     shapes.push_back(std::make_shared<Sphere>(floor));

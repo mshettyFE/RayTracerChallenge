@@ -161,9 +161,9 @@ std::unique_ptr<Canvas> Camera::render(World w) const{
     Canvas image = Canvas(this->hsize, this->vsize);
     for(int y=0; y<this->vsize-1; ++y){
         for(int x=0; x<this->hsize-1; ++x){
-            Ray r = ray_for_pixel(x,y);
+            Ray r = ray_for_pixel(y,x);
             Color c = w.color_at(r);
-            image.write_pixel(x,y,c);
+            image.write_pixel(y,x,c);
         }
     }
     return std::make_unique<Canvas>(image);
