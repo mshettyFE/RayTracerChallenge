@@ -17,7 +17,12 @@ Color Checkers::at(const Tuple& pt) const {
     if(pt.type() != TupType::POINT){
         throw std::invalid_argument("pt must be a point in Checkers");
     }
-    if(static_cast<int>(floor(pt[0])+floor(pt[1])+floor(pt[2]))%2  == 0){
+    int x = static_cast<int>(floor(pt[0]));
+    int y = static_cast<int>(floor(pt[1]+glob_resolution));
+    int z = static_cast<int>(floor(pt[2]));
+    int checker = x+y+z;
+//    int checker = x+z;
+    if(static_cast<int>(checker)%2  == 0){
         return color_a;
     }
     return color_b;

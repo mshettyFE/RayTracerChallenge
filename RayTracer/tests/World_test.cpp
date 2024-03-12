@@ -342,7 +342,10 @@ TEST(TestImage,AirBubble){
     wall_mat.set_color(GREEN);
     air.set_reflectance(0);
     air.set_transparency(0);
-    wall_mat.set_pattern(std::make_shared<Checkers>(Checkers(WHITE,RED)));
+    air.set_cast_shadow(false);
+    auto pat =  Checkers(WHITE,RED);
+    wall_mat.set_pattern(std::make_shared<Checkers>(pat));
+    
     std::vector<Matrix> operations{MatRotateZ(pi/4.0),MatTranslation(7,0,0)};
     Plane wall(Chain(operations),wall_mat);
     std::vector<std::shared_ptr<Shape>> shapes;
@@ -356,7 +359,7 @@ TEST(TestImage,AirBubble){
     Tuple from({-5,0,0}, TupType::POINT);
     Tuple to({0,0,0}, TupType::POINT);
     Tuple up({0,0,-1});
-    Camera cam(1000,1000,pi/2.0, from, to, up);
+    Camera cam(100,100,pi/2.0, from, to, up);
     auto img = cam.render(w);
     img->save_ppm("NestedGlass");
 }
