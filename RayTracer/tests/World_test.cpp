@@ -15,6 +15,8 @@
 #include "Canvas.h"
 #include "TestPattern.h"
 #include "Checkers.h"
+#include "Stripes.h"
+#include "GradientPattern.h"
 #include <memory>
 
 TEST(WorldTest,IntersectionTest){
@@ -353,7 +355,7 @@ TEST(TestImage,AirBubble){
     Tuple from({-5,0,0}, TupType::POINT);
     Tuple to({0,0,0}, TupType::POINT);
     Tuple up({0,0,-1});
-    Camera cam(1000,1000,pi/2.0, from, to, up);
+    Camera cam(100,100,pi/2.0, from, to, up);
     auto img = cam.render(w);
     img->save_ppm("NestedGlass");
 }
