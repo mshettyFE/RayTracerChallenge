@@ -59,14 +59,12 @@ TEST(TestImage, GradPatternTest){
     Tuple to = Tuple({0,1,0}, TupType::POINT);
     Tuple up = Tuple({1,0,0});
     Camera c(100,100, pi/3.0, from, to, up );
-    std::vector<std::unique_ptr<Shape>> shapes;
-    shapes.push_back(std::make_unique<Plane>(floor));
-    shapes.push_back(std::make_unique<Sphere>(middle));
-    shapes.push_back(std::make_unique<Sphere>(right));
-    shapes.push_back(std::make_unique<Sphere>(smallest));
-    std::vector<std::unique_ptr<LightSource>> sources;
-    sources.push_back(std::make_unique<PointSource>(ps));
-    World w(sources, shapes);
+    World w;
+    w.add_shape(std::make_unique<Plane>(floor));
+    w.add_shape(std::make_unique<Sphere>(middle));
+    w.add_shape(std::make_unique<Sphere>(right));
+    w.add_shape(std::make_unique<Sphere>(smallest));
+    w.add_source(std::make_unique<PointSource>(ps));
     std::unique_ptr<Canvas> img = c.render(w);
     img->save_ppm("GradPlaneScene");
 }

@@ -8,12 +8,14 @@
 #include "CollisionInfo.h"
 #include "Color.h"
 #include <memory>
+#include "LightSource.h"
+#include "Shape.h"
 #include "PointSource.h"
 
 class World{
     private:
-        std::vector<std::unique_ptr<LightSource>> sources = {};
-        std::vector<std::unique_ptr<Shape>> shapes = {};
+        std::vector<const LightSource*> sources;
+        std::vector<const Shape*> shapes;
     public:
 
     std::vector<Impact> intersect(const Ray& r) const;

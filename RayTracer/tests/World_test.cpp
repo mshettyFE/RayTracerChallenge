@@ -124,7 +124,7 @@ TEST(WorldTest, NonReflecting){
     std::unique_ptr<Sphere> s1 = std::make_unique<Sphere>(Sphere(MatIdentity(4),mat));
     std::unique_ptr<Sphere> s2 = std::make_unique<Sphere>(Sphere(MatScaling(0.5,0.5,0.5)));
     std::unique_ptr<PointSource> source = std::make_unique<PointSource>(PointSource(Color(1,1,1), Tuple({-10,10,-10}, TupType::POINT)));
-    World w();
+    World w;
     w.add_shape(std::move(s1));
     w.add_shape(std::move(s2));
     w.add_source(std::move(source));
@@ -173,7 +173,7 @@ TEST(WorldTest, InfiniteRecursion){
     w.add_shape(std::make_unique<Plane>(upper));
 
     std::cout << "Infinite Recursion" << std::endl;
-    world.color_at(r); // should terminate and not Segfault
+    w.color_at(r); // should terminate and not Segfault
 }
 
 TEST(WorldTest, CapRecursion){
@@ -344,7 +344,7 @@ TEST(TestImage,AirBubble){
     w.add_shape(std::make_unique<Sphere>(outer));
     w.add_shape(std::make_unique<Sphere>(middle));
     w.add_shape(std::make_unique<Plane>(wall));
-    w.add_source(std::make_unique<PointSource>(ps))
+    w.add_source(std::make_unique<PointSource>(ps));
     Tuple from({-5,0,0}, TupType::POINT);
     Tuple to({0,0,0}, TupType::POINT);
     Tuple up({0,0,-1});

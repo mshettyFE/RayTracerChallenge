@@ -191,7 +191,7 @@ void Tuple::set_type(TupType t){
 
 TupType Tuple::type() const{
   double d = this->data[this->dim];
-  if ( abs(d-TupType::POINT) < glob_resolution){
+  if ( std::abs(d-TupType::POINT) < glob_resolution){
     return TupType::POINT;
   }
   return TupType::VECTOR;
