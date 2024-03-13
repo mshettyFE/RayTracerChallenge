@@ -11,7 +11,7 @@
 #include "Impact.h"
 
 TEST(CollisionInfoTest, CollisionInfoInit){
-    Ray r = Ray(Tuple({0,0,-5}, TupType::POINT),Tuple({0,0,1}));
+    Ray r = Ray({0,0,-5}, {0,0,1});
     std::shared_ptr<Sphere> s = std::make_shared<Sphere>(Sphere());
     Impact hit(4,s);
     CollisionInfo i (hit, r);
@@ -21,7 +21,7 @@ TEST(CollisionInfoTest, CollisionInfoInit){
     EXPECT_EQ(i.get_eye(), Tuple({0,0,-1}));
     EXPECT_EQ(i.get_normal(), Tuple({0,0,-1}));
     EXPECT_EQ(i.is_inside(), false);
-    r = Ray(Tuple({0,0,0}, TupType::POINT),Tuple({0,0,1}));
+    r = Ray({0,0,0}, {0,0,1});
     hit = Impact(1,s);
     i  = CollisionInfo(hit, r);
     EXPECT_EQ(i.get_impact().get_t(), 1);
@@ -33,7 +33,7 @@ TEST(CollisionInfoTest, CollisionInfoInit){
  }
 
  TEST(CollisionInfoTest, Over){
-    Ray r = Ray(Tuple({0,0,-5}, TupType::POINT),Tuple({0,0,1}));
+    Ray r = Ray({0,0,-5}, {0,0,1});
     std::shared_ptr<Sphere> s = std::make_shared<Sphere>(Sphere());
     Impact hit(4,s);
     CollisionInfo i (hit, r);
@@ -43,7 +43,7 @@ TEST(CollisionInfoTest, CollisionInfoInit){
 
 TEST(CollisionInfoTest, Reflect){
     Plane p;
-    Ray r(Tuple({0,1,-1}, TupType::POINT), Tuple({0,-std::sqrt(2)/2.0,std::sqrt(2)/2.0}));
+    Ray r({0,1,-1}, {0,-std::sqrt(2)/2.0,std::sqrt(2)/2.0});
     Impact i(std::sqrt(2), std::make_shared<Plane>(p));
     CollisionInfo c(i,r);
     EXPECT_EQ(c.get_reflect(),Tuple({0,std::sqrt(2)/2.0,std::sqrt(2)/2.0}));
