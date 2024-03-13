@@ -1,6 +1,6 @@
 #include "Cylinder.h"
 
-Cylinder::Cylinder(Matrix Transformation, Material material, std::shared_ptr<Shape> parent,
+Cylinder::Cylinder(Matrix Transformation, Material material, Shape* parent,
      double min, double max,bool closed ): Shape(Transformation,material,parent,"Cylinder"){
     this->minimum = min;
     this->maximum = max;
@@ -28,20 +28,20 @@ std::vector<Impact> Cylinder::intersect_cap(const Ray& r) const{
         return {};        
     }
     std::vector<Impact> out;
-    auto self = std::make_shared<Cylinder>(*this);
     double ori_y = r.get_origin()[1];
     double t = (minimum-ori_y)/dir_y;
     if(check_cap(r, t)){
-        out.push_back(Impact(t,self));
+        out.push_back(Impact(t,this));
     }
     t = (maximum-ori_y)/dir_y;
     if(check_cap(r, t)){
-        out.push_back(Impact(t,self));
+        out.push_back(Impact(t,this));
     }
     return out;
 }
 
 std::vector<Impact> Cylinder::local_intersect(const Ray &other) const {
+    std::cout << minimum << " " << maximum << std::endl;
     double origin_x =  other.get_origin()[0];
     double origin_y =  other.get_origin()[1];
     double origin_z =  other.get_origin()[2];
@@ -55,7 +55,6 @@ std::vector<Impact> Cylinder::local_intersect(const Ray &other) const {
     if(disc<0){return {};}
 
     std::vector<Impact> out;
-    auto self = std::make_shared<Cylinder>(*this);
     if(a> glob_resolution){
         double add_on = std::sqrt(disc);
         double t0 = (-b-add_on)/(2.0*a);
@@ -67,11 +66,11 @@ std::vector<Impact> Cylinder::local_intersect(const Ray &other) const {
         }
         double y0 = origin_y+t0*direction_y;
         if((y0 > minimum) && (y0 < maximum)){
-            out.push_back(Impact(t0,self));
+            out.push_back(Impact(t0,this));
         }
         double y1 = origin_y+t1*direction_y;
         if((y1 > minimum) && (y1 < maximum)){
-            out.push_back(Impact(t1,self));
+            out.push_back(Impact(t1,this));
         }
     }
     for(auto hit: intersect_cap(other)){

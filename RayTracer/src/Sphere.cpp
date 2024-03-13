@@ -2,7 +2,7 @@
 #include <iostream>
 #include <cmath>
 
-Sphere::Sphere(Matrix Transformation, Material material, std::shared_ptr<Shape> parent) : Shape(Transformation, material, parent, "Sphere"){}
+Sphere::Sphere(Matrix Transformation, Material material, Shape* parent) : Shape(Transformation, material, parent, "Sphere"){}
 
 
 Tuple Sphere::local_normal_at(const Tuple& pt) const{

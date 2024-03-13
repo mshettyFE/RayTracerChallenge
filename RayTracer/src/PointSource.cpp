@@ -8,7 +8,7 @@
 
 PointSource::PointSource(const Color& a_intensity,const Tuple& a_position)  : LightSource(a_intensity, a_position, "PointSource" ){}
 
-Color PointSource::shade(const std::shared_ptr<Shape> obj, const Tuple& position,
+Color PointSource::shade(const Shape* obj, const Tuple& position,
         const Tuple& camera, const Tuple& normal, bool in_shadow) const{
     if(position.type() != TupType::POINT){throw std::invalid_argument("position must be a point");}
     if(camera.type() != TupType::VECTOR){throw std::invalid_argument("camera must be a vector");}

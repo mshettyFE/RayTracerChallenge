@@ -2,7 +2,7 @@
 #include "Impact.h"
 #include <algorithm>
 
-Group::Group(Matrix Transformation, Material material, std::shared_ptr<Shape> parent): Shape(Transformation,material,parent,"Group"){
+Group::Group(const Matrix& Transformation, const Material& material, Shape* parent): Shape(Transformation,material,parent,"Group"){
     this->nested_shape_type = NestedShapeType::GROUP;
 }
 
@@ -16,7 +16,7 @@ void Group::indent_print(unsigned int tabs) const{
     tabs++;
     for(auto child: children){
         if(child->get_nst() == NestedShapeType::GROUP){
-            std::dynamic_pointer_cast<Group>(child)->indent_print(tabs);
+            static_cast<const Group*>(child)->indent_print(tabs);
         }
         else{
             child->print(tabs);

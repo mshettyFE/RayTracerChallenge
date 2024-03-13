@@ -16,7 +16,7 @@ private:
 public:
     void verbose_print() const override;
 
-    Cube(Matrix Transformation=MatIdentity(4), Material material=Material(), std::shared_ptr<Shape> parent=nullptr);
+    Cube(Matrix Transformation=MatIdentity(4), Material material=Material(), Shape* parent=nullptr);
 };
 
 #endif

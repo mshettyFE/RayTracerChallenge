@@ -17,18 +17,20 @@ private:
 protected:
     unsigned long id;
     Material mat;
-    std::shared_ptr<Shape> parent;
+    const Shape* parent;
     std::string name;
     NestedShapeType nested_shape_type = NestedShapeType::UNNESTED;
     Matrix get_only_this_transform() const;
 public:
+    Shape(const Matrix& Transformation=MatIdentity(4), const Material& material=Material(), const Shape* parent=nullptr, std::string name="PLACEHOLDER");
+
+    virtual void verbose_print() const=0;
+
     Tuple normal_at(const Tuple& pt) const;
     std::vector<Impact> intersect(const Ray &other) const;
 
-    virtual void verbose_print() const=0;
     void print(unsigned int indent=0) const;
 
-    Shape(Matrix Transformation=MatIdentity(4), Material material=Material(), std::shared_ptr<Shape> parent=nullptr, std::string name="PLACEHOLDER");
 
     Matrix get_transform(int count = 0, bool verbose=false) const;
     void set_transform(Matrix Tranformation);
@@ -42,8 +44,8 @@ public:
     void set_nst(NestedShapeType new_nst);
     NestedShapeType get_nst() const;
 
-    std::shared_ptr<Shape> get_parent() const;
-    void set_parent(std::shared_ptr<Shape> new_parent);
+    const Shape* get_parent() const;
+    void set_parent(const Shape* new_parent);
 
 };
 

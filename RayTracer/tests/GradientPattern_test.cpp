@@ -36,7 +36,7 @@ TEST(TestImage, GradPatternTest){
     middle_mat.set_diffuse(0.7);
     middle_mat.set_specular(0.3);
     middle_mat.set_color(Color({0.1,1,0.5}));
-    middle_mat.set_pattern(std::make_shared<GradientPattern>(GradientPattern(WHITE,BLACK, MatScaling(2,2,2))));
+    middle_mat.set_pattern(std::make_unique<GradientPattern>(GradientPattern(WHITE,BLACK, MatScaling(2,2,2))));
     Sphere middle = Sphere(middle_transform, middle_mat);
 // right sphere
     Matrix right_transform = MatTranslation(1.5,0.5,-0.5)*MatScaling(0.5,0.5,0.5);
@@ -60,12 +60,12 @@ TEST(TestImage, GradPatternTest){
     Tuple up = Tuple({1,0,0});
     Camera c(100,100, pi/3.0, from, to, up );
     std::vector<std::shared_ptr<Shape>> shapes;
-    shapes.push_back(std::make_shared<Plane>(floor));
-    shapes.push_back(std::make_shared<Sphere>(middle));
-    shapes.push_back(std::make_shared<Sphere>(right));
-    shapes.push_back(std::make_shared<Sphere>(smallest));
+    shapes.push_back(std::make_unique<Plane>(floor));
+    shapes.push_back(std::make_unique<Sphere>(middle));
+    shapes.push_back(std::make_unique<Sphere>(right));
+    shapes.push_back(std::make_unique<Sphere>(smallest));
     std::vector<std::shared_ptr<LightSource>> sources;
-    sources.push_back(std::make_shared<PointSource>(ps));
+    sources.push_back(std::make_unique<PointSource>(ps));
     World w(sources,shapes);
     std::unique_ptr<Canvas> img = c.render(w);
     img->save_ppm("GradPlaneScene");

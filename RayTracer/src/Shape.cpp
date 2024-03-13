@@ -2,8 +2,8 @@
 #include "Matrix.h"
 #include <stdexcept>
 
-Shape::Shape(Matrix a_Transformation, Material material, std::shared_ptr<Shape> parent,std::string name){
-    if (a_Transformation.get_dim() != 4){
+Shape::Shape(const Matrix& Transformation, const Material& material, const Shape* parent, std::string name){
+    if (Transformation.get_dim() != 4){
         throw std::invalid_argument("Invalid Transformation Matrix");
     }
     mat = material;
@@ -11,12 +11,13 @@ Shape::Shape(Matrix a_Transformation, Material material, std::shared_ptr<Shape> 
     id = GlobalID;
     GlobalID += 1;
     this->name = name;
-    Transformation = a_Transformation;
+    this->Transformation = Transformation;
 }
 
 void Shape::set_nst(NestedShapeType new_nst){
     this->nested_shape_type  = new_nst;
 }
+
 NestedShapeType Shape::get_nst() const{
     return this->nested_shape_type;
 }
@@ -58,10 +59,11 @@ void Shape::set_material(Material new_mat){
 
 Material Shape::get_material() const{return mat;}
 
-std::shared_ptr<Shape> Shape::get_parent() const{
+const Shape* Shape::get_parent() const{
     return this->parent;
 }
-void Shape::set_parent(std::shared_ptr<Shape> new_parent){
+
+void Shape::set_parent(const  Shape* new_parent){
     this->parent = new_parent;
 }
 

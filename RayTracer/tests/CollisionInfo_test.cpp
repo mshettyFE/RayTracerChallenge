@@ -12,20 +12,20 @@
 
 TEST(CollisionInfoTest, CollisionInfoInit){
     Ray r = Ray({0,0,-5}, {0,0,1});
-    std::shared_ptr<Sphere> s = std::make_shared<Sphere>(Sphere());
-    Impact hit(4,s);
+    Sphere  s;
+    Impact hit(4,&s);
     CollisionInfo i (hit, r);
     EXPECT_EQ(i.get_impact().get_t(), 4);
-    EXPECT_EQ(i.get_impact().get_obj(), s);
+    EXPECT_EQ(i.get_impact().get_obj(), &s);
     EXPECT_EQ(i.get_pnt(), Tuple({0,0,-1},TupType::POINT));
     EXPECT_EQ(i.get_eye(), Tuple({0,0,-1}));
     EXPECT_EQ(i.get_normal(), Tuple({0,0,-1}));
     EXPECT_EQ(i.is_inside(), false);
     r = Ray({0,0,0}, {0,0,1});
-    hit = Impact(1,s);
+    hit = Impact(1,&s);
     i  = CollisionInfo(hit, r);
     EXPECT_EQ(i.get_impact().get_t(), 1);
-    EXPECT_EQ(i.get_impact().get_obj(), s);
+    EXPECT_EQ(i.get_impact().get_obj(), &s);
     EXPECT_EQ(i.get_pnt(), Tuple({0,0,1},TupType::POINT));
     EXPECT_EQ(i.get_eye(), Tuple({0,0,-1}));
     EXPECT_EQ(i.get_normal(), Tuple({0,0,-1}));
@@ -34,8 +34,8 @@ TEST(CollisionInfoTest, CollisionInfoInit){
 
  TEST(CollisionInfoTest, Over){
     Ray r = Ray({0,0,-5}, {0,0,1});
-    std::shared_ptr<Sphere> s = std::make_shared<Sphere>(Sphere());
-    Impact hit(4,s);
+    Sphere s;
+    Impact hit(4,&s);
     CollisionInfo i (hit, r);
     EXPECT_LE(i.get_over_pnt()[2], -glob_resolution/2.0);
     EXPECT_GE(i.get_pnt()[2],i.get_over_pnt()[2]);
@@ -44,7 +44,7 @@ TEST(CollisionInfoTest, CollisionInfoInit){
 TEST(CollisionInfoTest, Reflect){
     Plane p;
     Ray r({0,1,-1}, {0,-std::sqrt(2)/2.0,std::sqrt(2)/2.0});
-    Impact i(std::sqrt(2), std::make_shared<Plane>(p));
+    Impact i(std::sqrt(2), &p);
     CollisionInfo c(i,r);
     EXPECT_EQ(c.get_reflect(),Tuple({0,std::sqrt(2)/2.0,std::sqrt(2)/2.0}));
 }
@@ -58,12 +58,12 @@ TEST(CollisionInfoTest, IndexInfo){
     C.set_transform(MatTranslation(0.25,0,0));
     Ray r({-4,0,0},{1,0,0});
     std::vector<Impact> hits;
-    hits.push_back(Impact(2, std::make_shared<Sphere>(A)));
-    hits.push_back(Impact(2.75, std::make_shared<Sphere>(B)));
-    hits.push_back(Impact(3.25, std::make_shared<Sphere>(C)));
-    hits.push_back(Impact(4.75, std::make_shared<Sphere>(B)));
-    hits.push_back(Impact(5.25, std::make_shared<Sphere>(C)));
-    hits.push_back(Impact(6, std::make_shared<Sphere>(A)));
+    hits.push_back(Impact(2, &A));
+    hits.push_back(Impact(2.75, &B));
+    hits.push_back(Impact(3.25, &C));
+    hits.push_back(Impact(4.75, &B));
+    hits.push_back(Impact(5.25, &C));
+    hits.push_back(Impact(6, &A));
     std::vector<CollisionInfo> comps;
     CollisionInfo cmp(hits[5],r,hits);
 
@@ -82,7 +82,7 @@ TEST(CollisionInfoTest, UnderPnt){
     Ray r({0,0,-5},{0,0,1});
     Sphere s = glass_sphere();
     s.set_transform(MatTranslation(0,0,1));
-    Impact i(5.0,std::make_shared<Sphere>(s));
+    Impact i(5.0,&s);
     CollisionInfo comps(i,r);
     EXPECT_GE(comps.get_under_pnt()[2] , glob_resolution/2.0);
     EXPECT_GE(comps.get_under_pnt()[2], comps.get_pnt()[2]);
@@ -92,8 +92,8 @@ TEST(CollisionInfoTest, InternalReflectanceSchlick){
     Sphere s = glass_sphere();
     Ray r({0,0,std::sqrt(2)/2.0},{0,1,0});
     std::vector<Impact> xs{
-        Impact(-std::sqrt(2)/2.0,std::make_shared<Sphere>(s)),
-        Impact(std::sqrt(2)/2.0,std::make_shared<Sphere>(s))
+        Impact(-std::sqrt(2)/2.0,&s),
+        Impact(std::sqrt(2)/2.0,&s)
     };
     CollisionInfo comps(xs[1],r, xs);
     EXPECT_FLOAT_EQ(comps.schlick(), 1.0);
@@ -103,8 +103,8 @@ TEST(CollisionInfoTest, PerpendicularRayReflectanceSchlick){
     Sphere s = glass_sphere();
     Ray r({0,0,0},{0,1,0});
     std::vector<Impact> xs{
-        Impact(-1,std::make_shared<Sphere>(s)),
-        Impact(1,std::make_shared<Sphere>(s))
+        Impact(-1,&s),
+        Impact(1,&s)
     };
     CollisionInfo comps(xs[1],r, xs);
     EXPECT_LE(comps.schlick()- 0.04, glob_resolution);
@@ -114,7 +114,7 @@ TEST(CollisionInfoTest, N2GEQN1Schlick){
     Sphere s = glass_sphere();
     Ray r({0,0.99,-2},{0,0,1});
     std::vector<Impact> xs{
-        Impact(1.8589,std::make_shared<Sphere>(s))
+        Impact(1.8589,&s)
     };
     CollisionInfo comps(xs[0],r);
     EXPECT_LE(comps.schlick()- 0.48873, glob_resolution);

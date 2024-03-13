@@ -8,19 +8,13 @@
 
 TEST(CylinderTest, Miss){
     Cylinder c;
-    Tuple direction({0,1,0});
-    direction.normalize();
-    Tuple origin({1,0,0}, TupType::POINT);
-    Ray r(origin,direction);
+    Ray r({1,0,0},{0,1,0});
     EXPECT_EQ(c.intersect(r).size() ,0);
-    direction = Tuple({0,0,0});
-    direction.normalize();
-    origin = Tuple({0,1,0}, TupType::POINT);
-    r = Ray(origin,direction);
+    r = Ray({0,1,0},{0,0,0});
     EXPECT_EQ(c.intersect(r).size() ,0);
-    direction = Tuple({1,1,1});
+    Tuple direction ({1,1,1});
     direction.normalize();
-    origin = Tuple({0,0,-5}, TupType::POINT);
+    Tuple origin ({0,0,-5}, TupType::POINT);
     r = Ray(origin,direction);
     EXPECT_EQ(c.intersect(r).size() ,0);
 }
@@ -28,25 +22,19 @@ TEST(CylinderTest, Miss){
 
 TEST(CylinderTest, Hit){
     Cylinder c;
-    Tuple direction({0,0,1});
-    direction.normalize();
-    Tuple origin({1,0,-5}, TupType::POINT);
-    Ray r(origin, direction);
+    Ray r({1,0,-5}, {0,0,1});
     auto hits= c.intersect(r);
     ASSERT_EQ(hits.size(), 2);
     EXPECT_EQ(hits[0].get_t(),5);
     EXPECT_EQ(hits[1].get_t(),5);
-    direction = Tuple({0,0,1});
-    direction.normalize();
-    origin = Tuple({0,0,-5}, TupType::POINT);
-    r = Ray(origin, direction);
+    r = Ray({0,0,-5}, {0,0,1});
     hits= c.intersect(r);
     EXPECT_EQ(hits.size(), 2);
     EXPECT_EQ(hits[0].get_t(),4);
     EXPECT_EQ(hits[1].get_t(),6);
-    direction = Tuple({0.1,1,1});
+    Tuple direction ({0.1,1,1});
     direction.normalize();
-    origin = Tuple({0.5,0,-5}, TupType::POINT);
+    Tuple origin({0.5,0,-5}, TupType::POINT);
     r = Ray(origin, direction);
     hits= c.intersect(r);
     EXPECT_EQ(hits.size(), 2);
@@ -76,10 +64,7 @@ TEST(CylinderTest, Truncate){
     Tuple origin({0,1.5,0}, TupType::POINT);
     Ray r(origin, direction);
     EXPECT_EQ(c.intersect(r).size(), 0);
-    direction = Tuple({0,0,1});
-    direction.normalize();
-    origin = Tuple({0,3,-5}, TupType::POINT);
-    r = Ray(origin, direction);
+    r = Ray({0,3,-5}, {0,0,1});
     EXPECT_EQ(c.intersect(r).size(), 0);
     origin = Tuple({0,0,-5}, TupType::POINT);
     r = Ray(origin, direction);

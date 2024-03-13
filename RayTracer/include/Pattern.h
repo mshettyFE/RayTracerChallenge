@@ -16,7 +16,7 @@ private:
 public:
     Pattern(Matrix trans=MatIdentity(4), std::string name="PLACEHOLDER");
 
-    Color at_object(const Tuple& pt, const std::shared_ptr<Shape>& obj) const;
+    Color at_object(const Tuple& pt, const Shape* obj) const;
 
     void set_transformation(const Matrix& new_mat);
     Matrix get_transformation() const;

@@ -12,12 +12,11 @@
 
 class World{
 private:
-    std::vector<std::shared_ptr<LightSource>> sources;
-    std::vector<std::shared_ptr<Shape>> shapes;
+    std::vector<std::unique_ptr<LightSource>> sources;
+    std::vector<std::unique_ptr<Shape>> shapes;
 public:
 
-    World(std::vector<std::shared_ptr<LightSource>> light_sources, std::vector<std::shared_ptr<Shape>> all_shapes);
-    World(std::shared_ptr<LightSource> light_sources, std::shared_ptr<Shape>  shape);
+    World(std::vector<std::unique_ptr<LightSource>>& light_sources, std::vector<std::unique_ptr<Shape>>& all_shapes);
 
     std::vector<Impact> intersect(const Ray& r) const;
 
@@ -28,12 +27,10 @@ public:
     int number_of_sources() const;
     int number_of_shapes() const;
 
-    std::shared_ptr<Shape> get_shape(int i) const ;
-    std::shared_ptr<LightSource> get_source(int i) const;
+    Shape* get_shape(int i) const ;
+    const LightSource* get_source(int i) const;
 
-    void set_shape(int i, std::shared_ptr<Shape> other);
-
-    void add_shape(std::shared_ptr<Shape> new_shape);
+    void add_shape(std::unique_ptr<Shape> new_shape);
 
     bool is_shadowed(const Tuple& pt) const;
 
@@ -46,6 +43,5 @@ public:
 };
 
 World default_world();
-
 
 #endif

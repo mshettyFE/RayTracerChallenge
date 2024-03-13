@@ -8,13 +8,13 @@
 class Impact{
 private:
     double time;
-    std::shared_ptr<Shape> obj;
+    const Shape* obj;
 public:
-    Impact(double time,const std::shared_ptr<Shape>& obj);
+    Impact(double time, const Shape* obj);
     Impact();
     
     double get_t() const;
-    std::shared_ptr<Shape> get_obj() const;
+    const Shape* get_obj() const;
 
     bool operator==(const Impact& other) const;
     bool operator!=(const Impact& other) const;

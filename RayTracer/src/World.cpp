@@ -11,16 +11,10 @@
 #include <memory>
 #include <stdexcept>
 
-World::World(std::vector<std::shared_ptr<LightSource>> light_sources, std::vector<std::shared_ptr<Shape>> all_shapes){
-    sources = light_sources;
-    shapes = all_shapes;
+World::World(std::vector<std::unique_ptr<LightSource>>& light_sources, std::vector<std::unique_ptr<Shape>>& all_shapes){
+    for(auto const& source: light_sources){sources.emplace_back(source);}
+    for(auto const& shape: all_shapes){shapes.emplace_back(shape);}
 }
-
-World::World(std::shared_ptr<LightSource> light_source, std::shared_ptr<Shape>  shape){
-    sources.push_back(light_source);
-    shapes.push_back(shape);    
-}
-
 
 int World::number_of_sources() const{
     return sources.size();
@@ -31,7 +25,7 @@ int World::number_of_shapes() const{
 
 std::vector<Impact> World::intersect(const Ray& r) const{
     std::vector<Impact> all_hits;
-    for(auto shape: shapes){
+    for(auto const& shape: shapes){
         for(auto hit: shape->intersect(r)){
             all_hits.push_back(hit);
         }
@@ -45,8 +39,8 @@ Color  World::shade_hit(const CollisionInfo& hit, unsigned int remaining){
     bool shadowed = is_shadowed(hit.get_over_pnt());
     double mat_ref = hit.get_impact().get_obj()->get_material().get_reflectance();
     double mat_transp = hit.get_impact().get_obj()->get_material().get_transparency();
-    for(auto source: sources){
-        Color surface =  source->shade(hit.get_impact().get_obj(),hit.get_pnt(),hit.get_eye(), hit.get_normal(), shadowed );
+    for(auto const& source: sources){
+        Color surface =  source->shade(hit.get_impact().get_obj(), hit.get_pnt(),hit.get_eye(), hit.get_normal(), shadowed );
         Color reflected_color = reflect_color(hit, remaining);
         Color refracted_color = refract_color(hit,remaining);
         if((mat_ref > 0) && (mat_transp >0)){
@@ -60,24 +54,14 @@ Color  World::shade_hit(const CollisionInfo& hit, unsigned int remaining){
     return total;
 }
 
-std::shared_ptr<Shape> World::get_shape(int i) const{
+const LightSource* World::get_source(int i) const {
     if(i<0){
         throw std::invalid_argument("Index is negative");
     }
     if(i >= this->number_of_shapes()){
         throw std::invalid_argument("Index is out of bounds");
     }
-    return this->shapes[i];
-}
-
-std::shared_ptr<LightSource> World::get_source(int i) const {
-    if(i<0){
-        throw std::invalid_argument("Index is negative");
-    }
-    if(i >= this->number_of_shapes()){
-        throw std::invalid_argument("Index is out of bounds");
-    }
-    return this->sources[i];
+    return this->sources[i].get();
 }
 
 Color World::color_at(const Ray& r, unsigned int remaining){
@@ -95,7 +79,7 @@ Color World::color_at(const Ray& r, unsigned int remaining){
         if(lowest_positive_index==-1){
             return out;
         }
-        for(auto source : sources){
+        for(auto const& source : sources){
             out += shade_hit(CollisionInfo(hits[lowest_positive_index],r), remaining);
         }
     }
@@ -104,14 +88,14 @@ Color World::color_at(const Ray& r, unsigned int remaining){
 
 World default_world(){
     Material mat(0.1,0.7,0.2,200.0,Color({0.8,1.0,0.6}));
-    std::shared_ptr<Sphere> s1 = std::make_shared<Sphere>(Sphere(MatIdentity(4),mat));
-    std::shared_ptr<Sphere> s2 = std::make_shared<Sphere>(Sphere(MatScaling(0.5,0.5,0.5)));
-    std::vector<std::shared_ptr<Shape>> shapes;
-    shapes.push_back(s1);
-    shapes.push_back(s2);
-    std::shared_ptr<PointSource> source = std::make_shared<PointSource>(PointSource(Color(1,1,1), Tuple({-10,10,-10}, TupType::POINT)));
-    std::vector<std::shared_ptr<LightSource>> sources;
-    sources.push_back(source);
+    std::unique_ptr<Sphere> s1 = std::make_unique<Sphere>(Sphere(MatIdentity(4),mat));
+    std::unique_ptr<Sphere> s2 = std::make_unique<Sphere>(Sphere(MatScaling(0.5,0.5,0.5)));
+    std::vector<std::unique_ptr<Shape>> shapes;
+    shapes.emplace_back(s1);
+    shapes.emplace_back(s2);
+    std::unique_ptr<PointSource> source = std::make_unique<PointSource>(PointSource(Color(1,1,1), Tuple({-10,10,-10}, TupType::POINT)));
+    std::vector<std::unique_ptr<LightSource>> sources;
+    sources.emplace_back(source);
     return World(sources, shapes);
 }
 
@@ -130,7 +114,7 @@ std::ostream& operator << (std::ostream &out, const World& w){
 
 
 bool World::is_shadowed(const Tuple& pt) const{
-    for(auto source: sources){
+    for(auto const& source: sources){
         Tuple v = source->get_position()-pt;
         double distance = v.L2Norm();
         v.normalize();
@@ -147,8 +131,8 @@ bool World::is_shadowed(const Tuple& pt) const{
     return false;
 }
 
-void World::add_shape(std::shared_ptr<Shape> new_shape){
-    shapes.push_back(new_shape);
+void World::add_shape(std::unique_ptr<Shape> new_shape){
+    shapes.emplace_back(new_shape);
 };
 
 Color World::reflect_color(const CollisionInfo&  comps, unsigned int remaining){
@@ -180,14 +164,4 @@ Color World::refract_color(const CollisionInfo& comps, unsigned int remaining){
     Tuple new_direction = comps.get_normal()*(n_ratio*cos_i-cos_t)- comps.get_eye()*n_ratio;
     Ray refracted_ray(comps.get_under_pnt(), new_direction);
     return color_at(refracted_ray,remaining-1)*comps.get_impact().get_obj()->get_material().get_transparency();
-}
-
-void World::set_shape(int i, std::shared_ptr<Shape> other){
-    if(i<0){
-        throw std::invalid_argument("Index is negative");
-    }
-    if(i >= this->number_of_shapes()){
-        throw std::invalid_argument("Index is out of bounds");
-    }
-    this->shapes[i] = other;
 }

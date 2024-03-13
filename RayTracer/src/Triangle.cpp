@@ -3,7 +3,7 @@
 #include "Impact.h"
 #include <initializer_list>
 
-Triangle::Triangle(const std::initializer_list<double> p1, const std::initializer_list<double> p2,const std::initializer_list<double> p3, const Matrix& Transformation, const Material& material, std::shared_ptr<Shape> parent) : Shape(Transformation,material, parent,"Triangle"){
+Triangle::Triangle(const std::initializer_list<double> p1, const std::initializer_list<double> p2,const std::initializer_list<double> p3, const Matrix& Transformation, const Material& material, Shape* parent) : Shape(Transformation,material, parent,"Triangle"){
     if(p1.size() != 3){throw std::invalid_argument("In Triangle, p1 have 3 coordinates");}   
     if(p2.size() != 3){throw std::invalid_argument("In Triangle, p2 have 3 coordinates");}   
     if(p3.size() != 3){throw std::invalid_argument("In Triangle, p3 have 3 coordinates");}

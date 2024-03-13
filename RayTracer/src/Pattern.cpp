@@ -20,7 +20,7 @@ std::string Pattern::get_name() const{
     return name;
 }
 
-Color Pattern::at_object(const Tuple& world_pt, const std::shared_ptr<Shape>& obj) const{
+Color Pattern::at_object(const Tuple& world_pt, const Shape* obj) const{
     if(world_pt.type() != TupType::POINT){
         throw std::invalid_argument("pt must be a point in Stripes");
     }
