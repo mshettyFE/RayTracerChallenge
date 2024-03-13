@@ -8,7 +8,7 @@ Cylinder::Cylinder(Matrix Transformation, Material material, Shape* parent,
 }
 
 void Cylinder::verbose_print() const{
-    std::cout << "Cylinder" << std::endl;
+    std::cout << this->get_name() << std::endl;
     std::cout << this->get_transform() << std::endl;
     std::cout << mat;
     std::cout << "Min:" << minimum << "Max: " << maximum << "Closed: " << closed << std::endl;

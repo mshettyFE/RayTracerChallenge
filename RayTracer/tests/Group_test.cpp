@@ -28,7 +28,7 @@ TEST(GroupTest, Printing){
     Sphere s4;
     g2.add_child<Sphere>(&s4);
     g1.add_child<Group>(&g2);
-    g1.verbose_print();
+    g1.print();
 }
 
 TEST(GroupTest,Intersection){
@@ -64,5 +64,6 @@ TEST(GroupTest, Normal){
     g2.add_child<Group>(&g3);
     g2.add_child<Sphere>(&s);
     g1.add_child<Group>(&g2);
+    g1.print();
     EXPECT_EQ(s.normal_at(Tuple({1.7321, 1.1547, -5.5774}, TupType::POINT)),Tuple({0.285704 ,0.428543, -0.857161}));
 }

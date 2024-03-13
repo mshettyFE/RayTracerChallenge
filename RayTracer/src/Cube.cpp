@@ -45,7 +45,7 @@ Tuple Cube::local_normal_at(const Tuple& pt) const{
 }
 
 void Cube::verbose_print() const {
-    std::cout << "Cube" << std::endl;
+    std::cout << this->get_name() << std::endl;
     std::cout << this->get_id() << std::endl;
     std::cout << this->get_transform() << std::endl;
     std::cout << this->get_material() << std::endl;

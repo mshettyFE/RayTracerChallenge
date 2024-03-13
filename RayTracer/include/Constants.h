@@ -9,12 +9,6 @@ enum TupType{
   POINT = 1, // corresponds to w component  of 1
 };
 
-enum NestedShapeType{
-  UNNESTED = 0,
-  GROUP = 1,
-  CSG = 2
-};
-
 const double glob_resolution = 0.00001;
 const double pi = std::acos(-1);
 

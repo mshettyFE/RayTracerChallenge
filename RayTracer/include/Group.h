@@ -15,13 +15,10 @@
 class Group : public Shape{
 private:
     void indent_print(unsigned int tabs=0) const;
-    std::vector<Shape*> children;
     Tuple local_normal_at(const Tuple& pt) const override;
     std::vector<Impact> local_intersect(const Ray &other) const override;
 public:
     void verbose_print() const override;
-
-    int get_total_children() const;
 
     Group(const Matrix& Transformation=MatIdentity(4), const Material& material=Material(), Shape* parent=nullptr);
 

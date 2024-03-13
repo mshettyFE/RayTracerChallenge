@@ -2,30 +2,13 @@
 #include "Impact.h"
 #include <algorithm>
 
-Group::Group(const Matrix& Transformation, const Material& material, Shape* parent): Shape(Transformation,material,parent,"Group"){
-    this->nested_shape_type = NestedShapeType::GROUP;
-}
-
-int Group::get_total_children() const{
-    return this->children.size();
-}
-
-void Group::indent_print(unsigned int tabs) const{
-    auto indentation = std::string(tabs,'\t');
-    this->print(tabs);
-    tabs++;
-    for(auto child: children){
-        if(child->get_nst() == NestedShapeType::GROUP){
-            static_cast<const Group*>(child)->indent_print(tabs);
-        }
-        else{
-            child->print(tabs);
-        }
-    }
-}
+Group::Group(const Matrix& Transformation, const Material& material, Shape* parent): Shape(Transformation,material,parent,"Group"){}
 
 void Group::verbose_print() const{
-    indent_print(0);
+    std::cout << this->get_name() << std::endl;
+    std::cout << this->get_id() << std::endl;
+    std::cout << this->get_transform() << std::endl;
+    std::cout << this->get_material() << std::endl;
 }
 
 std::vector<Impact> Group::local_intersect(const Ray &r) const {
@@ -35,7 +18,6 @@ std::vector<Impact> Group::local_intersect(const Ray &r) const {
             out.push_back(hit);
         }
     }
-//    std::sort(out.begin(), out.end(), [](double a, double b) -> bool{ return (a < b);  });
     return out;
 }
 

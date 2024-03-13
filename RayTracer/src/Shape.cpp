@@ -1,6 +1,10 @@
 #include "Shape.h"
+#include "Group.h"
 #include "Matrix.h"
+#include <set>
 #include <stdexcept>
+
+class Group;
 
 Shape::Shape(const Matrix& Transformation, const Material& material, const Shape* parent, std::string name){
     if (Transformation.get_dim() != 4){
@@ -13,15 +17,6 @@ Shape::Shape(const Matrix& Transformation, const Material& material, const Shape
     this->name = name;
     this->Transformation = Transformation;
 }
-
-void Shape::set_nst(NestedShapeType new_nst){
-    this->nested_shape_type  = new_nst;
-}
-
-NestedShapeType Shape::get_nst() const{
-    return this->nested_shape_type;
-}
-
 
 void Shape::set_transform(Matrix a_Tranformation){
     this->Transformation = a_Tranformation;
@@ -78,13 +73,23 @@ std::string Shape::get_name() const{
     return name;
 }
 
-void Shape::print(unsigned int indent) const{
+void Shape::print(unsigned int indent, std::set<const Shape*> visited) const{
     auto indentation = std::string(indent,'\t');
     if(parent == nullptr){
         std::cout << indentation <<"Shape: " <<  name << " ID: " << get_id() << " Parent: NULL" << std::endl;
     }
     else{
         std::cout << indentation <<"Shape: " <<  name << " ID: " << get_id() << " Parent " << parent->get_id() <<  std::endl;
+    }
+    indent++;
+    visited.insert(this);
+    if(get_total_children() != 0){
+        for(auto const& child: children){
+            if(visited.count(child)){
+                throw std::invalid_argument("Cycle detected in print. Check add_child arguments in Group (or CSG)");
+            }
+            child->print(indent);
+        }
     }
 }
 
@@ -102,4 +107,8 @@ Tuple Shape::normal_at(const Tuple& world_pt) const{
 std::vector<Impact> Shape::intersect(const Ray &other) const{
     Ray TransformedRay = other.transform(get_transform().Inverse());
     return local_intersect(TransformedRay);
+}
+
+int Shape::get_total_children() const{
+    return this->children.size();
 }

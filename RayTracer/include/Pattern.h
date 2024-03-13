@@ -15,6 +15,7 @@ private:
     std::string name;
 public:
     Pattern(Matrix trans=MatIdentity(4), std::string name="PLACEHOLDER");
+    virtual ~Pattern() {}
 
     Color at_object(const Tuple& pt, const Shape* obj) const;
 

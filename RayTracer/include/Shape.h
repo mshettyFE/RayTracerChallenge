@@ -7,6 +7,7 @@
 #include "Ray.h"
 #include "Impact.h"
 #include <memory>
+#include <set>
 
 class Shape{
 private:
@@ -18,19 +19,21 @@ protected:
     unsigned long id;
     Material mat;
     const Shape* parent;
+    std::vector<const Shape*> children;
     std::string name;
-    NestedShapeType nested_shape_type = NestedShapeType::UNNESTED;
     Matrix get_only_this_transform() const;
 public:
     Shape(const Matrix& Transformation=MatIdentity(4), const Material& material=Material(), const Shape* parent=nullptr, std::string name="PLACEHOLDER");
+    virtual ~Shape() {}
 
     virtual void verbose_print() const=0;
 
     Tuple normal_at(const Tuple& pt) const;
     std::vector<Impact> intersect(const Ray &other) const;
 
-    void print(unsigned int indent=0) const;
+    void print(unsigned int indent=0, std::set<const Shape*> visited={}) const;
 
+    int get_total_children() const;
 
     Matrix get_transform() const;
     Matrix get_aggregate_transform(int count=0, bool verbose=false) const;
@@ -41,9 +44,6 @@ public:
     void set_material(Material new_mat);
     Material get_material() const;
     unsigned long get_id() const;
-
-    void set_nst(NestedShapeType new_nst);
-    NestedShapeType get_nst() const;
 
     const Shape* get_parent() const;
     void set_parent(const Shape* new_parent);
