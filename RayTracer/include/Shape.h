@@ -32,7 +32,8 @@ public:
     void print(unsigned int indent=0) const;
 
 
-    Matrix get_transform(int count = 0, bool verbose=false) const;
+    Matrix get_transform() const;
+    Matrix get_aggregate_transform(int count=0, bool verbose=false) const;
     void set_transform(Matrix Tranformation);
 
     std::string get_name() const;

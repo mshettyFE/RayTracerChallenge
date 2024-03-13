@@ -32,7 +32,12 @@ Matrix Shape::get_only_this_transform() const{
 }
 
 
-Matrix Shape::get_transform(int count, bool verbose) const{
+Matrix Shape::get_transform() const{
+    return Transformation;
+}
+
+
+Matrix Shape::get_aggregate_transform(int count, bool verbose) const{
     Matrix output;
     if(verbose){
         if(get_parent() == nullptr){
@@ -47,7 +52,7 @@ Matrix Shape::get_transform(int count, bool verbose) const{
     }
     else{
         count++;
-        Matrix parent_matrix = get_parent()->get_transform(count,verbose);
+        Matrix parent_matrix = get_parent()->get_aggregate_transform(count,verbose);
         output = parent_matrix*this->Transformation;
     }
     return output;
@@ -84,10 +89,11 @@ void Shape::print(unsigned int indent) const{
 }
 
 Tuple Shape::normal_at(const Tuple& world_pt) const{
-    Tuple local_point = get_transform().Inverse()*world_pt;
+    Matrix agg_trans_inv = get_aggregate_transform().Inverse();
+    Tuple local_point = agg_trans_inv*world_pt;
     local_point.set_type(TupType::POINT);
     Tuple local_normal  = local_normal_at(local_point);
-    Tuple output = get_transform().Inverse().Transpose()*local_normal;
+    Tuple output = agg_trans_inv.Transpose()*local_normal;
     output.set_type(TupType::VECTOR);
     output.normalize();
     return output;
