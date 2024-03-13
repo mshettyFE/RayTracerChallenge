@@ -15,13 +15,13 @@ private:
     Matrix Transformation;
     virtual Tuple local_normal_at(const Tuple& pt) const =0;
     virtual std::vector<Impact> local_intersect(const Ray &other) const =0;
+    Matrix get_aggregate_transform(std::set<const Shape*>& visited, bool verbose=false, int count=0) const;
 protected:
     unsigned long id;
     Material mat;
     const Shape* parent;
     std::vector<const Shape*> children;
     std::string name;
-    Matrix get_only_this_transform() const;
 public:
     Shape(const Matrix& Transformation=MatIdentity(4), const Material& material=Material(), const Shape* parent=nullptr, std::string name="PLACEHOLDER");
     virtual ~Shape() {}
@@ -36,7 +36,7 @@ public:
     int get_total_children() const;
 
     Matrix get_transform() const;
-    Matrix get_aggregate_transform(int count=0, bool verbose=false) const;
+    Matrix get_aggregate_transform(bool verbose=false) const;
     void set_transform(Matrix Tranformation);
 
     std::string get_name() const;
