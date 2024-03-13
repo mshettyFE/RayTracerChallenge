@@ -57,15 +57,15 @@ TEST(CameraTests, PixelSize){
 TEST(CameraTests, ShootRay){
     Camera c(201,101, pi/2.0);
     Ray r = c.ray_for_pixel(100,50);
-    Ray expected = Ray(Tuple({0,0,0}, TupType::POINT), Tuple({0,0,-1}));
+    Ray expected = Ray({0,0,0}, {0,0,-1});
     EXPECT_EQ(r, expected);
     r = c.ray_for_pixel(0,0);
-    expected = Ray(Tuple({0,0,0}, TupType::POINT), Tuple({0.66519, 0.33259, -0.66851}));
+    expected = Ray({0,0,0}, {0.66519, 0.33259, -0.66851});
     EXPECT_EQ(r, expected);
     Matrix new_view = MatRotateY(pi/4.0)* MatTranslation(0,-2,5);
     c.set_view(new_view);
     r = c.ray_for_pixel(100,50);
-    expected = Ray(Tuple({0,2,-5}, TupType::POINT), Tuple({std::pow(2,0.5)/2.0,0,-std::pow(2,0.5)/2.0}));
+    expected = Ray({0,2,-5}, {std::pow(2,0.5)/2.0,0,-std::pow(2,0.5)/2.0});
     EXPECT_EQ(r, expected);
 }
 
