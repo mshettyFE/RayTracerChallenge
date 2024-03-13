@@ -19,7 +19,7 @@ TEST(PointSourceTest, InShadow){
     // Straight on
     Tuple camera({0,0,-1});
     Tuple normal({0,0,-1});
-    Color result = ps.shade(std::make_shared<Sphere>(s), position, camera, normal, true);
+    Color result = ps.shade(&s, position, camera, normal, true);
     EXPECT_EQ(result, Color(0.1,0.1,0.1));
 
 }
@@ -31,7 +31,7 @@ TEST(PointSourceTest, StraightOn){
     // Straight on
     Tuple camera({0,0,-1});
     Tuple normal({0,0,-1});
-    Color result = ps.shade(std::make_shared<Sphere>(s), position, camera, normal);
+    Color result = ps.shade(&s, position, camera, normal);
     EXPECT_EQ(result, Color(1.9,1.9,1.9));
 }
 
@@ -41,7 +41,7 @@ TEST(PointSourceTest, AngledCamera){
     Tuple normal({0,0,-1});
     PointSource ps(Color({1,1,1}),Tuple({0,0,-10}));
     Tuple camera = Tuple({0,std::sqrt(2)/2.0,-std::sqrt(2)/2.0});
-    Tuple result = ps.shade(std::make_shared<Sphere>(s), position, camera, normal);
+    Tuple result = ps.shade(&s, position, camera, normal);
     EXPECT_EQ(result,Color(1,1,1));
 }
 
@@ -51,7 +51,7 @@ TEST(PointSourceTest, AngledLight){
     Tuple normal({0,0,-1});
     Tuple camera = Tuple({0,0,-1});
     PointSource ps =  PointSource(Color({1,1,1}),Tuple({0,10,-10}));
-    Color result = ps.shade(std::make_shared<Sphere>(s), position, camera, normal);
+    Color result = ps.shade(&s, position, camera, normal);
     EXPECT_EQ(result, Color(.7364,.7364,.7364));
 }
 
@@ -61,7 +61,7 @@ TEST(PointSourceTest, Obscured){
     Tuple normal({0,0,-1});
     PointSource ps =  PointSource(Color({1,1,1}),Tuple({0,0,10}));
     Tuple camera = Tuple({0,0,-1});
-    Color result = ps.shade(std::make_shared<Sphere>(s),position, camera,normal);
+    Color result = ps.shade(&s,position, camera,normal);
     EXPECT_EQ(result, Color(0.1,0.1,0.1));
 }
 
@@ -72,7 +72,7 @@ TEST(PointSourceTest, DirectLight){
     Tuple normal({0,0,-1});
     PointSource ps(Color({1,1,1}),Tuple({0,10,-10}));
     Tuple camera = Tuple({0,-std::sqrt(2)/2.0,-std::sqrt(2)/2.0});
-    Color result = ps.shade(std::make_shared<Sphere>(s), position, camera, normal);
+    Color result = ps.shade(&s, position, camera, normal);
     EXPECT_EQ(result, Color(1.6364,1.6364,1.6364));
 }
 
@@ -84,9 +84,9 @@ TEST(PointSourceTest,PatternedObj){
     Tuple normal({0,0,-1});
     PointSource ps(Color({1,1,1}),Tuple({0,0,-10}));
     Tuple pos({0.9,0,0},TupType::POINT);
-    Color c1 = ps.shade(std::make_shared<Sphere>(sph), pos, camera, normal ,false);
+    Color c1 = ps.shade(&sph, pos, camera, normal ,false);
     pos =  Tuple({1.1,0,0},TupType::POINT);
-    Color c2 = ps.shade(std::make_shared<Sphere>(sph), pos, camera, normal ,false);
+    Color c2 = ps.shade(&sph, pos, camera, normal ,false);
     EXPECT_EQ(c1, BLACK);
     EXPECT_EQ(c2, BLACK);
 }
@@ -124,7 +124,7 @@ TEST(TestImage, ShadedSphere){
             if(intersections.size() != 0){
                 Tuple position = r.position(intersections[0].get_t());
                 // Calculate what color the pixel should be, given the light source, material, current position, ray direction and normal vector at position
-                Color p = light_loc.shade(std::make_shared<Sphere>(s),position,-r.get_direction() , s.normal_at(position));
+                Color p = light_loc.shade(&s,position,-r.get_direction() , s.normal_at(position));
                 canvas.write_pixel(row,col,p);
             }
         }

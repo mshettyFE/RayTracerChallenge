@@ -16,7 +16,7 @@ std::vector<Impact> Plane::local_intersect(const Ray &other) const{
     }
     Tuple origin_vec = other.get_origin();
     double t = - origin_vec[1] / other.get_direction()[1];
-    out.push_back(Impact(t, std::make_shared<Plane>(*this)));
+    out.push_back(Impact(t, this));
     return out;
 }
 

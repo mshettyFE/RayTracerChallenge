@@ -2,21 +2,19 @@
 #define WORLD_H
 
 #include <vector>
-#include "PointSource.h"
 #include "Shape.h"
 #include "Ray.h"
 #include "Impact.h"
 #include "CollisionInfo.h"
 #include "Color.h"
 #include <memory>
+#include "PointSource.h"
 
 class World{
-private:
-    std::vector<std::unique_ptr<LightSource>> sources;
-    std::vector<std::unique_ptr<Shape>> shapes;
-public:
-
-    World(std::vector<std::unique_ptr<LightSource>>& light_sources, std::vector<std::unique_ptr<Shape>>& all_shapes);
+    private:
+        std::vector<std::unique_ptr<LightSource>> sources = {};
+        std::vector<std::unique_ptr<Shape>> shapes = {};
+    public:
 
     std::vector<Impact> intersect(const Ray& r) const;
 
@@ -27,10 +25,14 @@ public:
     int number_of_sources() const;
     int number_of_shapes() const;
 
-    Shape* get_shape(int i) const ;
+    const Shape* get_shape(int i) const ;
     const LightSource* get_source(int i) const;
 
+    void set_shape(int obj, std::unique_ptr<Shape>& other) ;
+    void set_source(int obj, std::unique_ptr<LightSource>& other) ;
+
     void add_shape(std::unique_ptr<Shape> new_shape);
+    void add_source(std::unique_ptr<LightSource> new_source);
 
     bool is_shadowed(const Tuple& pt) const;
 
@@ -42,6 +44,6 @@ public:
 
 };
 
-World default_world();
+std::unique_ptr<World> default_world();
 
 #endif

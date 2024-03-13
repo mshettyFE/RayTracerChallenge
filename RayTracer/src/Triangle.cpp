@@ -35,7 +35,7 @@ std::vector<Impact> Triangle::local_intersect(const Ray &other) const {
     double v = f*other.get_direction().dot(crossed_e1);
     if((v <0) || (u+v>1)){return{};}
     double t = f*edge2.dot(crossed_e1);
-    return {Impact(t,std::make_shared<Triangle>(*this))};
+    return {Impact(t,this)};
 }
 
 void Triangle::verbose_print() const {

@@ -11,11 +11,6 @@
 #include <memory>
 #include <stdexcept>
 
-World::World(std::vector<std::unique_ptr<LightSource>>& light_sources, std::vector<std::unique_ptr<Shape>>& all_shapes){
-    for(auto const& source: light_sources){sources.emplace_back(source);}
-    for(auto const& shape: all_shapes){shapes.emplace_back(shape);}
-}
-
 int World::number_of_sources() const{
     return sources.size();
 }
@@ -54,15 +49,47 @@ Color  World::shade_hit(const CollisionInfo& hit, unsigned int remaining){
     return total;
 }
 
-const LightSource* World::get_source(int i) const {
+const Shape* World::get_shape(int i) const {
     if(i<0){
         throw std::invalid_argument("Index is negative");
     }
     if(i >= this->number_of_shapes()){
         throw std::invalid_argument("Index is out of bounds");
     }
+    return this->shapes[i].get();
+}
+
+
+const LightSource* World::get_source(int i) const {
+    if(i<0){
+        throw std::invalid_argument("Index is negative");
+    }
+    if(i >= this->number_of_sources()){
+        throw std::invalid_argument("Index is out of bounds");
+    }
     return this->sources[i].get();
 }
+
+void World::set_shape(int obj, std::unique_ptr<Shape>& other)  {
+    if(obj<0){
+        throw std::invalid_argument("Index is negative");
+    }
+    if(obj >= this->number_of_shapes()){
+        throw std::invalid_argument("Index is out of bounds");
+    }
+    this->shapes[obj] = std::move(other);
+}
+
+void World::set_source(int obj, std::unique_ptr<LightSource>& other) {
+    if(obj<0){
+        throw std::invalid_argument("Index is negative");
+    }
+    if(obj >= this->number_of_shapes()){
+        throw std::invalid_argument("Index is out of bounds");
+    }
+    this->sources[obj].swap(other);
+}
+
 
 Color World::color_at(const Ray& r, unsigned int remaining){
     std::vector<Impact> hits = intersect(r);
@@ -86,17 +113,21 @@ Color World::color_at(const Ray& r, unsigned int remaining){
     return out;
 }
 
-World default_world(){
+std::unique_ptr<World> default_world(){
     Material mat(0.1,0.7,0.2,200.0,Color({0.8,1.0,0.6}));
     std::unique_ptr<Sphere> s1 = std::make_unique<Sphere>(Sphere(MatIdentity(4),mat));
     std::unique_ptr<Sphere> s2 = std::make_unique<Sphere>(Sphere(MatScaling(0.5,0.5,0.5)));
-    std::vector<std::unique_ptr<Shape>> shapes;
-    shapes.emplace_back(s1);
-    shapes.emplace_back(s2);
+//    std::vector<std::unique_ptr<Shape>> shapes;
+//    shapes.push_back(std::move(s1));
+//    shapes.push_back(std::move(s2));
     std::unique_ptr<PointSource> source = std::make_unique<PointSource>(PointSource(Color(1,1,1), Tuple({-10,10,-10}, TupType::POINT)));
-    std::vector<std::unique_ptr<LightSource>> sources;
-    sources.emplace_back(source);
-    return World(sources, shapes);
+//    std::vector<std::unique_ptr<LightSource>> sources;
+//    sources.push_back(std::move(source));
+    auto w = std::make_unique<World>(World());
+    w->add_shape(std::move(s1));
+    w->add_shape(std::move(s2));
+    w->add_source(std::move(source));
+    return w;
 }
 
 std::ostream& operator << (std::ostream &out, const World& w){
@@ -132,8 +163,13 @@ bool World::is_shadowed(const Tuple& pt) const{
 }
 
 void World::add_shape(std::unique_ptr<Shape> new_shape){
-    shapes.emplace_back(new_shape);
+    shapes.push_back(std::move(new_shape));
 };
+
+void World::add_source(std::unique_ptr<LightSource> new_source){
+    sources.push_back(std::move(new_source));
+}
+
 
 Color World::reflect_color(const CollisionInfo&  comps, unsigned int remaining){
     if(remaining <= 0){

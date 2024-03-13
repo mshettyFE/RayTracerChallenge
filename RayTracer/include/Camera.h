@@ -4,8 +4,8 @@
 #include "Matrix.h"
 #include "Tuple.h"
 #include "Canvas.h"
-#include "World.h"
 #include "Ray.h"
+#include "World.h"
 #include <memory>
 
 class Camera{

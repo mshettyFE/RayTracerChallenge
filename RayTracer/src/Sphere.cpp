@@ -23,11 +23,10 @@ std::vector<Impact> Sphere::local_intersect(const Ray &other) const{
     if(discriminant<0){
         return output;
     }
-    auto self = std::make_shared<Sphere>(*this);
     double t1 = (-b-std::sqrt(discriminant))/(2.0*a);
     double t2 = (-b+std::sqrt(discriminant))/(2.0*a);
-    output.push_back(Impact(t1,self));
-    output.push_back(Impact(t2,self));
+    output.push_back(Impact(t1,this));
+    output.push_back(Impact(t2,this));
     return output;
 }
 

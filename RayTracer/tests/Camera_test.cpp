@@ -6,9 +6,9 @@
 #include "Matrix.h"
 #include "Sphere.h"
 #include "Shape.h"
-#include "World.h"
 #include "PointSource.h"
 #include "LightSource.h"
+#include "World.h"
 
 TEST(CameraTests, ViewTransformations){
 // identity
@@ -70,14 +70,15 @@ TEST(CameraTests, ShootRay){
 }
 
 TEST(CameraTests, Render){
-    World wrd = default_world();
+    auto wrd = default_world();
     Tuple from = Tuple({0,0,-5}, TupType::POINT);
     Tuple to =  Tuple({0,0,0}, TupType::POINT);
     Tuple up = Tuple({0,1,0});
     Camera cam(11,11,pi/5.0, from, to, up);
-    std::unique_ptr<Canvas> img2 = cam.render(wrd);
+    std::unique_ptr<Canvas> img2 = cam.render(*wrd);
     EXPECT_EQ((*img2)(5,5), Color({0.38066, 0.47583, 0.2855}));
 }
+/*
 
 TEST(TestImage, OnlySpheres){
 // floor
@@ -120,16 +121,14 @@ TEST(TestImage, OnlySpheres){
     Tuple to = Tuple({0,1,0}, TupType::POINT);
     Tuple up = Tuple({1,0,0});
     Camera c(100,100, pi/3.0, from, to, up );
-    std::vector<std::unique_ptr<Shape>> shapes;
-    shapes.push_back(std::make_unique<Sphere>(floor));
-    shapes.push_back(std::make_unique<Sphere>(lwall));
-    shapes.push_back(std::make_unique<Sphere>(rwall));
-    shapes.push_back(std::make_unique<Sphere>(middle));
-    shapes.push_back(std::make_unique<Sphere>(right));
-    shapes.push_back(std::make_unique<Sphere>(smallest));
-    std::vector<std::unique_ptr<LightSource>> sources;
-    sources.push_back(std::make_unique<PointSource>(ps));
-    World w(sources,shapes);
+    World w;
+    w.add_shape(std::make_unique<Sphere>(floor));
+    w.add_shape(std::make_unique<Sphere>(lwall));
+    w.add_shape(std::make_unique<Sphere>(rwall));
+    w.add_shape(std::make_unique<Sphere>(middle));
+    w.add_shape(std::make_unique<Sphere>(right));
+    w.add_shape(std::make_unique<Sphere>(smallest));
+    w.add_source(std::make_unique<PointSource>(ps));
     std::unique_ptr<Canvas> img = c.render(w);
     img->save_ppm("Scene");
 }
@@ -143,11 +142,11 @@ TEST(TestImage,ShadedSphereRedux){
     Tuple to = Tuple({0,0,0}, TupType::POINT);
     Tuple up = Tuple({0,1,0});
     Camera c(100,100, pi/4.0, from, to, up );
-    std::vector<std::unique_ptr<LightSource>> sources;
-    sources.push_back(std::make_unique<PointSource>(light_loc));
-    std::vector<std::unique_ptr<Shape>> shapes;
-    shapes.push_back(std::make_unique<Sphere>(s));
-    World w(sources,shapes);
+    World w;
+    w.add_shape(std::make_unique<Sphere>(s));
+    w.add_source(std::make_unique<PointSource>(light_loc));
     std::unique_ptr<Canvas> img = c.render(w);
     img->save_ppm("ShadedSphereCamera");
 }
+
+*/

@@ -34,7 +34,7 @@ CollisionInfo::CollisionInfo(const Impact& impt, const Ray& ray, const std::vect
 
 void CollisionInfo::calculate_indices(const std::vector<Impact>& all_hits){
 // assumes all_hits is non-empty
-    std::vector<std::shared_ptr<Shape>> containers;
+    std::vector<const Shape*> containers;
     for(const Impact impt: all_hits){
 // find n1
         if(this->impact == impt){
@@ -46,7 +46,7 @@ void CollisionInfo::calculate_indices(const std::vector<Impact>& all_hits){
             }
         }
 // check if we have already entered the object before
-        std::shared_ptr<Shape> current_obj = impt.get_obj();
+        const Shape* current_obj = impt.get_obj();
         bool found = false;
         int offset = 0;
         for(auto obj: containers){

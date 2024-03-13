@@ -79,7 +79,7 @@ std::vector<Impact> Cube::local_intersect(const Ray &other) const {
         return {};
     }
     std::vector<Impact> out;
-    out.push_back(Impact(largest_min,std::make_shared<Cube>(*this)));
-    out.push_back(Impact(smallest_max,std::make_shared<Cube>(*this)));
+    out.push_back(Impact(largest_min,this));
+    out.push_back(Impact(smallest_max,this));
     return out;
 }
