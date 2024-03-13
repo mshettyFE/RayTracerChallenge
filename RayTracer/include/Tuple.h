@@ -9,8 +9,6 @@
 
 class Tuple{
   protected:
-// How close two doubles need to be to be overlapping
-    double resolution;
 // The number of physical dimensions. The actual number of coordinates stored is dim+1 to account for point/vector info
     int dim;
 // place where data is stored. Size is dim+1. Last element is always either 0 (Vector) or 1 (Point)
@@ -23,9 +21,9 @@ class Tuple{
     // Constructors
     // Defaults to internally being Vectors unless constructed as Point
     Tuple();
-    Tuple(std::initializer_list<double> args,  const TupType a_type=TupType::VECTOR, double resolution=glob_resolution);
-    Tuple(std::vector<double> args,  const TupType a_type=TupType::VECTOR, double resolution=glob_resolution);
-    Tuple(unsigned int dim, const TupType a_type=TupType::VECTOR,  double resolution=glob_resolution);
+    Tuple(std::initializer_list<double> args,  const TupType a_type=TupType::VECTOR);
+    Tuple(std::vector<double> args,  const TupType a_type=TupType::VECTOR);
+    Tuple(unsigned int dim, const TupType a_type=TupType::VECTOR);
 
     // overloaded binary operators
     bool operator==(const Tuple& other) const;
@@ -73,7 +71,6 @@ class Tuple{
     TupType type() const;
     void set_type(TupType t);
 
-    double get_resolution() const;
     double get_dim() const;
 
     friend std::ostream& operator << (std::ostream &out, const Tuple& other);

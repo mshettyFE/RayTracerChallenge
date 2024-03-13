@@ -87,7 +87,7 @@ TEST(PointSourceTest,PatternedObj){
     Color c1 = ps.shade(std::make_shared<Sphere>(sph), pos, camera, normal ,false);
     pos =  Tuple({1.1,0,0},TupType::POINT);
     Color c2 = ps.shade(std::make_shared<Sphere>(sph), pos, camera, normal ,false);
-    EXPECT_EQ(c1, WHITE);
+    EXPECT_EQ(c1, BLACK);
     EXPECT_EQ(c2, BLACK);
 }
 

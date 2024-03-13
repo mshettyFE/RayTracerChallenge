@@ -9,40 +9,35 @@
 Tuple::Tuple(){
   // Empty tuple
   dim = 1;
-  resolution = glob_resolution;
   data.push_back(0);
   data.push_back(TupType::VECTOR);
 }
 
-Tuple::Tuple(std::initializer_list<double> args, const TupType a_type, double a_resolution){
+Tuple::Tuple(std::initializer_list<double> args, const TupType a_type){
   for (double item: args){
     data.push_back(item);
   }
   dim = data.size();
-  resolution = a_resolution;
   data.push_back(a_type);
 }
 
-Tuple::Tuple(std::vector<double> args,  const TupType a_type, double a_resolution){
+Tuple::Tuple(std::vector<double> args,  const TupType a_type){
   for (double item: args){
     data.push_back(item);
   }
   dim = data.size();
-  resolution = a_resolution;
   data.push_back(a_type);
 }
 
 
-Tuple::Tuple(unsigned int a_dim, const TupType a_type, double a_resolution){
+Tuple::Tuple(unsigned int a_dim, const TupType a_type){
   for(int i=0; i< a_dim; ++i){
     data.push_back(0);
   }
   dim = data.size();
-  resolution = a_resolution;
   data.push_back(a_type);
 }
 
-double Tuple::get_resolution() const{return resolution;}
 double Tuple::get_dim() const{return dim;}
 
 
@@ -196,14 +191,14 @@ void Tuple::set_type(TupType t){
 
 TupType Tuple::type() const{
   double d = this->data[this->dim];
-  if ( abs(d-TupType::POINT) < resolution){
+  if ( abs(d-TupType::POINT) < glob_resolution){
     return TupType::POINT;
   }
   return TupType::VECTOR;
 }
 
 bool Tuple::is_same(double one, double two) const{
-  if(std::abs(one-two) < resolution){
+  if(std::abs(one-two) < glob_resolution){
     return true;
   }
   return false;

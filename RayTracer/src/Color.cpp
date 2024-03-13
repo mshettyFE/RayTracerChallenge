@@ -9,7 +9,6 @@ Color::Color(){
     data.push_back(0);
     data.push_back(TupType::VECTOR);
     dim = 3;
-    resolution = glob_resolution;
 }
 
 Color::Color(double red, double green, double blue, double a_resolution){
@@ -19,7 +18,6 @@ Color::Color(double red, double green, double blue, double a_resolution){
     data.push_back(blue);
     data.push_back(TupType::VECTOR);
     dim = 3;
-    resolution = a_resolution;
 }
 
 Color::Color(int hex, double a_resolution){
@@ -32,7 +30,6 @@ Color::Color(int hex, double a_resolution){
     data.push_back(blue/255.0);
     data.push_back(TupType::VECTOR);
     dim = 3;
-    resolution = a_resolution;
 }
 
 

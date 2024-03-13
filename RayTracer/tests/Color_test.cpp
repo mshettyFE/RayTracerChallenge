@@ -6,7 +6,6 @@
 TEST(ColorTests, Arithmetic){
     Color a(0.9,0.6,0.75);
     Color b(0.7, 0.1, 0.25);
-    EXPECT_EQ(a.get_resolution(),b.get_resolution());
     EXPECT_EQ(a.get_dim(),b.get_dim());
     Color added(1.6,0.7,1.0);
     EXPECT_EQ(a+b, added);
