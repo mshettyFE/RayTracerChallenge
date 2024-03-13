@@ -64,7 +64,9 @@ TEST(CylinderTest, Truncate){
     Tuple origin({0,1.5,0}, TupType::POINT);
     Ray r(origin, direction);
     EXPECT_EQ(c.intersect(r).size(), 0);
-    r = Ray({0,3,-5}, {0,0,1});
+    direction = Tuple({0,0,1});
+    origin = Tuple({0,3,-5}, TupType::POINT);
+    r = Ray(origin, direction);
     EXPECT_EQ(c.intersect(r).size(), 0);
     origin = Tuple({0,0,-5}, TupType::POINT);
     r = Ray(origin, direction);

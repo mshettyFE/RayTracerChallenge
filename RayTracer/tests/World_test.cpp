@@ -230,25 +230,22 @@ TEST(WorldTest, InternalReflect){
 }
 
 TEST(WorldTest, ColorRefracted){
-    auto w = default_world();
-    const Shape* a = w->get_shape(0);
-    Material mat = a->get_material();
-    mat.set_ambient(1.0);
-    mat.set_pattern(std::make_unique<TestPattern>(TestPattern()));
-    std::unique_ptr<Shape> A = std::make_unique<Sphere>(Sphere(a->get_transform(),mat));
-    A->set_material(mat);
-    const Shape* b = w->get_shape(1);
-    mat = b->get_material();
-    mat.set_transparency(1.0);
-    mat.set_refractive_index(1.5);
-    std::unique_ptr<Shape> B = std::make_unique<Sphere>(Sphere(b->get_transform(),mat));
-    B->set_material(mat);
-    w->set_shape(0,A);
-    w->set_shape(0,B);
+    TestPattern tp;
+    Material mat1(1,0.7,0.2,200.0,Color({0.8,1.0,0.6}),std::make_unique<TestPattern>(tp));
+    std::unique_ptr<Sphere> s1 = std::make_unique<Sphere>(Sphere(MatIdentity(4),mat1));
+    Material mat2;
+    mat2.set_transparency(1.0);
+    mat2.set_refractive_index(1.5);
+    std::unique_ptr<Sphere> s2 = std::make_unique<Sphere>(Sphere(MatScaling(0.5,0.5,0.5),mat2));
+    std::unique_ptr<PointSource> source = std::make_unique<PointSource>(PointSource(Color(1,1,1), Tuple({-10,10,-10}, TupType::POINT)));
+    World w;
+    w.add_shape(std::move(s1));
+    w.add_shape(std::move(s2));
+    w.add_source(std::move(source));
     Ray r({0,0,0.1},{0,1,0});
-    std::vector<Impact> xs{Impact(-0.9899,w->get_shape(0)), Impact(-0.4899,w->get_shape(1)), Impact(0.4899,w->get_shape(1)), Impact(0.9899,w->get_shape(0))};
+    std::vector<Impact> xs{Impact(-0.9899,w.get_shape(0)), Impact(-0.4899,w.get_shape(1)), Impact(0.4899,w.get_shape(1)), Impact(0.9899,w.get_shape(0))};
     CollisionInfo comps(xs[2],r, xs);
-    EXPECT_EQ(w->refract_color(comps,5), Color({0, 0.99888, 0.04721}));
+    EXPECT_EQ(w.refract_color(comps,5), Color({0, 0.99888, 0.04721}));
 }
 
 TEST(WorldTest, ShadeWithRefraction){
@@ -319,14 +316,14 @@ TEST(TestImage,AirBubble){
     PointSource ps(WHITE,Tuple({-10,10,-10}, TupType::POINT));
     Material glass;
     glass.set_color(GRAY);
-    glass.set_reflectance(0);
-    glass.set_transparency(0);
+    glass.set_reflectance(1);
+    glass.set_transparency(1);
     glass.set_refractive_index(GLASS);
     Sphere outer(MatScaling(2,2,2), glass);
     Material air;
     air.set_color(WHITE);
     air.set_reflectance(0);
-    air.set_transparency(0);
+    air.set_transparency(1);
     air.set_refractive_index(AIR);
     Sphere middle(MatIdentity(4), air);
     Material wall_mat;

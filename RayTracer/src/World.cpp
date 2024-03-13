@@ -56,7 +56,7 @@ const Shape* World::get_shape(int i) const {
     if(i >= this->number_of_shapes()){
         throw std::invalid_argument("Index is out of bounds");
     }
-    return this->shapes[i];
+    return this->shapes[i].get();
 }
 
 
@@ -67,7 +67,7 @@ const LightSource* World::get_source(int i) const {
     if(i >= this->number_of_sources()){
         throw std::invalid_argument("Index is out of bounds");
     }
-    return this->sources[i];
+    return this->sources[i].get();
 }
 
 void World::set_shape(int obj, std::unique_ptr<Shape>& other)  {
@@ -77,7 +77,7 @@ void World::set_shape(int obj, std::unique_ptr<Shape>& other)  {
     if(obj >= this->number_of_shapes()){
         throw std::invalid_argument("Index is out of bounds");
     }
-    this->shapes[obj] = other.get();
+    this->shapes[obj] =std::move( other);
 }
 
 void World::set_source(int obj, std::unique_ptr<LightSource>& other) {
@@ -87,7 +87,7 @@ void World::set_source(int obj, std::unique_ptr<LightSource>& other) {
     if(obj >= this->number_of_shapes()){
         throw std::invalid_argument("Index is out of bounds");
     }
-    this->sources[obj] = other.get();
+    this->sources[obj] = std::move(other);
 }
 
 
@@ -163,11 +163,11 @@ bool World::is_shadowed(const Tuple& pt) const{
 }
 
 void World::add_shape(std::unique_ptr<Shape> new_shape){
-    shapes.push_back(new_shape.get());
+    shapes.push_back(std::move(new_shape));
 };
 
 void World::add_source(std::unique_ptr<LightSource> new_source){
-    sources.push_back(new_source.get());
+    sources.push_back(std::move(new_source));
 }
 
 

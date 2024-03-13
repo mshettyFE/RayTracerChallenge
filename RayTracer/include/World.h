@@ -14,8 +14,8 @@
 
 class World{
     private:
-        std::vector<const LightSource*> sources;
-        std::vector<const Shape*> shapes;
+        std::vector<std::shared_ptr<LightSource>> sources;
+        std::vector<std::shared_ptr<Shape>> shapes;
     public:
 
     std::vector<Impact> intersect(const Ray& r) const;
