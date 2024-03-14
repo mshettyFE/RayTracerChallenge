@@ -88,4 +88,7 @@ Tuple operator*(T scalar, Tuple const & other) {
 
 Tuple normalize(const Tuple& other);
 
+Tuple GenVec(double x,double y,double z);
+Tuple GenPoint(double x,double y,double z);
+
 #endif

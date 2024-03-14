@@ -237,3 +237,6 @@ Tuple normalize(const Tuple& other){
 Tuple Tuple::reflect(const Tuple& normal) const{
   return *this-normal*2*this->dot(normal); // Subtracts of twice the component in the same direction of normal from the input
 }
+
+Tuple GenVec(double x,double y,double z){return Tuple({x,y,z},TupType::VECTOR);};
+Tuple GenPoint(double x,double y,double z){return Tuple({x,y,z},TupType::POINT);};
