@@ -86,6 +86,6 @@ std::ostream& operator << (std::ostream &out, const Color& other){
 }
 
 Color random_color(){
-    RNG rng;
-    return Color(rng.roll_uniform(), rng.roll_uniform(), rng.roll_uniform());
+    RNG r;
+    return Color(r.roll_uniform(0,1), r.roll_uniform(0,1), r.roll_uniform(0,1));
 }

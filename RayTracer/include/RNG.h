@@ -5,15 +5,19 @@
 
 class RNG{
 private:
-    static inline std::random_device rd;
-    static inline std::default_random_engine rng{rd()};
-    static inline std::uniform_real_distribution<double> ud{0,1};
-    static inline std::normal_distribution<double> nd{0,1};
+    static inline std::default_random_engine engine= std::default_random_engine(time(0));;
+    static inline  std::uniform_real_distribution<double> udd {};
+    static inline  std::normal_distribution<double> nd {};
 public:
-    void set_normal(double mu, double sigma);
-    void set_uniform(double min, double max);
-    double roll_normal();
-    double roll_uniform();
+    double inline  roll_uniform(double low, double high)
+    {
+        return udd(engine, std::uniform_real_distribution<double>::param_type{low,high});
+    }
+
+    double inline  roll_normal(double mean, double sigma)
+    {
+        return nd(engine, std::normal_distribution<double>::param_type{mean,sigma});
+    }
 };
 
 

@@ -346,22 +346,22 @@ TEST(TestImage, SimpleTeapot){
 
 TEST(TestImage, RandomSpheres){
     RNG rng;
-    rng.set_normal(0,5);
     World w;
     Material m = Material();
     Plane floor = Plane(MatScaling(10,0.01,10), m);
     w.add_shape(std::make_unique<Plane>(std::move(floor)));
     PointSource ps(WHITE, Tuple({-20,20,-20}, TupType::POINT));
     w.add_source(std::make_unique<PointSource>(std::move(ps)));
-    Material shiny = Material(random_color());
-    shiny.set_reflectance(1);
-    shiny.set_transparency(1);
-    shiny.set_refractive_index(GLASS);
     for(int i=0; i<10; ++i){
-        auto transformation = MatTranslation(rng.roll_normal(),1,rng.roll_normal());
+        Color rc = random_color();
+        Material shiny = Material(rc);
+        shiny.set_reflectance(1);
+        shiny.set_transparency(1);
+        shiny.set_refractive_index(GLASS);
+        auto transformation = MatTranslation(rng.roll_uniform(0,5),1,rng.roll_uniform(0,5));
         w.add_shape(std::make_unique<Sphere>(Sphere(transformation,shiny)));
     }
-    Tuple from({-10,1,0}, TupType::POINT);
+    Tuple from({-3,3,0}, TupType::POINT);
     Tuple to({0,1,0}, TupType::POINT);
     Tuple up({0,0,-1});
     Camera cam(100,100,pi/2.0, from, to, up);
