@@ -95,28 +95,33 @@ void Parser::parse_face(std::istringstream& iss){
         }
     }
 // Record triangles
-    std::vector<Triangle> recorded_triangles;
-    if(recorded_vertices.size() < 3){throw std::invalid_argument(error_message);}
-    int first_node = recorded_vertices[1];
-    Tuple p1 = get_vertex(first_node);
-    for(int i=2; i<recorded_vertices.size()-1; ++i){
-        int second_node = recorded_vertices[i];
-        int third_node = recorded_vertices[i+1];
-        Tuple p2 = get_vertex(second_node); 
-        Tuple p3 = get_vertex(third_node);
-        recorded_triangles.push_back(Triangle(vertices[first_node],vertices[second_node],vertices[third_node]));
-    }
-    std::string group_name;
-    if(current_group==""){
-        group_name = gen_group_id();
+    if(accept_normals){
+        throw std::invalid_argument("Not Implemented");
     }
     else{
-        group_name = current_group;
-    }
-//    std::cout << group_name << std::endl;
-    recorded_groups.insert(std::make_pair(group_name,std::make_unique<Group>(Group())));
-    for(int i=0; i< recorded_triangles.size(); ++i){
-        recorded_groups[group_name]->add_child(std::make_unique<Triangle>(std::move(recorded_triangles[i])));
+        std::vector<Triangle> recorded_triangles;
+        if(recorded_vertices.size() < 3){throw std::invalid_argument(error_message);}
+        int first_node = recorded_vertices[1];
+        Tuple p1 = get_vertex(first_node);
+        for(int i=2; i<recorded_vertices.size()-1; ++i){
+            int second_node = recorded_vertices[i];
+            int third_node = recorded_vertices[i+1];
+            Tuple p2 = get_vertex(second_node); 
+            Tuple p3 = get_vertex(third_node);
+            recorded_triangles.push_back(Triangle(vertices[first_node],vertices[second_node],vertices[third_node]));
+        }
+        std::string group_name;
+        if(current_group==""){
+            group_name = gen_group_id();
+        }
+        else{
+            group_name = current_group;
+        }
+    //    std::cout << group_name << std::endl;
+        recorded_groups.insert(std::make_pair(group_name,std::make_unique<Group>(Group())));
+        for(int i=0; i< recorded_triangles.size(); ++i){
+            recorded_groups[group_name]->add_child(std::make_unique<Triangle>(std::move(recorded_triangles[i])));
+        }
     }
 }
 

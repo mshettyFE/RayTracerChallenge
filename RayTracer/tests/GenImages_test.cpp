@@ -9,6 +9,8 @@
 #include "Checkers.h"
 #include "OBJParser.h"
 #include <random>
+#include <vector>
+#include <tuple>
 
 TEST(TestImage, OnlySpheres){
 // floor
@@ -343,6 +345,36 @@ TEST(TestImage, SimpleTeapot){
     img->save_ppm("SimpleTeapot");
 }
 
+std::vector<std::tuple<double,double,double,double>> place_random_spheres(int total_spheres=10){
+    assert(total_spheres>0);
+    RNG rng;
+    std::vector<std::tuple<double,double,double,double>> output;
+    while(output.size() < total_spheres){
+    // generate random translation and size of sphere
+        double x = rng.roll_uniform(0,5);
+//        double y = rng.roll_uniform(0,5);
+        double z = rng.roll_uniform(0,5);
+        double rad = rng.roll_normal(0,1);
+        double y = rad;
+        bool intersected = false;
+        // run through all existing spheres
+        for(auto const& data: output){
+            double dx = std::get<0>(data)-x;
+            double dy = std::get<1>(data)-y;
+            double dz = std::get<2>(data)-z;
+            double min_sep = std::get<3>(data)+rad; // spheres need to have centers be seperated by at least the sum of the radii
+            double distance = std::sqrt(dx*dx+dy*dy+dz*dz); // this is the distance between centers of spheres
+            if(distance < min_sep){ // if we don't satisfy the min separation, break out and try again
+                intersected = true;
+                break;
+            }
+        }
+        if(!intersected){ // not intersection, add data
+            output.push_back(std::make_tuple(x,y,z,rad));
+        }
+    }
+    return output;
+}
 
 TEST(TestImage, RandomSpheres){
     RNG rng;
@@ -350,18 +382,22 @@ TEST(TestImage, RandomSpheres){
     Material m = Material();
     Plane floor = Plane(MatScaling(10,0.01,10), m);
     w.add_shape(std::make_unique<Plane>(std::move(floor)));
-    PointSource ps(WHITE, Tuple({-20,20,-20}, TupType::POINT));
+    PointSource ps(WHITE, Tuple({-30,30,-30}, TupType::POINT));
     w.add_source(std::make_unique<PointSource>(std::move(ps)));
-    for(int i=0; i<10; ++i){
+    auto sphere_dat = place_random_spheres(50);
+    for(auto const& data: sphere_dat){
         Color rc = random_color();
         Material shiny = Material(rc);
         shiny.set_reflectance(1);
         shiny.set_transparency(1);
         shiny.set_refractive_index(GLASS);
-        auto transformation = MatTranslation(rng.roll_uniform(0,5),1,rng.roll_uniform(0,5));
-        w.add_shape(std::make_unique<Sphere>(Sphere(transformation,shiny)));
+        Matrix translation = MatTranslation(std::get<0>(data),std::get<1>(data),std::get<2>(data));
+        double rad = std::get<3>(data);
+        Matrix scaling = MatScaling(rad,rad,rad);
+        Matrix transformation = Chain({scaling, translation});
+        w.add_shape(std::make_unique<Sphere>(Sphere(transformation,shiny))); 
     }
-    Tuple from({-3,3,0}, TupType::POINT);
+    Tuple from({-4,2,5}, TupType::POINT);
     Tuple to({0,1,0}, TupType::POINT);
     Tuple up({0,0,-1});
     Camera cam(100,100,pi/2.0, from, to, up);

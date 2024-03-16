@@ -17,9 +17,9 @@ private:
     std::string gen_group_id();
     static inline unsigned long Group_ID{0};
     void read_line(const std::string& line);
-    void parse_vertex(std::istringstream& iss) ;
-    void parse_normal(std::istringstream& iss) ;
-    void parse_group(std::istringstream& iss) ;
+    void parse_vertex(std::istringstream& iss);
+    void parse_normal(std::istringstream& iss);
+    void parse_group(std::istringstream& iss);
     void parse_face(std::istringstream& iss);
     unsigned long invalid_reads=0;
     unsigned long current_line=0;
