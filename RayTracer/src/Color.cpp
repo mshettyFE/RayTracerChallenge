@@ -11,7 +11,7 @@ Color::Color(){
     dim = 3;
 }
 
-Color::Color(double red, double green, double blue, double a_resolution){
+Color::Color(double red, double green, double blue){
     data.clear();
     data.push_back(red);
     data.push_back(green);
@@ -20,7 +20,7 @@ Color::Color(double red, double green, double blue, double a_resolution){
     dim = 3;
 }
 
-Color::Color(int hex, double a_resolution){
+Color::Color(int hex){
     data.clear();
     double red = RED_CHANNEL(hex);
     double green = GREEN_CHANNEL(hex);
@@ -83,4 +83,9 @@ void Color::normalize(){
 std::ostream& operator << (std::ostream &out, const Color& other){
     out << "R: " << other.get_red() << " G: " << other.get_green() << " B: " << other.get_blue();
     return out;
+}
+
+Color random_color(){
+    RNG rng;
+    return Color(rng.roll_uniform(), rng.roll_uniform(), rng.roll_uniform());
 }

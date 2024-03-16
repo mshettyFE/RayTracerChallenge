@@ -5,8 +5,10 @@
 #include "Camera.h"
 #include "Plane.h"
 #include "GradientPattern.h"
+#include "Color.h"
 #include "Checkers.h"
 #include "OBJParser.h"
+#include <random>
 
 TEST(TestImage, OnlySpheres){
 // floor
@@ -333,10 +335,36 @@ TEST(TestImage, SimpleTeapot){
     w.add_shape(std::move(group));
     PointSource ps(WHITE,Tuple({-10,10,-10}, TupType::POINT));
     w.add_source(std::make_unique<PointSource>(std::move(ps)));
-    Tuple from({-9,0,0}, TupType::POINT);
+    Tuple from({-4.5,4.5,0}, TupType::POINT);
     Tuple to({0,0,0}, TupType::POINT);
     Tuple up({0,0,-1});
-    Camera cam(100,100,pi/2.0, from, to, up);    
+    Camera cam(10,10,pi/2.0, from, to, up);    
     auto img = cam.render(&w);
     img->save_ppm("SimpleTeapot");
+}
+
+
+TEST(TestImage, RandomSpheres){
+    RNG rng;
+    rng.set_normal(0,5);
+    World w;
+    Material m = Material();
+    Plane floor = Plane(MatScaling(10,0.01,10), m);
+    w.add_shape(std::make_unique<Plane>(std::move(floor)));
+    PointSource ps(WHITE, Tuple({-20,20,-20}, TupType::POINT));
+    w.add_source(std::make_unique<PointSource>(std::move(ps)));
+    Material shiny = Material(random_color());
+    shiny.set_reflectance(1);
+    shiny.set_transparency(1);
+    shiny.set_refractive_index(GLASS);
+    for(int i=0; i<10; ++i){
+        auto transformation = MatTranslation(rng.roll_normal(),1,rng.roll_normal());
+        w.add_shape(std::make_unique<Sphere>(Sphere(transformation,shiny)));
+    }
+    Tuple from({-10,1,0}, TupType::POINT);
+    Tuple to({0,1,0}, TupType::POINT);
+    Tuple up({0,0,-1});
+    Camera cam(100,100,pi/2.0, from, to, up);
+    auto img = cam.render(&w);
+    img->save_ppm("RandomSpheres");
 }

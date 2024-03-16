@@ -3,6 +3,8 @@
 
 #include "Tuple.h"
 #include "Constants.h"
+#include "RNG.h"
+#include <random>
 
 #define RED Color(1,0,0)
 #define GREEN Color(0,1,0)
@@ -20,8 +22,8 @@ class Color : public Tuple{
     // Constructors
     // Internally, used Vectors instead of Points
     // assumes max value of r,g,b is 1. Doesn't enforce this constraint since some transformations might more you out of this range
-        Color(double red, double green, double blue, double a_resolution=glob_resolution);
-        Color(int hex, double a_resolution=glob_resolution);
+        Color(double red, double green, double blue);
+        Color(int hex);
         Color();
 
         // Convinience functions to extract RGB channel values
@@ -60,5 +62,7 @@ Color operator*(T scalar, Color const & other) {
     static_assert(std::is_arithmetic<T>::value,"Need to multiply color by a number");
     return other * scalar;
 }
+
+Color random_color();
 
 #endif
