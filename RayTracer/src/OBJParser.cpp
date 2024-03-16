@@ -13,6 +13,7 @@ void Parser::read_line(const std::string& line){
     std::istringstream iss(line);
     std::string type;
     iss >> type;
+    std::cout << current_line << " " << type << std::endl;
     if(iss.fail()){
         throw InvalidLineParser();
     }
@@ -23,7 +24,7 @@ void Parser::read_line(const std::string& line){
         parse_face(iss);
     }
     else if(type=="g"){
-        throw std::invalid_argument("not implemented");
+        parse_group(iss);
     }
     else if(type=="vn"){
         throw std::invalid_argument("not implemented");
@@ -36,6 +37,7 @@ void Parser::read_line(const std::string& line){
 void Parser::read(const std::string& fname, bool file){
     invalid_reads = 0;
     current_line = 0;
+    current_group="";
     if(file){
 // for now, just assume that fname is valid filename
         std::ifstream myfile(fname.c_str());
@@ -69,7 +71,7 @@ void Parser::read(const std::string& fname, bool file){
 }
 
 void Parser::parse_face(std::istringstream& iss){
-    std::string error_message = "Error at "+current_line;
+    std::string error_message = "Failed to parse. Error at line "+std::to_string(current_line);
     bool accept_normals = true;
     if(normals.size() == 1){
         accept_normals = false;
@@ -93,6 +95,7 @@ void Parser::parse_face(std::istringstream& iss){
         }
     }
 // Record triangles
+    std::vector<Triangle> recorded_triangles;
     if(recorded_vertices.size() < 3){throw std::invalid_argument(error_message);}
     int first_node = recorded_vertices[1];
     Tuple p1 = get_vertex(first_node);
@@ -101,16 +104,27 @@ void Parser::parse_face(std::istringstream& iss){
         int third_node = recorded_vertices[i+1];
         Tuple p2 = get_vertex(second_node); 
         Tuple p3 = get_vertex(third_node);
-        std::string triangle_name = gen_triangle_id();
-        recorded_groups.insert(std::make_pair(triangle_name,std::make_unique<Triangle>(std::move(Triangle({p1,p2,p3})))));
+        recorded_triangles.push_back(Triangle(vertices[first_node],vertices[second_node],vertices[third_node]));
+    }
+    std::string group_name;
+    if(current_group==""){
+        group_name = gen_group_id();
+    }
+    else{
+        group_name = current_group;
+    }
+    std::cout << group_name << std::endl;
+    recorded_groups.insert(std::make_pair(group_name,std::make_unique<Group>(Group())));
+    for(int i=0; i< recorded_triangles.size(); ++i){
+        recorded_groups[group_name]->add_child(std::make_unique<Triangle>(std::move(recorded_triangles[i])));
     }
 }
 
-std::string Parser::gen_triangle_id(){
+std::string Parser::gen_group_id(){
 std::string candidate_id;
     while(true){
-        candidate_id = "Triangle_"+std::to_string(Triangle_ID);
-        Triangle_ID++;
+        candidate_id = "Triangle_"+std::to_string(Group_ID);
+        Group_ID++;
         if (recorded_groups.count(candidate_id)) {
             continue;
         } else {
@@ -120,8 +134,17 @@ std::string candidate_id;
     return candidate_id;
 }
 
+void Parser::parse_group(std::istringstream& iss){
+    std::string error_message = "Failed to parse. Error at line "+std::to_string(current_line);
+    std::string temp;
+    iss >> temp;
+    if(iss.fail()){std::cout << error_message << std::endl; throw std::invalid_argument(error_message);}
+    if(!iss.eof()){throw std::invalid_argument(error_message);}
+    std::string current_group=temp;
+}
+
 void Parser::parse_vertex(std::istringstream& iss){
-    std::string error_message = "Error at "+current_line;
+    std::string error_message = "Failed to parse. Error at line "+std::to_string(current_line);
     double temp_num;
     std::vector<double> points;
     while(iss >> temp_num || !iss.eof()){
