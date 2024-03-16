@@ -13,7 +13,7 @@ class Shape{
 private:
     static inline unsigned long GlobalID{0};
     Matrix Transformation;
-    virtual Tuple local_normal_at(const Tuple& pt) const =0;
+    virtual Tuple local_normal_at(const Tuple& pt, const Impact& impt=Impact()) const =0;
     virtual std::vector<Impact> local_intersect(const Ray &other) const =0;
     Matrix get_aggregate_transform(std::set<const Shape*>& visited, bool verbose=false, int count=0) const;
 protected:
@@ -32,7 +32,7 @@ public:
 
     virtual void verbose_print() const=0;
 
-    Tuple normal_at(const Tuple& pt) const;
+    Tuple normal_at(const Tuple& pt, const Impact& impt=Impact()) const;
     std::vector<Impact> intersect(const Ray &other) const;
 
     void print(unsigned int indent=0, std::set<const Shape*> visited={}) const;

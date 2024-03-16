@@ -97,11 +97,11 @@ void Shape::print(unsigned int indent, std::set<const Shape*> visited) const{
     }
 }
 
-Tuple Shape::normal_at(const Tuple& world_pt) const{
+Tuple Shape::normal_at(const Tuple& world_pt, const Impact& impt) const{
     Matrix agg_trans_inv = this->get_aggregate_transform().Inverse();
     Tuple local_point = agg_trans_inv*world_pt;
     local_point.set_type(TupType::POINT);
-    Tuple local_normal  = local_normal_at(local_point);
+    Tuple local_normal  = local_normal_at(local_point,impt);
     Tuple output = agg_trans_inv.Transpose()*local_normal;
     output.set_type(TupType::VECTOR);
     output.normalize();

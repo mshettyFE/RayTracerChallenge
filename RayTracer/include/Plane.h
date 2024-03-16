@@ -10,7 +10,7 @@
 class Plane: public Shape{
     private:
         Tuple normal_vector;
-        Tuple local_normal_at(const Tuple& pt) const override;
+        Tuple local_normal_at(const Tuple& pt, const Impact& impt=Impact()) const override;
         std::vector<Impact> local_intersect(const Ray &other) const override;
     public:
         Plane(Matrix Transformation=MatIdentity(4), Material material=Material(), Shape* parent=nullptr);

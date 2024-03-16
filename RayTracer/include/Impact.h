@@ -10,11 +10,15 @@ class Impact{
 private:
     double time;
     const Shape* obj;
+    double u;
+    double v;
 public:
-    Impact(double time, const Shape* obj);
+    Impact(double time, const Shape* obj, double u=0, double v=0);
     Impact();
     
     double get_t() const;
+    double get_u() const;
+    double  get_v() const;
     const Shape* get_obj() const;
 
     bool operator==(const Impact& other) const;

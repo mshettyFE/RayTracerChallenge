@@ -4,7 +4,7 @@
 
 Sphere::Sphere(const Matrix& Transformation, const Material& material, const Shape* parent) :Shape(Transformation, material, parent, "Sphere") {}
 
-Tuple Sphere::local_normal_at(const Tuple& pt) const{
+Tuple Sphere::local_normal_at(const Tuple& pt, const Impact& impt) const{
 // assumes pt already normalized
     return pt;
 }

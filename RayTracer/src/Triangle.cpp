@@ -17,6 +17,9 @@ Triangle::Triangle(const std::initializer_list<double> p1, const std::initialize
 }
 
 Triangle::Triangle(const Tuple& p1, const Tuple& p2, const Tuple& p3, const Matrix& Transformation, const Material& material, Shape* parent) : Shape(Transformation,material, parent,"Triangle"){
+    if(p1.type() != TupType::POINT){throw std::invalid_argument("In Smooth Triangle, p1 must have 3 coordinates");}
+    if(p2.type() != TupType::POINT){throw std::invalid_argument("In Smooth Triangle, p2 must have 3 coordinates");}
+    if(p2.type() != TupType::POINT){throw std::invalid_argument("In Smooth Triangle, p3 must have 3 coordinates");}
     this->p1 = p1;
     this->p2 = p2;
     this->p3 = p3;
@@ -27,7 +30,7 @@ Triangle::Triangle(const Tuple& p1, const Tuple& p2, const Tuple& p3, const Matr
 }
 
 
-Tuple Triangle::local_normal_at(const Tuple& pt) const {
+Tuple Triangle::local_normal_at(const Tuple& pt, const Impact& impt) const {
     return this->normal; 
 }
 

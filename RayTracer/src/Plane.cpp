@@ -5,7 +5,7 @@ Plane::Plane( Matrix Transformation, Material material, Shape* parent) : Shape(T
     normal_vector = Tuple({0,1,0},TupType::VECTOR);
 }
 
-Tuple Plane::local_normal_at(const Tuple& pt) const {
+Tuple Plane::local_normal_at(const Tuple& pt, const Impact& impt) const {
     return normal_vector;
 }
 

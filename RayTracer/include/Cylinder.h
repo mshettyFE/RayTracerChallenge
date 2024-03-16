@@ -16,7 +16,7 @@ private:
     bool closed;
     bool check_cap(const Ray& r, double time) const;
     std::vector<Impact> intersect_cap(const Ray& r) const;
-    Tuple local_normal_at(const Tuple& pt) const override;
+    Tuple local_normal_at(const Tuple& pt, const Impact& impt=Impact()) const override;
     std::vector<Impact> local_intersect(const Ray &other) const override;
 public:
     void verbose_print() const override;
