@@ -1,35 +1,39 @@
 #include <memory>
 #include <vector>
 #include "Triangle.h"
+#include "Shape.h"
 #include "Group.h"
 
 
-struct line_item{
-    std::string character;
-    std::vector<double> points;
-    void print() const{
-    std::cout << "Char: " << this->character << std::endl << "Points: ";
-    for(auto const& i: this->points){
-        std::cout << i << " ";
+class InvalidLineParser : public std::exception {
+    public:
+char * what () {
+        return "Invalid line";
     }
-    std::cout << std::endl;
-}
 };
 
 class Parser{
 private:
-    bool parse_line(std::istringstream& iss, struct line_item& out_param);
-    Tuple parse_vertex(const struct line_item& input) const;
-    bool parse_face(const struct line_item& input, Tuple& output) const;
+    std::string gen_triangle_id();
+    static inline unsigned long Triangle_ID{0};
+    void read_line(const std::string& line);
+    void parse_vertex(std::istringstream& iss) ;
+    void parse_normal(std::istringstream& iss) ;
+    void parse_group(std::istringstream& iss) ;
+    void parse_face(std::istringstream& iss);
     unsigned long invalid_reads;
     unsigned long current_line;
     std::vector<Tuple> vertices = {GenPoint(0,0,0)};
+    std::vector<Tuple> normals = {GenVec(0,0,0)};
+    std::map<std::string, std::unique_ptr<Shape>> recorded_groups;
+
     void reset_vertices();
 public:
-    std::unique_ptr<Group> read(const std::string& fname, bool file=true);
+    void read(const std::string& fname, bool file=true);
     unsigned long get_invalid_reads() const;
     unsigned long get_current_line() const;
-
+    std::unique_ptr<Group> emit();
     Tuple get_vertex(int i) const;
+    const std::vector<Tuple> get_vertices() const;
     unsigned long get_total_vertices() const;
 };

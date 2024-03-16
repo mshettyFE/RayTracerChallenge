@@ -53,6 +53,8 @@ public:
     const Shape* get_parent() const;
     void set_parent(const Shape* new_parent);
 
+    const std::vector<std::unique_ptr<Shape>>& get_children() const;
+
     const Shape* get_this() const{return this;}
 
 };

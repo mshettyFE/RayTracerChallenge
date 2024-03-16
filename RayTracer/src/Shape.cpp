@@ -117,21 +117,6 @@ int Shape::get_total_children() const{
     return this->children.size();
 }
 
-/*
-const Shape* Shape::get_node(int id, int count, bool debug) const{
-    if(debug){
-        std::cout << id << " " << "" << this->get_id() << " " <<  count <<" " <<  get_total_children() << std::endl;
-    }
-    count++;
-    if(this->get_id() == id){
-        return this;
-    }
-    for(auto const& child: children){
-        return child->get_node(id,count,debug);
-    }
-    if(this->parent==nullptr){
-        throw std::invalid_argument("Couldn't find child");
-    }
-    return nullptr;
+const std::vector<std::unique_ptr<Shape>>& Shape::get_children() const{
+    return children;
 }
-*/

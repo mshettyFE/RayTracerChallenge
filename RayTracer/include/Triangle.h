@@ -18,6 +18,7 @@ private:
     std::vector<Impact> local_intersect(const Ray &other) const override;
 public:
     Triangle(const std::initializer_list<double> p1, const std::initializer_list<double> p2,const std::initializer_list<double> p3, const Matrix& Transformation=MatIdentity(4), const Material& material=Material(), Shape* parent=nullptr);
+    Triangle(const Tuple& p1, const Tuple& p2, const Tuple& p3, const Matrix& Transformation=MatIdentity(4), const Material& material=Material(), Shape* parent=nullptr);
 
     void verbose_print() const override;
 

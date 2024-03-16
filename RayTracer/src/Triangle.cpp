@@ -16,6 +16,17 @@ Triangle::Triangle(const std::initializer_list<double> p1, const std::initialize
     this->normal.normalize();
 }
 
+Triangle::Triangle(const Tuple& p1, const Tuple& p2, const Tuple& p3, const Matrix& Transformation, const Material& material, Shape* parent) : Shape(Transformation,material, parent,"Triangle"){
+    this->p1 = p1;
+    this->p2 = p2;
+    this->p3 = p3;
+    this->edge1 = this->p2-this->p1;
+    this->edge2 = this->p3-this->p1;
+    this->normal = this->edge2.cross(this->edge1);
+    this->normal.normalize();
+}
+
+
 Tuple Triangle::local_normal_at(const Tuple& pt) const {
     return this->normal; 
 }
