@@ -6,7 +6,6 @@
 #include "Material.h"
 #include "Ray.h"
 #include "Shape.h"
-#include "Group.h"
 #include "Impact.h"
 #include <memory>
 #include <map>
@@ -22,7 +21,7 @@ public:
 
     Group(const Matrix& Transformation=MatIdentity(4), const Material& material=Material(), Shape* parent=nullptr);
 
-    const Shape* add_child(std::unique_ptr<Shape> new_member){
+    virtual const Shape* add_child(std::unique_ptr<Shape> new_member){
         unsigned long new_id = new_member->get_id();
         new_member->set_parent(this);
         this->children.push_back(std::move(new_member));

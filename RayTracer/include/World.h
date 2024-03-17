@@ -3,6 +3,7 @@
 
 #include "Shape.h"
 #include "Ray.h"
+#include "AABB.h"
 #include "Impact.h"
 #include "CollisionInfo.h"
 #include "Color.h"
@@ -14,7 +15,10 @@ class World{
     private:
         std::vector<std::unique_ptr<LightSource>> sources;
         std::vector<std::unique_ptr<Shape>> shapes;
+        std::unique_ptr<AABB> root_bounding_box=nullptr;
     public:
+
+    void init_bvh(){}
 
     std::vector<Impact> intersect(const Ray& r) const;
 
