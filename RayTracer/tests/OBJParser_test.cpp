@@ -24,7 +24,7 @@ TEST(OBJParser, VertexParser){
             p.get_vertex(0);
         }
         catch(const std::invalid_argument &e){
-            EXPECT_STREQ( "Out of bounds on parser (0 is out of bounds)", e.what() );
+            EXPECT_STREQ( "0 Out of bounds on parser for vertex (0 is out of bounds)", e.what() );
             throw;
         }
     }
@@ -92,4 +92,30 @@ TEST(OBJParser, NamedGroups){
     EXPECT_EQ(points_triangle_two[0],vertices[1]);
     EXPECT_EQ(points_triangle_two[1],vertices[3]);
     EXPECT_EQ(points_triangle_two[2],vertices[4]);
+}
+
+TEST(OBJParser, ParseNormalVertices){
+    Parser p;
+    p.read("vn 0 0 1\n"
+"vn 0.707 0 -0.707\n"
+"vn 1 2 3\n",false);
+    auto  normals = p.get_normals();
+    EXPECT_EQ(normals.size(), 4);
+    EXPECT_EQ(normals[0],GenVec(0,0,0));
+    EXPECT_EQ(normals[1], GenVec(0,0,1));
+    EXPECT_EQ(normals[2], GenVec(0.707, 0, -0.707));
+    EXPECT_EQ(normals[3], GenVec(1, 2, 3));
+}
+
+
+TEST(OBJParser, FacesWithNormals){
+    Parser p;
+    p.read("v 0 1 0\n"
+"v -1 0 0\n"
+"v 1 0 0\n"
+"vn -1 0 0\n"
+"vn 1 0 0\n"
+"vn 0 1 0\n"
+"f 1//3 2//1 3//2\n"
+"f 1/0/3 2/102/1 3/14/2\n", false);
 }

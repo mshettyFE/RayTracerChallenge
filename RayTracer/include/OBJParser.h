@@ -27,13 +27,14 @@ private:
     std::vector<Tuple> vertices = {GenPoint(0,0,0)};
     std::vector<Tuple> normals = {GenVec(0,0,0)};
     std::map<std::string, std::unique_ptr<Group>> recorded_groups;
-    void reset_vertices();
 public:
     void read(const std::string& fname, bool file=true);
     unsigned long get_invalid_reads() const;
     unsigned long get_current_line() const;
     std::unique_ptr<Group> emit();
     Tuple get_vertex(int i) const;
+    Tuple get_normal(int i) const;
     const std::vector<Tuple> get_vertices() const;
+    const std::vector<Tuple> get_normals() const;
     unsigned long get_total_vertices() const;
 };

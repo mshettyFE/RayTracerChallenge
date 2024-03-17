@@ -25,9 +25,9 @@ SmoothTriangle::SmoothTriangle(const Tuple& p1, const Tuple& p2, const Tuple& p3
     if(p1.type() != TupType::POINT){throw std::invalid_argument("In Smooth Triangle, p1 must be a point");}
     if(p2.type() != TupType::POINT){throw std::invalid_argument("In Smooth Triangle, p2 must be a point");}
     if(p2.type() != TupType::POINT){throw std::invalid_argument("In Smooth Triangle, p3 must be a point");}
-    if(n1.type() != TupType::POINT){throw std::invalid_argument("In Smooth Triangle, n1 must be a normal");}
-    if(n2.type() != TupType::POINT){throw std::invalid_argument("In Smooth Triangle, n2 must be a normal");}
-    if(n3.type() != TupType::POINT){throw std::invalid_argument("In Smooth Triangle, n3 must be a normal");}
+    if(n1.type() != TupType::VECTOR){throw std::invalid_argument("In Smooth Triangle, n1 must be a vector");}
+    if(n2.type() != TupType::VECTOR){throw std::invalid_argument("In Smooth Triangle, n2 must be a vector");}
+    if(n3.type() != TupType::VECTOR){throw std::invalid_argument("In Smooth Triangle, n3 must be a vector");}
     this->p1 = p1;
     this->p2 = p2;
     this->p3 = p3;

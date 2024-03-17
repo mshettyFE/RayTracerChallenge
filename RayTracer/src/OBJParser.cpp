@@ -5,6 +5,7 @@
 #include <algorithm>
 #include "OBJParser.h"
 #include "Triangle.h"
+#include "SmoothTriangle.h"
 #include "Group.h"
 #include "Tuple.h"
 
@@ -27,7 +28,7 @@ void Parser::read_line(const std::string& line){
         parse_group(iss);
     }
     else if(type=="vn"){
-        throw std::invalid_argument("not implemented");
+        parse_normal(iss);
     }
     else{
         throw InvalidLineParser();
@@ -70,11 +71,28 @@ void Parser::read(const std::string& fname, bool file){
     }
 }
 
+void Parser::parse_normal(std::istringstream& iss){
+    std::string error_message = "Failed to parse. Error at line "+std::to_string(current_line);
+    double temp_num;
+    std::vector<double> points;
+    while(iss >> temp_num || !iss.eof()){
+        if(iss.fail()){throw std::invalid_argument(error_message);}
+        points.push_back(temp_num);
+    }
+    if(points.size() != 3){throw std::invalid_argument(error_message);}
+    normals.push_back(GenVec(points[0],points[1],points[2]));
+}
+
+
 void Parser::parse_face(std::istringstream& iss){
     std::string error_message = "Failed to parse. Error at line "+std::to_string(current_line);
     bool accept_normals = true;
     if(normals.size() == 1){
         accept_normals = false;
+        error_message += ". Normal deactivated";
+    }
+    else{
+        error_message += ". Normal activated";
     }
     std::vector<std::string> verts;
     std::string temp;
@@ -83,45 +101,74 @@ void Parser::parse_face(std::istringstream& iss){
         verts.push_back(temp);
     }
 // parse snippets of face line
-    std::vector<int> recorded_vertices{0};
-    std::vector<int> recorded_normals{0};
+    std::vector<int> recorded_vertices;
+    std::vector<int> recorded_normals;
     for(std::string item: verts){
         if(accept_normals){
-            throw std::invalid_argument("Not Implemented");           
+// need to parse files of the form x/*/n, where x is vertex info, n is normal info, and you ignore *
+            std::string token;
+            int vertex_id=-1;
+            int normal_id=-1;
+            std::istringstream normal_ss(item);
+// vertex
+            if(!std::getline(normal_ss, token,'/')){throw std::invalid_argument(error_message);}
+            try{vertex_id = std::stoi(token);} catch (std::invalid_argument const& ex){throw std::invalid_argument(error_message);}
+// ignore texture index
+            if(token.size() == 0){throw std::invalid_argument(error_message);}
+            if(!std::getline(normal_ss, token,'/')){throw std::invalid_argument(error_message);}
+// get normal index
+            normal_ss >> token;
+            if(normal_ss.fail() || !normal_ss.eof()){throw std::invalid_argument(error_message);}
+            try{normal_id = std::stoi(token);} catch (std::invalid_argument const& ex){throw std::invalid_argument(error_message);}
+            recorded_vertices.push_back(vertex_id);
+            recorded_normals.push_back(normal_id);
         }
 // parse simple faces
         else{
-            recorded_vertices.push_back(std::stoi(item));
+            int vertex_id = -1;
+            try{vertex_id = std::stoi(item);} catch (std::invalid_argument const& ex){throw std::invalid_argument(error_message);}
+            recorded_vertices.push_back(vertex_id);
         }
     }
 // Record triangles
+    std::vector<std::unique_ptr<Shape>> recorded_triangles;
+    if(recorded_vertices.size() < 3){throw std::invalid_argument(error_message);}
     if(accept_normals){
-        throw std::invalid_argument("Not Implemented");
+        if(recorded_vertices.size() != recorded_normals.size()){throw std::invalid_argument(error_message);}
     }
-    else{
-        std::vector<Triangle> recorded_triangles;
-        if(recorded_vertices.size() < 3){throw std::invalid_argument(error_message);}
-        int first_node = recorded_vertices[1];
-        Tuple p1 = get_vertex(first_node);
-        for(int i=2; i<recorded_vertices.size()-1; ++i){
-            int second_node = recorded_vertices[i];
-            int third_node = recorded_vertices[i+1];
-            Tuple p2 = get_vertex(second_node); 
-            Tuple p3 = get_vertex(third_node);
-            recorded_triangles.push_back(Triangle(vertices[first_node],vertices[second_node],vertices[third_node]));
-        }
-        std::string group_name;
-        if(current_group==""){
-            group_name = gen_group_id();
+    int first_vertex_node = recorded_vertices[0];
+    int first_normal_node=0;
+    Tuple p1 = get_vertex(first_vertex_node);
+    Tuple n1;
+    if(accept_normals){
+        first_normal_node = recorded_normals[0];
+        n1 = get_normal(first_normal_node);
+    }
+    for(int i=1; i<recorded_vertices.size()-1; ++i){
+        int second_vertex_node = recorded_vertices[i];
+        int third_vertex_node = recorded_vertices[i+1];
+        Tuple p2 = get_vertex(second_vertex_node); 
+        Tuple p3 = get_vertex(third_vertex_node);
+        if(accept_normals){
+            int second_normal_node = recorded_normals[i];
+            int third_normal_mode = recorded_normals[i+1];
+            recorded_triangles.push_back(std::move(std::make_unique<SmoothTriangle>(std::move(SmoothTriangle(vertices[first_vertex_node],vertices[second_vertex_node],vertices[third_vertex_node], normals[first_normal_node], normals[second_normal_node],normals[third_normal_mode])))));
         }
         else{
-            group_name = current_group;
+            recorded_triangles.push_back(std::move(std::make_unique<Triangle>(std::move(Triangle(vertices[first_vertex_node],vertices[second_vertex_node],vertices[third_vertex_node])))));
         }
-    //    std::cout << group_name << std::endl;
-        recorded_groups.insert(std::make_pair(group_name,std::make_unique<Group>(Group())));
-        for(int i=0; i< recorded_triangles.size(); ++i){
-            recorded_groups[group_name]->add_child(std::make_unique<Triangle>(std::move(recorded_triangles[i])));
-        }
+    }
+    std::string group_name;
+    if(current_group==""){
+        group_name = gen_group_id();
+    }
+    else{
+        group_name = current_group;
+    }
+//    std::cout << group_name << std::endl;
+    recorded_groups.insert(std::make_pair(group_name,std::make_unique<Group>(Group())));
+    for(int i=0; i< recorded_triangles.size(); ++i){
+        recorded_groups[group_name]->add_child(std::move(recorded_triangles[i]));
     }
 }
 
@@ -143,7 +190,7 @@ void Parser::parse_group(std::istringstream& iss){
     std::string error_message = "Failed to parse. Error at line "+std::to_string(current_line);
     std::string temp;
     iss >> temp;
-    if(iss.fail()){std::cout << error_message << std::endl; throw std::invalid_argument(error_message);}
+    if(iss.fail()){throw std::invalid_argument(error_message);}
     if(!iss.eof()){throw std::invalid_argument(error_message);}
     std::string current_group=temp;
 }
@@ -169,17 +216,20 @@ unsigned long Parser::get_current_line() const{
 }
 
 Tuple Parser::get_vertex(int i) const{
-    if(i<=0){throw std::invalid_argument("Out of bounds on parser (0 is out of bounds)");}
+    std::string error_message = std::to_string(i)+" Out of bounds on parser for vertex (0 is out of bounds)";
+    if(i<=0){throw std::invalid_argument(error_message);}
     return vertices[i];
 }
 
-unsigned long Parser::get_total_vertices() const{
-    return this->vertices.size();
+Tuple Parser::get_normal(int i) const{
+    std::string error_message = std::to_string(i)+"Out of bounds on parser for normal (0 is out of bounds)";
+    if(i<=0){throw std::invalid_argument(error_message);}
+    return normals[i];
 }
 
-void Parser::reset_vertices(){
-    vertices.clear();
-    vertices.push_back(GenPoint(0,0,0));
+
+unsigned long Parser::get_total_vertices() const{
+    return this->vertices.size();
 }
 
 std::unique_ptr<Group> Parser::emit(){
@@ -196,6 +246,10 @@ std::unique_ptr<Group> Parser::emit(){
     return g;
 }
 
-    const std::vector<Tuple> Parser::get_vertices() const{
-        return vertices;
-    }
+const std::vector<Tuple> Parser::get_vertices() const{
+    return vertices;
+}
+
+const std::vector<Tuple> Parser::get_normals() const{
+    return normals;
+}
