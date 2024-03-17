@@ -158,6 +158,7 @@ Ray Camera::ray_for_pixel(int px, int py) const{
 }
 
 std::unique_ptr<Canvas> Camera::render(const World* w) const{
+    total_rays=0;
     Canvas image = Canvas(this->hsize, this->vsize);
     for(int y=0; y<this->vsize-1; ++y){
         for(int x=0; x<this->hsize-1; ++x){
@@ -166,6 +167,7 @@ std::unique_ptr<Canvas> Camera::render(const World* w) const{
             image.write_pixel(y,x,c);
         }
     }
+    std::cout << "Total Rays Created: " << Camera::total_rays << std::endl;
     return std::make_unique<Canvas>(image);
 }
 
@@ -180,3 +182,4 @@ std::ostream& operator << (std::ostream& out, const Camera& c){
     out << "View: " << c.get_view() << std::endl;
     return out;
 }
+

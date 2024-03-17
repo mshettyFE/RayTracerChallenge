@@ -12,7 +12,7 @@
 #include <vector>
 #include <tuple>
 
-TEST(TestImage, OnlySpheres){
+TEST(GenImage, OnlySpheres){
 // floor
     Material floor_mat = Material();
     floor_mat.set_color(Color({1, 0.9, 0.9}));
@@ -65,7 +65,7 @@ TEST(TestImage, OnlySpheres){
     img->save_ppm("Scene");
 }
 
-TEST(TestImage,ShadedSphereRedux){
+TEST(GenImage,ShadedSphereRedux){
     // unit sphere at origin
     Sphere s(MatIdentity(4), Material(Color(1,0.2,1)));
     // Place light source up, behind and left the camera
@@ -81,7 +81,7 @@ TEST(TestImage,ShadedSphereRedux){
     img->save_ppm("ShadedSphereCamera");
 }
 
-TEST(TestImage, HotPink){
+TEST(GenImage, HotPink){
     int width = 400;
     int height = 480;
     Canvas c(width, height);
@@ -93,7 +93,7 @@ TEST(TestImage, HotPink){
     c.save_ppm("HotPink");
 }
 
-TEST(TestImage, GradPatternTest){
+TEST(GenImage, GradPatternTest){
 // floor
     Material floor_mat = Material();
     floor_mat.set_color(Color({1, 0.9, 0.9}));
@@ -139,7 +139,7 @@ TEST(TestImage, GradPatternTest){
     img->save_ppm("GradPlaneScene");
 }
 
-TEST(TestImage, Planes){
+TEST(GenImage, Planes){
 // floor
     Material floor_mat = Material();
     floor_mat.set_color(Color({1, 0.9, 0.9}));
@@ -184,7 +184,7 @@ TEST(TestImage, Planes){
     img->save_ppm("PlaneScene");
 }
 
-TEST(TestImage, ShadedSphere){
+TEST(GenImage, ShadedSphere){
     // Place Sphere at origin
     Sphere s(MatScaling(0.25,0.25,0.25), Material(Color(1,0.2,1)));
     // Place light source up, behind and left the camera
@@ -225,7 +225,7 @@ TEST(TestImage, ShadedSphere){
     canvas.save_ppm("ShadedSphere");
 }
 
-TEST(TestImage, Spheres){
+TEST(GenImage, Spheres){
     // Define canvas
     int dim = 100;
     Canvas canvas(dim, dim);
@@ -260,7 +260,7 @@ TEST(TestImage, Spheres){
     canvas.save_ppm("RedSphere");
 }
 
-TEST(TestImage, FresnelEffect){
+TEST(GenImage, FresnelEffect){
     PointSource ps(WHITE,Tuple({-100,0,0}, TupType::POINT));
     Material base_mat;
     base_mat.set_reflectance(1);
@@ -288,7 +288,7 @@ TEST(TestImage, FresnelEffect){
     img->save_ppm("Fresnel");
 }
 
-TEST(TestImage,AirBubble){
+TEST(GenImage,AirBubble){
     PointSource ps(WHITE,Tuple({-10,10,-10}, TupType::POINT));
     Material glass;
     glass.set_color(GRAY);
@@ -327,7 +327,7 @@ TEST(TestImage,AirBubble){
     img->save_ppm("NestedGlass");
 }
 
-TEST(TestImage, SimpleTeapot){
+TEST(GenImage, SimpleTeapot){
 // Assumes that tests are run in build folder which is parallel to obj file
     std::string teapot_obj = "../obj/teapot.obj";
     Parser p;
@@ -376,7 +376,7 @@ std::vector<std::tuple<double,double,double,double>> place_random_spheres(int to
     return output;
 }
 
-TEST(TestImage, RandomSpheres){
+TEST(GenImage, RandomSpheres){
     RNG rng;
     World w;
     Material m = Material();

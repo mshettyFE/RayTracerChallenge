@@ -9,6 +9,6 @@ make
  
 # Running
 ## Without generating images
-./Tracer --gtest_filter=-TestImage.*
+./Tracer --gtest_filter=-GenImage.*
 ## Generating images
-./Tracer --gtest_filter=TestImage.*
+./Tracer --gtest_filter=GenImage.*

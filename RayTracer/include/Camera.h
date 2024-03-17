@@ -19,6 +19,7 @@ private:
     double half_height;
     Matrix view_trans;
 public:
+    static inline unsigned long long total_rays=0;
     Camera(int hsize, int vsize, double field_of_view);
     Camera(int hsize, int vsize, double field_of_view, const Tuple& camera_loc, const Tuple& pointed_at, const Tuple& upwards);
 

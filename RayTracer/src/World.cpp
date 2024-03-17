@@ -7,6 +7,7 @@
 #include "CollisionInfo.h"
 #include "Ray.h"
 #include "PointSource.h"
+#include "Camera.h"
 #include <algorithm>
 #include <vector>
 #include <memory>
@@ -93,6 +94,7 @@ void World::set_source(int obj, std::unique_ptr<LightSource>& other) {
 
 
 Color World::color_at(const Ray& r, unsigned int remaining) const{
+    Camera::total_rays += 1;
     std::vector<Impact> hits = intersect(r);
     Color out = BLACK;
     if (hits.size() > 0){
@@ -180,6 +182,7 @@ Color World::reflect_color(const CollisionInfo&  comps, unsigned int remaining) 
         return BLACK;
     }
     Ray r = Ray(comps.get_over_pnt(), comps.get_reflect());
+    Camera::total_rays += 1;
     Color col = this->color_at(r, remaining-1);
     return col*comps.get_impact().get_obj()->get_material().get_reflectance();
 }
@@ -197,6 +200,7 @@ Color World::refract_color(const CollisionInfo& comps, unsigned int remaining) c
     if(sin2_theta > 1){
         return BLACK;
     }
+    Camera::total_rays += 1;
     double cos_t = std::sqrt(1.0-sin2_theta);
     Tuple new_direction = comps.get_normal()*(n_ratio*cos_i-cos_t)- comps.get_eye()*n_ratio;
     Ray refracted_ray(comps.get_under_pnt(), new_direction);
