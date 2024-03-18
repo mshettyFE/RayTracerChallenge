@@ -8,6 +8,7 @@
 #include "Color.h"
 #include "Checkers.h"
 #include "OBJParser.h"
+#include "Cube.h"
 #include <random>
 #include <vector>
 #include <tuple>
@@ -327,6 +328,7 @@ TEST(GenImage,AirBubble){
     img->save_ppm("NestedGlass");
 }
 
+/*
 TEST(GenImage, SimpleTeapot){
 // Assumes that tests are run in build folder which is parallel to obj file
     std::string teapot_obj = "../obj/teapot.obj";
@@ -344,6 +346,7 @@ TEST(GenImage, SimpleTeapot){
     auto img = cam.render(&w);
     img->save_ppm("SimpleTeapot");
 }
+*/
 
 std::vector<std::tuple<double,double,double,double>> place_random_spheres(int total_spheres=10){
     assert(total_spheres>0);
@@ -403,4 +406,142 @@ TEST(GenImage, RandomSpheres){
     Camera cam(100,100,pi/2.0, from, to, up);
     auto img = cam.render(&w);
     img->save_ppm("RandomSpheres");
+}
+
+TEST(GenImage, Orientation){
+    Material Red = Material(0.1,0.7,0.0,200,RED,0.1,0.0,VACUUM);
+    Material Blue = Material(0.1,0.7,0.0,200,BLUE,0.1,0.0,VACUUM);
+    Material Green = Material(0.1,0.7,0.0,200,GREEN,0.1,0.0,VACUUM);
+    Material Yellow = Material(0.1,0.7,0.0,200,YELLOW,0.1,0.0,VACUUM);
+    Material Purple = Material(0.1,0.7,0.0,200,PURPLE,0.1,0.0,VACUUM);
+    Material White = Material(0.1,0.7,0.0,200,WHITE,0.1,0.0,VACUUM);
+    Sphere s1(MatTranslation(0,2,0),White);
+    Sphere s2(MatTranslation(0,-2,0),Blue);
+    Sphere s3(MatTranslation(0,0,2),Red);
+    Sphere s4(MatTranslation(0,0,-2),Green);
+    Sphere s5(MatTranslation(-2,0,0),Yellow);
+    Sphere s6(MatTranslation(2,0,0),Purple);
+    PointSource Source = PointSource(WHITE,GenPoint(-10,10,10));
+    World w;
+    w.add_source(std::make_unique<PointSource>(std::move(Source)));
+    w.add_shape(std::make_unique<Sphere>(std::move(s1)));
+    w.add_shape(std::make_unique<Sphere>(std::move(s2)));
+    w.add_shape(std::make_unique<Sphere>(std::move(s3)));
+    w.add_shape(std::make_unique<Sphere>(std::move(s4)));
+    w.add_shape(std::make_unique<Sphere>(std::move(s5)));
+    w.add_shape(std::make_unique<Sphere>(std::move(s6)));
+    Tuple from = GenPoint(-5,0,0);
+    Tuple to = GenPoint(0,0,0);
+    Tuple up = GenVec(0,1,0);
+    Camera c(100,100, pi/2.0,from,to,up);
+    auto img = c.render(&w);
+    img->save_ppm("Orientation");
+}
+
+TEST(GenImage, CoverImage){
+    Tuple from = GenPoint(-18,18,-30);
+    Tuple to = GenPoint(6,0,6);
+    Tuple up = GenVec(-0.45, 1, 0);
+    Camera c(1000,1000,0.785,from,to,up);
+    PointSource Source = PointSource(WHITE,GenPoint(50,100,-50));
+    PointSource Source2 = PointSource(Color(0.2, 0.2, 0.2),GenPoint(-400, 50, -10));
+    Material White = Material(0.1,0.7,0.0,200,WHITE,0.1,0.0,VACUUM);
+    Material Blue = Material(0.1,0.7,0.0,200,BLUE,0.1,0.0,VACUUM);
+    Material Red = Material(0.1,0.7,0.0,200,RED,0.1,0.0,VACUUM);
+    Material Purple = Material(0.1,0.7,0.0,200,Color(0.373, 0.404, 0.550),0.1,0.0,VACUUM);
+    std::vector<Matrix> temp = {MatTranslation(1,-1,1),MatScaling(0.5,0.5,0.5)};
+    Matrix Standard = Chain(temp);
+    Matrix Large = MatScaling(3.5,3.5,3.5);
+    temp = {Standard,MatScaling(3,3,3)};
+    Matrix Medium = Chain(temp);
+    temp = {Standard, MatScaling(2,2,2)};
+    Matrix Small = Chain(temp);
+    temp = {MatRotateX(pi/2.0), MatTranslation(0,0,500)};
+    Matrix PlaneTrans = Chain(temp);
+    Material PlaneMat = Material(1,0,0,200,WHITE);
+    Plane plane(PlaneTrans,PlaneMat);
+    Material sphere = Material(0.0,0.2,1.0,200,Color(0.373, 0.404, 0.550),0.7,0.7,1.5);
+    Sphere sph(Large,sphere);
+    temp = {Medium, MatTranslation(4,0,0)};
+    Matrix c1Trans = Chain(temp);
+    Cube c1(c1Trans,White);
+    temp = {Large, MatTranslation(8.5, 1.5, -0.5)};
+    Matrix c2Trans = Chain(temp);
+    Cube c2(c2Trans,Blue);
+    temp = {Large, MatTranslation(0, 0, 4)};
+    Matrix c3Trans = Chain(temp);
+    Cube c3(c3Trans,Red);
+    temp = {Small, MatTranslation(4, 0, 4)};
+    Matrix c4Trans = Chain(temp);
+    Cube c4(c4Trans,White);
+    temp = {Medium, MatTranslation(7.5, 0.5, 4)};
+    Matrix c5Trans = Chain(temp);
+    Cube c5(c5Trans,Purple);
+    temp = {Medium, MatTranslation(-0.25, 0.25, 8)};
+    Matrix c6Trans = Chain(temp);
+    Cube c6(c6Trans,White);
+    temp = {Large, MatTranslation(4, 1, 7.5)};
+    Matrix c7Trans = Chain(temp);
+    Cube c7(c7Trans,Blue);
+    temp = {Medium, MatTranslation(10, 2, 7.5)};
+    Matrix c8Trans = Chain(temp);
+    Cube c8(c8Trans,Red);
+    temp = {Small, MatTranslation(8, 2, 12)};
+    Matrix c9Trans = Chain(temp);
+    Cube c9(c9Trans,White);
+    temp = {Medium, MatTranslation(8, 2, 12)};
+    Matrix c10Trans = Chain(temp);
+    Cube c10(c10Trans,White);
+    temp = {Small, MatTranslation(20, 1, 9)};
+    Matrix c11Trans = Chain(temp);
+    Cube c11(c11Trans,White);
+    temp = {Small, MatTranslation(20, 1, 9)};
+    Matrix c12Trans = Chain(temp);
+    Cube c12(c12Trans,White);
+    temp = {Large, MatTranslation(-0.5, -5, 0.25)};
+    Matrix c13Trans = Chain(temp);
+    Cube c13(c13Trans,Blue);
+    temp = {Large, MatTranslation(4,-4,0)};
+    Matrix c14Trans = Chain(temp);
+    Cube c14(c14Trans,Red);
+    temp = {Large, MatTranslation(8.5,-4,0)};
+    Matrix c15Trans = Chain(temp);
+    Cube c15(c15Trans,White);
+    temp = {Large, MatTranslation(0,-4,4)};
+    Matrix c16Trans = Chain(temp);
+    Cube c16(c16Trans,White);
+    temp = {Large, MatTranslation(-0.5, -4.5, 8)};
+    Matrix c17Trans = Chain(temp);
+    Cube c17(c17Trans,Purple);
+    temp = {Large, MatTranslation(0, -8, 4)};
+    Matrix c18Trans = Chain(temp);
+    Cube c18(c18Trans,White);
+    temp = {Large, MatTranslation(-0.5, -8.5, 8)};
+    Matrix c19Trans = Chain(temp);
+    Cube c19(c19Trans,White);
+    World w;
+    w.add_source(std::make_unique<PointSource>(std::move(Source)));
+    w.add_shape(std::make_unique<Plane>(std::move(plane)));
+    w.add_shape(std::make_unique<Sphere>(std::move(sph)));
+    w.add_shape(std::make_unique<Cube>(std::move(c1)));
+    w.add_shape(std::make_unique<Cube>(std::move(c2)));
+    w.add_shape(std::make_unique<Cube>(std::move(c3)));
+    w.add_shape(std::make_unique<Cube>(std::move(c4)));
+    w.add_shape(std::make_unique<Cube>(std::move(c5)));
+    w.add_shape(std::make_unique<Cube>(std::move(c6)));
+    w.add_shape(std::make_unique<Cube>(std::move(c7)));
+    w.add_shape(std::make_unique<Cube>(std::move(c8)));
+    w.add_shape(std::make_unique<Cube>(std::move(c9)));
+    w.add_shape(std::make_unique<Cube>(std::move(c10)));
+    w.add_shape(std::make_unique<Cube>(std::move(c11)));
+    w.add_shape(std::make_unique<Cube>(std::move(c12)));
+    w.add_shape(std::make_unique<Cube>(std::move(c13)));
+    w.add_shape(std::make_unique<Cube>(std::move(c14)));
+    w.add_shape(std::make_unique<Cube>(std::move(c15)));
+    w.add_shape(std::make_unique<Cube>(std::move(c16)));
+    w.add_shape(std::make_unique<Cube>(std::move(c17)));
+    w.add_shape(std::make_unique<Cube>(std::move(c18)));
+    w.add_shape(std::make_unique<Cube>(std::move(c19)));
+    std::unique_ptr<Canvas> img = c.render(&w);
+    img->save_ppm("Cover");
 }

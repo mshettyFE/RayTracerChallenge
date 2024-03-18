@@ -78,6 +78,10 @@ class Tuple{
 
     Tuple reflect(const Tuple& normal) const;
 
+    double get_x() const{return this->data[0];};
+    double get_y() const{return this->data[1];};
+    double get_z() const{return this->data[2];};
+
 };
 
 template <typename T>

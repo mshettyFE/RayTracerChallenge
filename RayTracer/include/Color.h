@@ -9,6 +9,8 @@
 #define RED Color(1,0,0)
 #define GREEN Color(0,1,0)
 #define BLUE Color(0,0,1)
+#define YELLOW Color(0xFFFF00)
+#define PURPLE Color(0.373, 0.404, 0.550)
 #define BLACK Color(0,0,0)
 #define WHITE Color(1,1,1)
 #define GRAY Color(0.5,0.5,0.5)
