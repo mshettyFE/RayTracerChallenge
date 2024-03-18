@@ -6,6 +6,7 @@
 #include "Material.h"
 #include "Ray.h"
 #include "Impact.h"
+#include "AABB.h"
 #include <memory>
 #include <set>
 
@@ -57,7 +58,8 @@ public:
 
     const Shape* get_this() const{return this;}
 
-};
+    virtual std::unique_ptr<AABB> bound() const = 0;
 
+};
 
 #endif

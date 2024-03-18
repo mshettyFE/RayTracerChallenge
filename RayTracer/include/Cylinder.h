@@ -20,6 +20,7 @@ private:
     std::vector<Impact> local_intersect(const Ray &other) const override;
 public:
     void verbose_print() const override;
+    std::unique_ptr<AABB> bound() const override;
 
     Cylinder(Matrix Transformation=MatIdentity(4), Material material=Material(), Shape* parent=nullptr,
      double min= NEG_INFTY, double max= INFTY,bool closed = false);

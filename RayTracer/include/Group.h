@@ -18,6 +18,7 @@ private:
     std::vector<Impact> local_intersect(const Ray &other) const override;
 public:
     void verbose_print() const override;
+    std::unique_ptr<AABB> bound() const override;
 
     Group(const Matrix& Transformation=MatIdentity(4), const Material& material=Material(), Shape* parent=nullptr);
 

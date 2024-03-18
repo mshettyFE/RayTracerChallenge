@@ -80,3 +80,5 @@ std::vector<Impact> SmoothTriangle::local_intersect(const Ray &other) const {
 Tuple SmoothTriangle::local_normal_at(const Tuple& pt, const Impact& impt) const {
 return this->n2 * impt.get_u() +this->n3 * impt.get_v() + this->n1 * (1 - impt.get_u() - impt.get_v());
 }
+
+std::unique_ptr<AABB> SmoothTriangle::bound() const{return nullptr;}

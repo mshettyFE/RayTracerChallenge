@@ -11,6 +11,9 @@ class Sphere: public Shape{
         Sphere(const Matrix& Transformation=MatIdentity(4), const Material& material=Material(), const Shape* parent=nullptr);
 
         void verbose_print() const override;
+
+        std::unique_ptr<AABB> bound() const override;
+
 };
 
 Sphere glass_sphere(double IOR=GLASS);

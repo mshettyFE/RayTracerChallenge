@@ -16,6 +16,8 @@ class Plane: public Shape{
         Plane(Matrix Transformation=MatIdentity(4), Material material=Material(), Shape* parent=nullptr);
 
         void verbose_print() const override;
+        std::unique_ptr<AABB> bound() const override;
+
 
 
 };

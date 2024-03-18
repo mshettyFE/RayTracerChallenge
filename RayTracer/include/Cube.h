@@ -17,6 +17,9 @@ public:
     void verbose_print() const override;
 
     Cube(Matrix Transformation=MatIdentity(4), Material material=Material(), Shape* parent=nullptr);
+
+    std::unique_ptr<AABB> bound() const override;
+
 };
 
 #endif

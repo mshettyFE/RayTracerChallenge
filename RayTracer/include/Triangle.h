@@ -26,6 +26,8 @@ public:
     Tuple get_edge1() const;
     Tuple get_edge2() const;
 
+    std::unique_ptr<AABB> bound() const override;
+
 };
 
 #endif

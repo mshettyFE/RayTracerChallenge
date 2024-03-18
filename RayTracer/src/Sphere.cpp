@@ -41,3 +41,5 @@ Sphere glass_sphere(double IOR){
     Material mat(WHITE,0,1.0,IOR);
     return Sphere(MatIdentity(4), mat);
 }
+
+std::unique_ptr<AABB> Sphere::bound() const{return nullptr;}

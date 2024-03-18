@@ -83,3 +83,6 @@ std::vector<Impact> Cube::local_intersect(const Ray &other) const {
     out.push_back(Impact(smallest_max,this));
     return out;
 }
+
+std::unique_ptr<AABB> Cube::bound() const{return nullptr;}
+

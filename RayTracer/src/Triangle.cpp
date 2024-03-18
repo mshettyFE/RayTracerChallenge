@@ -34,6 +34,9 @@ Tuple Triangle::local_normal_at(const Tuple& pt, const Impact& impt) const {
     return this->normal; 
 }
 
+std::unique_ptr<AABB> Triangle::bound() const{return nullptr;}
+
+
 std::vector<Impact> Triangle::local_intersect(const Ray &other) const {
 //www.tandfonline.com/doi/abs/10.1080/10867651.1997.10487468
     auto crossed_e2 = other.get_direction().cross(edge2);

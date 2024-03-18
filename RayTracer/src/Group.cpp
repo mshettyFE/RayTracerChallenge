@@ -24,3 +24,5 @@ std::vector<Impact> Group::local_intersect(const Ray &r) const {
 Tuple Group::local_normal_at(const Tuple& pt, const Impact& impt) const{
     throw std::invalid_argument("Group has no local normal");
 }
+
+std::unique_ptr<AABB> Group::bound() const{return nullptr;}

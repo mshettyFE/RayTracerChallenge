@@ -78,6 +78,9 @@ std::vector<Impact> Cylinder::local_intersect(const Ray &other) const {
     return out;
 }
 
+std::unique_ptr<AABB> Cylinder::bound() const{return nullptr;}
+
+
 Tuple Cylinder::local_normal_at(const Tuple& pt, const Impact& impt) const {
     if(pt.get_dim() != 3){
         throw std::invalid_argument("pt must have dimension of 3 in Cylinder");

@@ -28,3 +28,5 @@ void Plane::verbose_print() const{
     std::cout << "Normal; " << normal_vector << std::endl;
     std::cout << "\tShape ID: " << id << std::endl;
 }
+
+std::unique_ptr<AABB> Plane::bound() const{return nullptr;}
