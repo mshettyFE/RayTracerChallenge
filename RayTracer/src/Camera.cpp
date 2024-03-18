@@ -75,13 +75,13 @@ Camera::Camera(int hsize, int vsize, double field_of_view, const Tuple& camera_l
     Tuple true_up = left.cross(forward);
     Matrix orientation(
     {
-        {left[0],left[1],left[2],0},
-        {true_up[0],true_up[1],true_up[2],0},
-        {-forward[0],-forward[1],-forward[2],0},
+        {left.get_x(),left.get_y(),left.get_z(),0},
+        {true_up.get_x(),true_up.get_y(),true_up.get_z(),0},
+        {-forward.get_x(),-forward.get_y(),-forward.get_z(),0},
         {0,0,0,1}
     }
     );
-    Matrix trans = MatTranslation(-1.0*camera_loc[0],-1.0*camera_loc[1],-1.0*camera_loc[2]);
+    Matrix trans = MatTranslation(-1.0*camera_loc.get_x(),-1.0*camera_loc.get_y(),-1.0*camera_loc.get_z());
     this->view_trans = orientation*trans;
 }
 
@@ -162,7 +162,7 @@ std::unique_ptr<Canvas> Camera::render(const World* w) const{
     Canvas image = Canvas(this->hsize, this->vsize);
     for(int y=0; y<this->vsize-1; ++y){
         for(int x=0; x<this->hsize-1; ++x){
-            Ray r = ray_for_pixel(y,x);
+            Ray r = ray_for_pixel(x,y);
             Color c = w->color_at(r);
             image.write_pixel(y,x,c);
         }
