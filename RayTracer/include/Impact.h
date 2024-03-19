@@ -24,6 +24,11 @@ public:
     bool operator==(const Impact& other) const;
     bool operator!=(const Impact& other) const;
 
+    bool operator<(const Impact& other) const;
+    bool operator<=(const Impact& other) const;
+    bool operator>(const Impact& other) const;
+    bool operator>=(const Impact& other) const;
+
     friend std::ostream& operator << (std::ostream &out, const Impact& other);
 
 };

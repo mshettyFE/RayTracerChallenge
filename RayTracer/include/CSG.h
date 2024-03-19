@@ -13,6 +13,7 @@ public:
     CSG(CSG_OPS join_type, std::unique_ptr<Shape> left, std::unique_ptr<Shape> right, Matrix Transformation=MatIdentity(4));
 
     bool intersection_allowed(bool lhit, bool inl, bool inr) const;
+    std::vector<Impact> filter_impacts(const std::vector<Impact>& hits) const;
 
     Tuple local_normal_at(const Tuple& pt, const Impact& impt=Impact()) const override;
     std::vector<Impact> local_intersect(const Ray &other) const override;

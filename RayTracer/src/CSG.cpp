@@ -27,8 +27,36 @@ bool CSG::intersection_allowed(bool lhit, bool inl, bool inr) const{
     return false;
 }
 
+std::vector<Impact> CSG::filter_impacts(const std::vector<Impact>& hits) const{
+    bool inl = false;
+    bool inr = false;
+    std::vector<Impact> output;
+    for(auto const& hit: hits){
+        bool lhit  = get_left()->includes(hit.get_obj());
+        if(intersection_allowed(lhit,inl,inr)){
+            output.push_back(hit);
+        }
+        if(lhit){
+            inl = !inl;
+        }
+        else{
+            inr = !inr;
+        }
+    }
+    return output;
+}
+
+std::vector<Impact> CSG::local_intersect(const Ray &other) const {
+    auto left_hits = get_left()->intersect(other);
+    auto right_hits = get_right()->intersect(other);
+    std::sort(left_hits.begin(), left_hits.end());
+    std::sort(right_hits.begin(), right_hits.end());
+    std::vector<Impact> all_hits(left_hits.size()+right_hits.size());
+    std::merge(left_hits.begin(), left_hits.end(), right_hits.begin(), right_hits.end(), all_hits.begin());
+    return filter_impacts(all_hits);
+}
+
 Tuple CSG::local_normal_at(const Tuple& pt, const Impact& impt) const{std::invalid_argument("CSG doesn't have a normal (like group)"); return GenVec(0,0,0);}
-std::vector<Impact> CSG::local_intersect(const Ray &other) const {return {};}
 void CSG::verbose_print() const {}
 std::unique_ptr<AABB> CSG::bound() const {return nullptr;}
  

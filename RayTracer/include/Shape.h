@@ -58,6 +58,8 @@ public:
 
     const Shape* get_this() const{return this;}
 
+    bool includes(const Shape* test) const;
+
     virtual std::unique_ptr<AABB> bound() const = 0;
 
 };

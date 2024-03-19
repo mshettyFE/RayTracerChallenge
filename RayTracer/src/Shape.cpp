@@ -120,3 +120,15 @@ int Shape::get_total_children() const{
 const std::vector<std::unique_ptr<Shape>>& Shape::get_children() const{
     return children;
 }
+
+bool Shape::includes(const Shape* test) const{
+    if(this==test){
+        return true;
+    }
+    for(auto const& child: children){
+        if(child->includes(test)){
+            return true;
+        }
+    }
+    return false;
+}

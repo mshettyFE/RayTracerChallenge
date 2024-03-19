@@ -43,6 +43,23 @@ bool Impact::operator!=(const Impact& other) const{
     return true;
 }
 
+bool Impact::operator<(const Impact& other) const{
+    return get_t() < other.get_t();
+}
+
+bool Impact::operator<=(const Impact& other) const{
+    return get_t() <= other.get_t();
+}
+
+bool Impact::operator>(const Impact& other) const{
+    return get_t() > other.get_t();
+}
+
+bool Impact::operator>=(const Impact& other) const{
+    return get_t() >= other.get_t();
+}
+
+
 // helper function to get first hit with positive time. Return t=-1 if nothing found
 Impact first_hit(std::vector<Impact> intersections){
     Impact out;
