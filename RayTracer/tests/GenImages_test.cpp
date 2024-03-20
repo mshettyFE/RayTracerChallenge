@@ -328,7 +328,7 @@ TEST(GenImage,AirBubble){
     img->save_ppm("NestedGlass");
 }
 
-/*
+
 TEST(GenImage, SimpleTeapot){
 // Assumes that tests are run in build folder which is parallel to obj file
     std::string teapot_obj = "../obj/teapot.obj";
@@ -342,11 +342,28 @@ TEST(GenImage, SimpleTeapot){
     Tuple from({-4.5,4.5,0}, TupType::POINT);
     Tuple to({0,0,0}, TupType::POINT);
     Tuple up({0,0,-1});
-    Camera cam(10,10,pi/2.0, from, to, up);    
+    Camera cam(100,100,pi/2.0, from, to, up);    
     auto img = cam.render(&w);
     img->save_ppm("SimpleTeapot");
 }
-*/
+
+TEST(GenImage, SimpleInterpolateTeapot){
+// Assumes that tests are run in build folder which is parallel to obj file
+    std::string teapot_obj = "../obj/inter_teapot.obj";
+    Parser p;
+    p.read(teapot_obj,true);
+    auto group = p.emit();
+    World w;
+    w.add_shape(std::move(group));
+    PointSource ps(WHITE,Tuple({-10,10,-10}, TupType::POINT));
+    w.add_source(std::make_unique<PointSource>(std::move(ps)));
+    Tuple from({4,0,0}, TupType::POINT);
+    Tuple to({0,0,0}, TupType::POINT);
+    Tuple up({0,0,-1});
+    Camera cam(100,100,pi/2.0, from, to, up);    
+    auto img = cam.render(&w);
+    img->save_ppm("SimpleInterpTeapot");
+}
 
 std::vector<std::tuple<double,double,double,double>> place_random_spheres(int total_spheres=10){
     assert(total_spheres>0);

@@ -33,9 +33,9 @@ SmoothTriangle::SmoothTriangle(const Tuple& p1, const Tuple& p2, const Tuple& p3
     this->p3 = p3;
     this->edge1 = this->p2-this->p1;
     this->edge2 = this->p3-this->p1;
-    this->n1 = p1;
-    this->n2 = p2;
-    this->n3 = p3;
+    this->n1 = n1;
+    this->n2 = n2;
+    this->n3 = n3;
     this->n1.normalize();
     this->n2.normalize();
     this->n3.normalize();

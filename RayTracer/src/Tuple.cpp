@@ -72,7 +72,7 @@ Tuple Tuple::operator+=(const Tuple& other){
   }
   // Remember that this->dim represents the number of physical dimensions. The true length of data is dim+1.
   // Hence, the index of the last element (the w component) is dim
-  if(is_same(this->data[this->dim],TupType::POINT) && is_same(other.data[other.dim],TupType::POINT)){
+  if(is_same(this->type(),TupType::POINT) && is_same(other.type(),TupType::POINT)){
     throw std::invalid_argument("Can't Add points together");
   }
   for(int i=0; i< this->data.size(); ++i){
