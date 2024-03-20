@@ -84,5 +84,6 @@ std::vector<Impact> Cube::local_intersect(const Ray &other) const {
     return out;
 }
 
-std::unique_ptr<AABB> Cube::bound() const{return nullptr;}
-
+std::unique_ptr<AABB> Cube::bound() const{
+    return std::make_unique<AABB>(AABB({-1,-1,-1},{1,1,1}));
+}

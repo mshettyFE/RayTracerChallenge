@@ -3,7 +3,7 @@
 
 #include "Shape.h"
 #include "Ray.h"
-#include "AABB.h"
+#include "BVH.h"
 #include "Impact.h"
 #include "CollisionInfo.h"
 #include "Color.h"
@@ -15,11 +15,13 @@ class World{
     private:
         std::vector<std::unique_ptr<LightSource>> sources;
         std::vector<std::unique_ptr<Shape>> shapes;
-        std::unique_ptr<AABB> root_bounding_box=nullptr;
+        std::unique_ptr<BVH> bvh=nullptr;
     public:
 
-    void init_bvh(){}
-
+    void init_bvh(){
+        bvh = std::make_unique<BVH>(BVH(shapes));
+    }
+    
     std::vector<Impact> intersect(const Ray& r) const;
 
     Color  shade_hit(const CollisionInfo& hit, unsigned int remaining=5) const;

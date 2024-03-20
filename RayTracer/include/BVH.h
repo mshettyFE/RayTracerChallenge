@@ -9,7 +9,7 @@ class BVH{
 private:
     const AABB* head=nullptr;
 public:
-    BVH(std::vector<const AABB*> bounding_boxes);
+    BVH(const std::vector<std::unique_ptr<Shape>>& bounding_boxes);
     void print() const;
 };
 

@@ -1,6 +1,6 @@
 #include "BVH.h"
 
-BVH::BVH(std::vector<const AABB*> bounding_boxes){
+BVH::BVH(const std::vector<std::unique_ptr<Shape>>& bounding_boxes){
 
 }
 
