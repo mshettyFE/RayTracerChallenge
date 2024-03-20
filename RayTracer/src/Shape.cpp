@@ -132,3 +132,8 @@ bool Shape::includes(const Shape* test) const{
     }
     return false;
 }
+
+std::ostream& operator << (std::ostream &out, const Shape* other){
+    out << other->get_name() << " " << other->get_id() << std::endl;
+    return out;
+}

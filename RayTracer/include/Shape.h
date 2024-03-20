@@ -61,6 +61,8 @@ public:
     bool includes(const Shape* test) const;
 
     virtual std::unique_ptr<AABB> bound() const = 0;
+    
+    friend std::ostream& operator << (std::ostream &out, const Shape* other);
 
 };
 
