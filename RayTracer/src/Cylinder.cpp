@@ -78,7 +78,9 @@ std::vector<Impact> Cylinder::local_intersect(const Ray &other) const {
     return out;
 }
 
-std::unique_ptr<AABB> Cylinder::bound() const{return nullptr;}
+std::unique_ptr<AABB> Cylinder::bound() const{
+    return std::make_unique<AABB>(AABB({-1,minimum,-1},{1,maximum,1}));
+}
 
 
 Tuple Cylinder::local_normal_at(const Tuple& pt, const Impact& impt) const {

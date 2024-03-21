@@ -34,7 +34,13 @@ Tuple Triangle::local_normal_at(const Tuple& pt, const Impact& impt) const {
     return this->normal; 
 }
 
-std::unique_ptr<AABB> Triangle::bound() const{return nullptr;}
+std::unique_ptr<AABB> Triangle::bound() const{
+    auto output = std::make_unique<AABB>(AABB());
+    output->add_point(p1);
+    output->add_point(p2);
+    output->add_point(p3);
+    return output;
+}
 
 
 std::vector<Impact> Triangle::local_intersect(const Ray &other) const {

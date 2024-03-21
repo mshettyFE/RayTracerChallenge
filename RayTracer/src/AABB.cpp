@@ -57,3 +57,33 @@ void AABB::indented_print(int indent) const{
         right->indented_print(indent);
     }
 }
+
+void AABB::set_min_x(double value) { min_bounds[0] = value;}
+void AABB::set_min_y(double value) { min_bounds[1] = value;}
+void AABB::set_min_z(double value) { min_bounds[2]= value;}
+void AABB::set_max_x(double value) { max_bounds[0]= value;}
+void AABB::set_max_y(double value) { max_bounds[1]= value;}
+void AABB::set_max_z(double value) { max_bounds[2]= value;}
+
+
+void AABB::add_point(const Tuple new_point){
+    if(new_point.type() != TupType::POINT){
+        throw std::invalid_argument("can't add vector to bounding box");
+    }
+    double x =  new_point.get_x();
+    double y =  new_point.get_y();
+    double z =  new_point.get_z();
+
+    if(x <this->get_min_x()){set_min_x(x);}
+    if(y <this->get_min_y()){set_min_y(y);}
+    if(z <this->get_min_z()){set_min_z(z);}
+
+    if(x >this->get_max_x()){set_max_x(x);}
+    if(y >this->get_max_y()){set_max_y(y);}
+    if(z >this->get_max_z()){set_max_z(z);}
+}
+
+
+void AABB::expand_box(const AABB* new_box){
+    
+}
