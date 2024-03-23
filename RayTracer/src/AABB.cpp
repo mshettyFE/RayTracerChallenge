@@ -22,8 +22,6 @@ bool AABB::operator==(const AABB& other) const{
             return false;
         }
     }
-    if(left!= other.left){return false;}
-    if(right != other.right){return false;}
     if(std::abs(other.min_bounds[0]- min_bounds[0]) > glob_resolution){return false;}
     if(std::abs(other.min_bounds[1]- min_bounds[1]) > glob_resolution){return false;}
     if(std::abs(other.min_bounds[2]- min_bounds[2]) > glob_resolution){return false;}
@@ -127,7 +125,7 @@ std::unique_ptr<AABB> AABB::transform(Matrix mat) const{
     for(auto const& pt : points){
         new_box.add_point(mat*pt);
     }
-    return std::make_unique<AABB>(new_box);
+    return std::make_unique<AABB>(std::move(new_box));
 }
 
 void AABB::expand_box(const AABB& new_box){
@@ -188,3 +186,5 @@ bool AABB::intersect(const Ray &other) const{
     }
     return true;
 }
+
+void insert(std::unique_ptr<AABB>& new_box){}

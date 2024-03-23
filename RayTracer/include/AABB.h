@@ -14,8 +14,8 @@ class Shape;
 class AABB{
 private:
     std::vector<const Shape*> enclosed_shapes;
-    const AABB* left=nullptr;
-    const AABB* right=nullptr;
+    std::unique_ptr<AABB> left=nullptr;
+    std::unique_ptr<AABB> right=nullptr;
     std::array<double,3> min_bounds={INFTY,INFTY,INFTY};
     std::array<double,3> max_bounds={NEG_INFTY,NEG_INFTY,NEG_INFTY};
     void indented_print(int indent=0) const;
@@ -54,6 +54,7 @@ public:
     bool contains(const AABB& new_box) const;
 
     void expand_box(const AABB& new_box);
+    void insert(std::unique_ptr<AABB>& new_box);
 
     void print() const;
 

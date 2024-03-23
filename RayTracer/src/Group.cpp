@@ -31,5 +31,5 @@ std::unique_ptr<AABB> Group::bound() const{
         auto bbox = parent_space_bounds(child.get());
         output.expand_box(*bbox.get());
     }
-    return std::make_unique<AABB>(output);
+    return std::make_unique<AABB>(std::move(output));
 }
