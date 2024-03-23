@@ -19,14 +19,17 @@ private:
     std::array<double,3> min_bounds={INFTY,INFTY,INFTY};
     std::array<double,3> max_bounds={NEG_INFTY,NEG_INFTY,NEG_INFTY};
     void indented_print(int indent=0) const;
-
-
+    std::vector<double> check_axis(double origin, double direction, double min, double max) const;
 public:
-    std::vector<Impact> local_intersect(const Ray &other) const{throw std::invalid_argument("TBD. Need to implement recursive bound checking");}; // Modify Cube intersection to work with AABB dimensions
+    bool intersect(const Ray &other) const;
+
     AABB(std::initializer_list<double> min_bounds, std::initializer_list<double> max_bounds);
     AABB(){}
 
     void add_point(const Tuple new_point);
+
+    Tuple get_min() const;
+   Tuple get_max() const;
 
     double get_min_x() const{return min_bounds[0];}
     double get_min_y() const{return min_bounds[1];}
@@ -46,9 +49,18 @@ public:
     bool operator==(const AABB& other) const;
     bool operator!=(const AABB& other) const;
 
-    void expand_box(const AABB* new_box);
+    bool contains(const Tuple& points) const;
+
+    bool contains(const AABB& new_box) const;
+
+    void expand_box(const AABB& new_box);
 
     void print() const;
+
+    std::unique_ptr<AABB> transform(Matrix mat) const;
+
 };
+
+std::unique_ptr<AABB> parent_space_bounds(const Shape* shape);
 
 #endif

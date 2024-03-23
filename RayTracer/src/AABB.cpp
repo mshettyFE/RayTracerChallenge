@@ -1,4 +1,5 @@
 #include "AABB.h"
+#include "Shape.h"
 #include <set>
 
 AABB::AABB(std::initializer_list<double> min_bounds, std::initializer_list<double> max_bounds){
@@ -83,7 +84,107 @@ void AABB::add_point(const Tuple new_point){
     if(z >this->get_max_z()){set_max_z(z);}
 }
 
+bool AABB::contains(const Tuple& points) const{
+    double x = points.get_x();
+    double y = points.get_y();
+    double z = points.get_z();
+    if(x <this->get_min_x()){return false;}
+    if(y <this->get_min_y()){return false;}
+    if(z <this->get_min_z()){return false;}
 
-void AABB::expand_box(const AABB* new_box){
-    
+    if(x >this->get_max_x()){return false;}
+    if(y >this->get_max_y()){return false;}
+    if(z >this->get_max_z()){return false;}
+    return true;
+}
+
+Tuple AABB::get_min() const{    return std::move(GenPoint(get_min_x(),get_min_y(),get_min_z()));}
+Tuple AABB::get_max() const{    return std::move(GenPoint(get_max_x(),get_max_y(),get_max_z()));}
+
+bool AABB::contains(const AABB& new_box) const{
+    return contains(new_box.get_min()) && contains(new_box.get_max());
+}
+
+std::unique_ptr<AABB> AABB::transform(Matrix mat) const{
+    double xmin, xmax, ymin,ymax, zmin,zmax;
+    xmin = min_bounds[0];
+    ymin = min_bounds[1];
+    zmin = min_bounds[2];
+    xmax = max_bounds[0];
+    ymax = max_bounds[1];
+    zmax = max_bounds[2];
+    std::vector<Tuple> points = {
+        GenPoint(xmin,ymin, zmin),
+        GenPoint(xmin,ymin, zmax),
+        GenPoint(xmin,ymax, zmin),
+        GenPoint(xmin,ymax, zmax),
+        GenPoint(xmax,ymin, zmin),
+        GenPoint(xmax,ymin, zmax),
+        GenPoint(xmax,ymax, zmin),
+        GenPoint(xmax,ymax, zmax)
+    };
+    AABB new_box;
+    for(auto const& pt : points){
+        new_box.add_point(mat*pt);
+    }
+    return std::make_unique<AABB>(new_box);
+}
+
+void AABB::expand_box(const AABB& new_box){
+    add_point(new_box.get_min());
+    add_point(new_box.get_max());
+}
+
+std::unique_ptr<AABB> parent_space_bounds(const Shape* shape){
+    return shape->bound()->transform(shape->get_transform());
+}
+
+std::vector<double> AABB::check_axis(double origin, double direction, double min, double max) const{
+    double tmin_num = (min-origin);
+    double tmax_num = (max-origin);
+    double tmin, tmax;
+    if(std::abs(direction) >= glob_resolution){
+        tmin = tmin_num/direction;
+        tmax = tmax_num/direction;
+    }
+    else{
+        tmin = tmin_num*INFTY;
+        tmax = tmax_num*INFTY;
+    }
+    if(tmin>tmax){
+        double temp = tmin;
+        tmin = tmax;
+        tmax = temp;
+    }
+    return {tmin,tmax};
+}
+
+bool AABB::intersect(const Ray &other) const{
+    std::vector<double> minima;
+    std::vector<double> maxima;
+    auto bounds = check_axis(other.get_origin()[0],other.get_direction()[0], get_min_x(), get_max_x());
+    minima.push_back(bounds[0]);
+    maxima.push_back(bounds[1]);
+    bounds = check_axis(other.get_origin()[1],other.get_direction()[1], get_min_y(), get_max_y());
+    minima.push_back(bounds[0]);
+    maxima.push_back(bounds[1]);
+    bounds = check_axis(other.get_origin()[2],other.get_direction()[2], get_min_z(), get_max_z());
+    minima.push_back(bounds[0]);
+    maxima.push_back(bounds[1]);
+    double largest_min = NEG_INFTY;
+    for(auto x: minima){
+        if(x>largest_min){
+            largest_min = x;
+        }    
+    }
+    double smallest_max = INFTY;
+    for(auto x: maxima){
+        if(x<smallest_max){
+            smallest_max = x;
+        }    
+    }
+    if(largest_min > smallest_max){
+        return false;
+    }
+    return true;
 }

@@ -25,4 +25,11 @@ Tuple Group::local_normal_at(const Tuple& pt, const Impact& impt) const{
     throw std::invalid_argument("Group has no local normal");
 }
 
-std::unique_ptr<AABB> Group::bound() const{return nullptr;}
+std::unique_ptr<AABB> Group::bound() const{
+    AABB output;
+    for(auto const& child: children){
+        auto bbox = parent_space_bounds(child.get());
+        output.expand_box(*bbox.get());
+    }
+    return std::make_unique<AABB>(output);
+}
