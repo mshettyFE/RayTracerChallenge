@@ -132,6 +132,37 @@ TEST(BVHTests,Split){
     EXPECT_EQ(box.get_right()->get_max(), expected_right.get_max());
 }
 
+TEST(BVHTests, Insert){
+    auto small_box =  std::make_unique<AABB>(AABB({-1,-1,-1},{1,1,1}));
+    auto big_box =  std::make_unique<AABB>(AABB({-2,-2,-2},{2,2,2}));
+// big_box shouldn't fit in in small_box
+    EXPECT_EQ(small_box->insert(big_box), false);
+// big_box should not get transferred to small_box
+    EXPECT_NE(big_box, nullptr);
+// small_box should fit in big_box
+    EXPECT_EQ(big_box->insert(small_box), true);
+// small_box should be nullptr
+    EXPECT_EQ(small_box, nullptr);
+// big_box should have 1 in the center
+    ASSERT_EQ(big_box->get_center().size(), 1);
+    EXPECT_EQ(*(big_box->get_center()[0]), AABB({-1,-1,-1},{1,1,1}));
+// add tiny box should also go into center
+    auto tiny_box =  std::make_unique<AABB>(AABB({-0.1,1.5,1.5},{0.1,1.6,1.6}));
+    EXPECT_EQ(big_box->insert(tiny_box), true);
+    EXPECT_EQ(tiny_box, nullptr);
+    ASSERT_EQ(big_box->get_center().size(), 2);
+    EXPECT_EQ(*(big_box->get_center()[1]), AABB({-0.1,1.5,1.5},{0.1,1.6,1.6}));
+// upon insert, left and right should get updated
+    std::cout << "Update Left and Right" << std::endl;
+    EXPECT_EQ(big_box->get_left(), nullptr);
+    EXPECT_EQ(big_box->get_right(), nullptr);
+    auto left_box = std::make_unique<AABB>(AABB({0.1,0.1,0.1},{0.5,0.5,0.5}));
+    EXPECT_EQ(big_box->insert(left_box),true);
+    EXPECT_NE(big_box->get_left(), nullptr);
+    EXPECT_NE(big_box->get_right(), nullptr);
+    big_box->print();
+}
+
 TEST(BVHTests,Intersect){
     AABB box({5,-2,0},{11,4,7});
     Ray r({15,1,2},{-1,0,0});

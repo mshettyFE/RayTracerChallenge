@@ -52,19 +52,21 @@ void AABB::print() const{
 
 void AABB::indented_print(int indent) const{
     auto indentation = std::string(indent,'\t');
-    std::cout << indentation << min_bounds[0] << " " << min_bounds[1] << " "<< min_bounds[2] << std::endl;
-    std::cout << indentation << max_bounds[0] << " " << max_bounds[1] << " "<< max_bounds[2] << std::endl;
-    std::cout << indentation << enclosed_shape << std::endl;
+    std::cout << indentation << "Min Bounds: " << min_bounds[0] << " " << min_bounds[1] << " "<< min_bounds[2] << std::endl;
+    std::cout << indentation << "Max Bounds: " << max_bounds[0] << " " << max_bounds[1] << " "<< max_bounds[2] << std::endl;
+    std::cout << indentation << "Central" << std::endl;
+    indent++;
     for(auto const& box: center){
         if(box != nullptr){
             box->indented_print(indent);            
         }
     }
-    indent++;
     if(left!= nullptr){
+        std::cout << indentation << "Left" << std::endl;
         left->indented_print(indent);
     }
     if(right!=nullptr){
+        std::cout << indentation << "Right" << std::endl;
         right->indented_print(indent);
     }
 }
@@ -207,14 +209,29 @@ bool AABB::is_leaf() const{
 }
 
 bool AABB::straddle(const AABB* new_box) const{
+    Tuple delta = this->get_max()-this->get_min();
+    double current_max = NEG_INFTY;
+    int index = -1;
+    for(int i=0; i<3; ++i){
+        if(delta[i] > current_max){
+            current_max=  delta[i];
+            index = i;
+        }
+    }
     auto middle = this->get_mid();
     double x = middle.get_x();
     double y = middle.get_y();
     double z = middle.get_z();
-    bool straddle_x = (new_box->get_min_x()< x) && (x < new_box->get_max_x());
-    bool straddle_y = (new_box->get_min_y()< y) && (y < new_box->get_max_y());
-    bool straddle_z = (new_box->get_min_z()< z) && (z < new_box->get_max_z());
-    return straddle_x&&straddle_y&&straddle_z ;
+    if(index==0){
+        return (new_box->get_min_x()< x) && (x < new_box->get_max_x());
+    }
+    else if(index==1){
+        return  (new_box->get_min_y()< y) && (y < new_box->get_max_y());        
+    }
+    else if(index==2){
+        return  (new_box->get_min_z()< z) && (z < new_box->get_max_z());
+    }
+    throw std::invalid_argument("Something went wrong in AABB::saddle");
 }
 
 void AABB::split(){
@@ -245,16 +262,16 @@ void AABB::split(){
         right_min = GenPoint(this->get_min_x(), this->get_min_y(), middle.get_z());
     }
     else{
-        throw std::invalid_argument("Something went horribly wrong when splitting");
+        throw std::invalid_argument("Something went horribly wrong when spliting");
     }
-    std::cout << index << "\n" << left_max << "\n" << right_min << std::endl;
 // assign left and right bounding box
-    this->left = std::make_unique<AABB>(this->get_min(), left_max);
-    this->right = std::make_unique<AABB>(right_min, this->get_max());
+    this->left = std::make_unique<AABB>( AABB(this->get_min(), left_max));
+    this->right = std::make_unique<AABB>( AABB(right_min, this->get_max()));
 }
 
 
 bool AABB::insert(std::unique_ptr<AABB>& new_box, unsigned int depth){
+    ++depth;
 // box needs to be big enough to hold new_box. If the box is not big enough, don't change the state of the current box
 // for recursive calls, prevents too-big boxes from affecting the state of the current box
     if(!this->contains(*new_box.get())){
@@ -266,7 +283,7 @@ bool AABB::insert(std::unique_ptr<AABB>& new_box, unsigned int depth){
     if(straddle(new_box.get())){
         for(int i=0; i<center.size(); ++i){
             if(center[i]->contains(*new_box.get())){
-                center[i]->insert(new_box);
+                center[i]->insert(new_box,depth);
                 return true;
             }
         }
@@ -276,17 +293,17 @@ bool AABB::insert(std::unique_ptr<AABB>& new_box, unsigned int depth){
     }
     else{
 // OK. The box doesn't go in the center. Check if both left and right are nullptr (having only one be null shouldn't happen with this setup?)
-// If both  are nullptr, then split the current box in half, and recurse on both halves
+// If both  are nullptr, then split the current box in half
         if(this->left==nullptr && this->right==nullptr){
             split();
-// return if the new_box fits in a sub-box. No need to check the other
-            if(this->left->insert(new_box)){
-                return true;
-            }
-            if(this->right->insert(new_box)){
-                return true;
-            }
         }
+//  Split(). Not to Split(). In either case, you can then recurse on both halves
+        if((this->left!=nullptr) && (this->right !=nullptr)){
+            this->left->insert(new_box,depth);
+            this->right->insert(new_box,depth);
+            return true;
+        }
+        throw std::invalid_argument("Both right and left should be set in insert...");
     }
 // assuming you got here, this means that the box doesn't fit in the center, left, or right groups.
 // Also, due to the first contains call, we know the new_box fits in the current, so it must be in one of the groups

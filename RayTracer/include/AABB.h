@@ -14,9 +14,9 @@ class Shape;
 class AABB{
 private:
     const Shape* enclosed_shape=nullptr;
-    std::vector<std::unique_ptr<AABB>> center={};
-    std::unique_ptr<AABB> left=nullptr;
-    std::unique_ptr<AABB> right=nullptr;
+    std::vector<std::unique_ptr<AABB>> center{};
+    std::unique_ptr<AABB> left{};
+    std::unique_ptr<AABB> right{};
     std::array<double,3> min_bounds={INFTY,INFTY,INFTY};
     std::array<double,3> max_bounds={NEG_INFTY,NEG_INFTY,NEG_INFTY};
     void indented_print(int indent=0) const;
@@ -48,7 +48,6 @@ public:
     void set_max_y(double value) ;
     void set_max_z(double value) ;
 
-
     bool operator==(const AABB& other) const;
     bool operator!=(const AABB& other) const;
 
@@ -57,6 +56,12 @@ public:
 
     const AABB* get_left(){return this->left.get();}
     const AABB* get_right(){return this->right.get();}
+
+    std::vector<const AABB*> get_center(){
+        std::vector<const AABB*> output;
+        for(auto const& box: center){output.push_back(box.get());}
+        return output;
+    }
 
     const Shape* contained_shape(){return enclosed_shape;}
     void set_shape(const Shape* new_shape){this->enclosed_shape = new_shape;}
