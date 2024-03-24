@@ -45,7 +45,7 @@ TEST(BVHTests,AddPoint){
 TEST(BVHTests, AddBox){
     AABB box1({-5, -2, 0}, {7, 4, 4});
     AABB box2({8, -7, -2},{14, 2, 8});
-    box1.expand_box(box2);
+    box1.expand_box(&box2);
     EXPECT_EQ(box1.get_min(), GenPoint(-5,-7,-2));
     EXPECT_EQ(box1.get_max(), GenPoint(14, 4, 8));
 }
@@ -119,6 +119,17 @@ TEST(BVHTests, CSGAgg){
     auto bb  = agg.bound();
     EXPECT_EQ(bb->get_min(), GenPoint(-1,-1,-1));
     EXPECT_EQ(bb->get_max(), GenPoint(3,4,5));
+}
+
+TEST(BVHTests,Split){
+    AABB box({-1,-2,-3},{1,2,3});
+    AABB expected_left({-1,-2,-3},{1,2,0});
+    AABB expected_right({-1,-2,0},{1,2,3});
+    box.split();
+    EXPECT_EQ(box.get_left()->get_min(), expected_left.get_min());
+    EXPECT_EQ(box.get_left()->get_max(), expected_left.get_max());
+    EXPECT_EQ(box.get_right()->get_min(), expected_right.get_min());
+    EXPECT_EQ(box.get_right()->get_max(), expected_right.get_max());
 }
 
 TEST(BVHTests,Intersect){

@@ -13,7 +13,8 @@ class Shape;
 
 class AABB{
 private:
-    std::vector<const Shape*> enclosed_shapes;
+    const Shape* enclosed_shape=nullptr;
+    std::vector<std::unique_ptr<AABB>> center={};
     std::unique_ptr<AABB> left=nullptr;
     std::unique_ptr<AABB> right=nullptr;
     std::array<double,3> min_bounds={INFTY,INFTY,INFTY};
@@ -24,12 +25,14 @@ public:
     bool intersect(const Ray &other) const;
 
     AABB(std::initializer_list<double> min_bounds, std::initializer_list<double> max_bounds);
+    AABB(Tuple min_bounds, Tuple max_bounds);
     AABB(){}
 
     void add_point(const Tuple new_point);
 
     Tuple get_min() const;
-   Tuple get_max() const;
+    Tuple get_max() const;
+    Tuple get_mid() const;
 
     double get_min_x() const{return min_bounds[0];}
     double get_min_y() const{return min_bounds[1];}
@@ -50,15 +53,28 @@ public:
     bool operator!=(const AABB& other) const;
 
     bool contains(const Tuple& points) const;
-
     bool contains(const AABB& new_box) const;
 
-    void expand_box(const AABB& new_box);
-    void insert(std::unique_ptr<AABB>& new_box);
+    const AABB* get_left(){return this->left.get();}
+    const AABB* get_right(){return this->right.get();}
+
+    const Shape* contained_shape(){return enclosed_shape;}
+    void set_shape(const Shape* new_shape){this->enclosed_shape = new_shape;}
+
+    void expand_box(const AABB* new_box);
+    bool insert(std::unique_ptr<AABB>& new_box, unsigned int depth=0);
+
+    void split();
+
+    bool straddle(const AABB* new_box) const;
 
     void print() const;
 
     std::unique_ptr<AABB> transform(Matrix mat) const;
+
+    bool is_leaf() const;
+
+    friend std::ostream& operator << (std::ostream &out, const AABB& other);
 
 };
 

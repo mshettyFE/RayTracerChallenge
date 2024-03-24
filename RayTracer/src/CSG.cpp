@@ -63,7 +63,7 @@ std::unique_ptr<AABB> CSG::bound() const{
     AABB output;
     for(auto const& child: children){
         auto bbox = parent_space_bounds(child.get());
-        output.expand_box(*bbox.get());
+        output.expand_box(bbox.get());
     }
     return std::make_unique<AABB>(std::move(output));
 }

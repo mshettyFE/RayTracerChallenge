@@ -12,3 +12,5 @@ BVH::BVH(const std::vector<std::unique_ptr<Shape>>& shapes){
 void BVH::print() const{
     head->print();    
 }
+
+const AABB* BVH::insert(std::unique_ptr<AABB>& new_box){return nullptr;}

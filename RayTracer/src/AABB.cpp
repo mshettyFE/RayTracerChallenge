@@ -15,10 +15,20 @@ AABB::AABB(std::initializer_list<double> min_bounds, std::initializer_list<doubl
     this->max_bounds[2] = max_temp[2];
 }
 
+AABB::AABB(Tuple min_bounds, Tuple max_bounds){
+    this->min_bounds[0] = min_bounds.get_x();
+    this->min_bounds[1] = min_bounds.get_y();
+    this->min_bounds[2] = min_bounds.get_z();
+    this->max_bounds[0] = max_bounds.get_x();
+    this->max_bounds[1] = max_bounds.get_y();
+    this->max_bounds[2] = max_bounds.get_z();
+}
+
 bool AABB::operator==(const AABB& other) const{
-    if(other.enclosed_shapes.size() != this->enclosed_shapes.size()){return false;}
-    for(int i=0; i< other.enclosed_shapes.size(); ++i){
-        if(other.enclosed_shapes[i] != enclosed_shapes[i] ){
+    if(this->enclosed_shape!=other.enclosed_shape){return false;}
+    if(other.center.size() != this->center.size()){return false;}
+    for(int i=0; i< other.center.size(); ++i){
+        if(other.center[i]->contained_shape() != this->center[i]->contained_shape() ){
             return false;
         }
     }
@@ -35,7 +45,6 @@ bool AABB::operator!=(const AABB& other) const{
     return !(*this == other);
 }
 
-
 void AABB::print() const{
     std::set<const AABB*> visited;
     indented_print();
@@ -45,8 +54,11 @@ void AABB::indented_print(int indent) const{
     auto indentation = std::string(indent,'\t');
     std::cout << indentation << min_bounds[0] << " " << min_bounds[1] << " "<< min_bounds[2] << std::endl;
     std::cout << indentation << max_bounds[0] << " " << max_bounds[1] << " "<< max_bounds[2] << std::endl;
-    for(const Shape* shp : enclosed_shapes){
-        std::cout << indentation << shp << std::endl; 
+    std::cout << indentation << enclosed_shape << std::endl;
+    for(auto const& box: center){
+        if(box != nullptr){
+            box->indented_print(indent);            
+        }
     }
     indent++;
     if(left!= nullptr){
@@ -98,6 +110,7 @@ bool AABB::contains(const Tuple& points) const{
 
 Tuple AABB::get_min() const{    return std::move(GenPoint(get_min_x(),get_min_y(),get_min_z()));}
 Tuple AABB::get_max() const{    return std::move(GenPoint(get_max_x(),get_max_y(),get_max_z()));}
+Tuple AABB::get_mid() const{return 0.5*(GenVec(min_bounds[0],min_bounds[1],min_bounds[2])+GenVec(max_bounds[0],max_bounds[1],max_bounds[2]));}
 
 bool AABB::contains(const AABB& new_box) const{
     return contains(new_box.get_min()) && contains(new_box.get_max());
@@ -128,9 +141,9 @@ std::unique_ptr<AABB> AABB::transform(Matrix mat) const{
     return std::make_unique<AABB>(std::move(new_box));
 }
 
-void AABB::expand_box(const AABB& new_box){
-    add_point(new_box.get_min());
-    add_point(new_box.get_max());
+void AABB::expand_box(const AABB* new_box){
+    add_point(new_box->get_min());
+    add_point(new_box->get_max());
 }
 
 std::unique_ptr<AABB> parent_space_bounds(const Shape* shape){
@@ -187,4 +200,102 @@ bool AABB::intersect(const Ray &other) const{
     return true;
 }
 
-void insert(std::unique_ptr<AABB>& new_box){}
+
+bool AABB::is_leaf() const{
+// AABB is leaf is no left pointer, no right pointer, no  center boxes, and enclosed_shape is not null
+    return (left==nullptr) && (right==nullptr) && (center.size() ==0) && (enclosed_shape !=nullptr);
+}
+
+bool AABB::straddle(const AABB* new_box) const{
+    auto middle = this->get_mid();
+    double x = middle.get_x();
+    double y = middle.get_y();
+    double z = middle.get_z();
+    bool straddle_x = (new_box->get_min_x()< x) && (x < new_box->get_max_x());
+    bool straddle_y = (new_box->get_min_y()< y) && (y < new_box->get_max_y());
+    bool straddle_z = (new_box->get_min_z()< z) && (z < new_box->get_max_z());
+    return straddle_x&&straddle_y&&straddle_z ;
+}
+
+void AABB::split(){
+    auto middle = this->get_mid();
+    Tuple delta = this->get_max()-this->get_min();
+    double current_max = NEG_INFTY;
+    int index = -1;
+    for(int i=0; i<3; ++i){
+        if(delta[i] > current_max){
+            current_max=  delta[i];
+            index = i;
+        }
+    }
+    Tuple left_max;
+    Tuple right_min;
+// To split box, divide, split along largest axis, and get the new min and max of left and right
+// The largest axis coordinate gets replaced by the corresponding middle coordinate, while the others get replaced by the min/max
+    if(index==0){
+        left_max = GenPoint(middle.get_x(),this->get_max_y(), this->get_max_z());
+        right_min = GenPoint(middle.get_x(), this->get_min_y(), this->get_min_z());
+    }
+    else if(index==1){
+        left_max = GenPoint(this->get_max_x(),middle.get_y(), this->get_max_z());
+        right_min = GenPoint(this->get_max_x(), middle.get_y(), this->get_min_z());
+    }
+    else if(index==2){
+        left_max = GenPoint(this->get_max_x(),this->get_max_y(), middle.get_z());
+        right_min = GenPoint(this->get_min_x(), this->get_min_y(), middle.get_z());
+    }
+    else{
+        throw std::invalid_argument("Something went horribly wrong when splitting");
+    }
+    std::cout << index << "\n" << left_max << "\n" << right_min << std::endl;
+// assign left and right bounding box
+    this->left = std::make_unique<AABB>(this->get_min(), left_max);
+    this->right = std::make_unique<AABB>(right_min, this->get_max());
+}
+
+
+bool AABB::insert(std::unique_ptr<AABB>& new_box, unsigned int depth){
+// box needs to be big enough to hold new_box. If the box is not big enough, don't change the state of the current box
+// for recursive calls, prevents too-big boxes from affecting the state of the current box
+    if(!this->contains(*new_box.get())){
+        return false;
+    }
+// If the box is small enough, and straddles  the center, you can't really assign it to either left or right
+// Hence, run through vector of center boxes.
+// If it does fit a box, then recurse on said box, and when stack eventually unwinds, return immediately
+    if(straddle(new_box.get())){
+        for(int i=0; i<center.size(); ++i){
+            if(center[i]->contains(*new_box.get())){
+                center[i]->insert(new_box);
+                return true;
+            }
+        }
+// If you got here, then the new_box doesn't fit in any of the present sub boxes. Add to vector, then return
+        center.push_back(std::move(new_box));
+        return true;
+    }
+    else{
+// OK. The box doesn't go in the center. Check if both left and right are nullptr (having only one be null shouldn't happen with this setup?)
+// If both  are nullptr, then split the current box in half, and recurse on both halves
+        if(this->left==nullptr && this->right==nullptr){
+            split();
+// return if the new_box fits in a sub-box. No need to check the other
+            if(this->left->insert(new_box)){
+                return true;
+            }
+            if(this->right->insert(new_box)){
+                return true;
+            }
+        }
+    }
+// assuming you got here, this means that the box doesn't fit in the center, left, or right groups.
+// Also, due to the first contains call, we know the new_box fits in the current, so it must be in one of the groups
+// What the above means is that something went horribly wrong for you to arrive here...
+    throw std::invalid_argument("Something went horrible wrong in AABB::insert");
+}
+
+std::ostream& operator << (std::ostream &out, const AABB& other){
+    out << other.get_min() << std::endl;
+    out << other.get_max() << std::endl;
+    return out;
+}
