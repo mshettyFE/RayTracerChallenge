@@ -179,8 +179,8 @@ TEST(BVHTests, Intersection){
     auto  a = BVH(shapes);
     a.print();
     std::cout << a.count_nodes() << std::endl;
-//    auto hits = a.intersect(r);
-//    ASSERT_EQ(hits.size(),4);
+    auto hits = a.intersect(r);
+    ASSERT_EQ(hits.size(),4);
 }
 
 TEST(BVHTests,Intersect){

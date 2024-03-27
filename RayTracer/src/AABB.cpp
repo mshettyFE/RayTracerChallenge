@@ -209,6 +209,12 @@ bool AABB::intersect(const Ray &other) const{
 bool AABB::is_leaf() const{
 // AABB is leaf is no left pointer, no right pointer, no  center boxes, and enclosed_shape is not null
 //    return (left==nullptr) && (right==nullptr) && (center.size() ==0) && (enclosed_shape !=nullptr);
+    std::cout << "Left: " << left.get() <<  " Bool: "  << (int)(left==nullptr) <<  std::endl;
+    std::cout << "Right: " << right.get() << " Bool: "  << (int)(right==nullptr) <<   std::endl;
+    std::cout << "Center: " << center.size() << " Bool: "  << (int)(center.size()==0) <<   std::endl;
+    std::cout << "Shape: " << &enclosed_shape <<  " Bool: "  << (int)(enclosed_shape!=nullptr) <<  std::endl;
+    std::cout << "Is Leaf: " << ((left==nullptr) && (right==nullptr) && (center.size() ==0) && (enclosed_shape !=nullptr)) << std::endl << std::endl;
+
     return (left==nullptr) && (right==nullptr) && (center.size() ==0) && (enclosed_shape !=nullptr);
 }
 
@@ -286,7 +292,8 @@ bool AABB::insert(std::unique_ptr<AABB>& new_box, unsigned int depth){
 // If it does fit a box, then recurse on said box, and when stack eventually unwinds, return immediately
     if(straddle(new_box.get())){
         for(int i=0; i<center.size(); ++i){
-            if(center[i]->contains(*new_box.get())){
+            bool is_hit = center[i]->contains(*new_box.get()); //problem here?
+            if(is_hit){
                 center[i]->insert(new_box,depth);
                 return true;
             }

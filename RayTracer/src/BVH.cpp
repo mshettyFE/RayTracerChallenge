@@ -27,11 +27,11 @@ void BVH::private_intersect(const Ray& r, const AABB* current_node, std::vector<
     // need to do central children first since it is ambiguous which side it falls in
     for(auto const& center_child: current_node->get_center()){
         if(center_child->intersect(r)){
-            std::cout << "Pre Current Size: " <<  out_vector.size() << std::endl;
-            std::cout <<"Pre Current Depth " <<  depth << std::endl;
+            std::cout << "Pre Center Current Size: " <<  out_vector.size() << std::endl;
+            std::cout <<"Pre Center Current Depth " <<  depth << std::endl;
             private_intersect(r,center_child,out_vector,  depth);
-            std::cout << "Post Current Size: " <<  out_vector.size() << std::endl;
-            std::cout <<"Post Current Depth " <<  depth << std::endl;
+            std::cout << "Post Center Current Size: " <<  out_vector.size() << std::endl;
+            std::cout <<"Post Center Current Depth " <<  depth << std::endl;
         }
     }
     // otherwise, recurse on left children, right children, and central children, and join vectors, then return output
@@ -40,12 +40,20 @@ void BVH::private_intersect(const Ray& r, const AABB* current_node, std::vector<
 // early return if left intersects
     if(lft!= nullptr){
         if(lft->intersect(r)){
+            std::cout << "Pre Center Current Size: " <<  out_vector.size() << std::endl;
+            std::cout <<"Pre Center Current Depth " <<  depth << std::endl;
             private_intersect(r,lft,out_vector, depth);
+            std::cout << "Post Left Current Size: " <<  out_vector.size() << std::endl;
+            std::cout <<"Post Left Current Depth " <<  depth << std::endl;
         }
     }
     if(rght!= nullptr){
         if(rght->intersect(r)){
+            std::cout << "Pre Right Current Size: " <<  out_vector.size() << std::endl;
+            std::cout <<"Pre Right Current Depth " <<  depth << std::endl;
             private_intersect(r,rght, out_vector, depth);
+            std::cout << "Post Right Current Size: " <<  out_vector.size() << std::endl;
+            std::cout <<"Post Right Current Depth " <<  depth << std::endl;
         }
     }
     std::cout << "Total Size: " << out_vector.size() << std::endl;
