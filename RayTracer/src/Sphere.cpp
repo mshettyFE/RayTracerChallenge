@@ -43,5 +43,5 @@ Sphere glass_sphere(double IOR){
 }
 
 std::unique_ptr<AABB> Sphere::bound() const{
-    return std::make_unique<AABB>(AABB({-1,-1,-1},{1,1,1}));
+    return std::make_unique<AABB>(AABB({-1,-1,-1},{1,1,1},this));
 }

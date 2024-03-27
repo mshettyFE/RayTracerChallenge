@@ -27,9 +27,14 @@ Tuple Group::local_normal_at(const Tuple& pt, const Impact& impt) const{
 
 std::unique_ptr<AABB> Group::bound() const{
     AABB output;
+    std::vector<std::unique_ptr<AABB>> boxes;
     for(auto const& child: children){
         auto bbox = parent_space_bounds(child.get());
         output.expand_box(bbox.get());
+        boxes.push_back(std::move(bbox));
+    }
+    for(int i=0; i<boxes.size(); ++i){
+        output.insert(boxes[i]);
     }
     return std::make_unique<AABB>(std::move(output));
 }

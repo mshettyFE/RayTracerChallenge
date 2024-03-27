@@ -2,7 +2,7 @@
 #include "Shape.h"
 #include <set>
 
-AABB::AABB(std::initializer_list<double> min_bounds, std::initializer_list<double> max_bounds){
+AABB::AABB(std::initializer_list<double> min_bounds, std::initializer_list<double> max_bounds, const Shape* shp){
     if(min_bounds.size() != 3){throw std::invalid_argument("min_bounds must have a length of 3");}
     if(max_bounds.size() != 3){throw std::invalid_argument("max_bounds must have a length of 3");}
     std::vector<double> min_temp(min_bounds);
@@ -13,22 +13,24 @@ AABB::AABB(std::initializer_list<double> min_bounds, std::initializer_list<doubl
     this->max_bounds[0] = max_temp[0];
     this->max_bounds[1] = max_temp[1];
     this->max_bounds[2] = max_temp[2];
+    this->set_shape(shp);
 }
 
-AABB::AABB(Tuple min_bounds, Tuple max_bounds){
+AABB::AABB(Tuple min_bounds, Tuple max_bounds, const Shape* shp){
     this->min_bounds[0] = min_bounds.get_x();
     this->min_bounds[1] = min_bounds.get_y();
     this->min_bounds[2] = min_bounds.get_z();
     this->max_bounds[0] = max_bounds.get_x();
     this->max_bounds[1] = max_bounds.get_y();
     this->max_bounds[2] = max_bounds.get_z();
+    this->set_shape(shp);
 }
 
 bool AABB::operator==(const AABB& other) const{
     if(this->enclosed_shape!=other.enclosed_shape){return false;}
     if(other.center.size() != this->center.size()){return false;}
     for(int i=0; i< other.center.size(); ++i){
-        if(other.center[i]->contained_shape() != this->center[i]->contained_shape() ){
+        if(other.center[i]->get_shape() != this->center[i]->get_shape() ){
             return false;
         }
     }
@@ -47,27 +49,28 @@ bool AABB::operator!=(const AABB& other) const{
 
 void AABB::print() const{
     std::set<const AABB*> visited;
-    indented_print();
+    indented_print(this,0);
 }
 
-void AABB::indented_print(int indent) const{
+void AABB::indented_print(const AABB* cur_box, int indent) const{
     auto indentation = std::string(indent,'\t');
-    std::cout << indentation << "Min Bounds: " << min_bounds[0] << " " << min_bounds[1] << " "<< min_bounds[2] << std::endl;
-    std::cout << indentation << "Max Bounds: " << max_bounds[0] << " " << max_bounds[1] << " "<< max_bounds[2] << std::endl;
-    std::cout << indentation << "Central" << std::endl;
+    std::cout << indentation << "Depth: " << indent << std::endl;
+    std::cout << indentation << "Min Bounds: " << cur_box->get_min_x() << " " << cur_box->get_min_y() << " "<< cur_box->get_min_z()<< std::endl;
+    std::cout << indentation << "Max Bounds: " << cur_box->get_max_x() << " " << cur_box->get_max_y()<< " "<< cur_box->get_max_z() << std::endl;
+    std::cout << indentation << cur_box << std::endl;
     indent++;
-    for(auto const& box: center){
+    for(auto const& box: cur_box->center){
         if(box != nullptr){
-            box->indented_print(indent);            
+            indented_print( box.get(), indent);
         }
     }
-    if(left!= nullptr){
+    if(cur_box->left!= nullptr){
         std::cout << indentation << "Left" << std::endl;
-        left->indented_print(indent);
+        indented_print(cur_box->left.get(), indent);
     }
-    if(right!=nullptr){
+    if(cur_box->right!=nullptr){
         std::cout << indentation << "Right" << std::endl;
-        right->indented_print(indent);
+        indented_print(cur_box->right.get(), indent);
     }
 }
 
@@ -205,6 +208,7 @@ bool AABB::intersect(const Ray &other) const{
 
 bool AABB::is_leaf() const{
 // AABB is leaf is no left pointer, no right pointer, no  center boxes, and enclosed_shape is not null
+//    return (left==nullptr) && (right==nullptr) && (center.size() ==0) && (enclosed_shape !=nullptr);
     return (left==nullptr) && (right==nullptr) && (center.size() ==0) && (enclosed_shape !=nullptr);
 }
 
@@ -299,8 +303,10 @@ bool AABB::insert(std::unique_ptr<AABB>& new_box, unsigned int depth){
         }
 //  Split(). Not to Split(). In either case, you can then recurse on both halves
         if((this->left!=nullptr) && (this->right !=nullptr)){
-            this->left->insert(new_box,depth);
-            this->right->insert(new_box,depth);
+            bool inside_left = this->left->insert(new_box,depth);
+            if (!inside_left){ // check if left took ownership. If it did not, box must go in right
+                this->right->insert(new_box,depth);
+            }
             return true;
         }
         throw std::invalid_argument("Both right and left should be set in insert...");

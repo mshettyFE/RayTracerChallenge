@@ -153,7 +153,6 @@ TEST(BVHTests, Insert){
     ASSERT_EQ(big_box->get_center().size(), 2);
     EXPECT_EQ(*(big_box->get_center()[1]), AABB({-0.1,1.5,1.5},{0.1,1.6,1.6}));
 // upon insert, left and right should get updated
-    std::cout << "Update Left and Right" << std::endl;
     EXPECT_EQ(big_box->get_left(), nullptr);
     EXPECT_EQ(big_box->get_right(), nullptr);
     auto left_box = std::make_unique<AABB>(AABB({0.1,0.1,0.1},{0.5,0.5,0.5}));
@@ -161,6 +160,27 @@ TEST(BVHTests, Insert){
     EXPECT_NE(big_box->get_left(), nullptr);
     EXPECT_NE(big_box->get_right(), nullptr);
     big_box->print();
+}
+
+TEST(BVHTests, InsertShapes){
+    std::vector<std::unique_ptr<Shape>> shapes;
+    shapes.push_back(std::move(std::make_unique<Sphere>(Sphere(MatScaling(2,2,2)))));
+    shapes.push_back(std::move(std::make_unique<Sphere>(Sphere(MatTranslation(2,2,2)))));
+    shapes.push_back(std::move(std::make_unique<Sphere>(Sphere(MatTranslation(-2,-2,-2)))));
+    shapes.push_back(std::move(std::make_unique<Sphere>(Sphere(MatScaling(0.5,0.5,0.5)*MatTranslation(-2,-2,-2)))));
+    auto  a = BVH(shapes);
+}
+
+TEST(BVHTests, Intersection){
+    std::vector<std::unique_ptr<Shape>> shapes;
+    shapes.push_back(std::move(std::make_unique<Sphere>(Sphere(MatTranslation(0,0,0.5)))));
+    shapes.push_back(std::move(std::make_unique<Sphere>(Sphere(MatTranslation(0,0,-0.5)))));
+    Ray r({0,0,2},{0,0,-1});
+    auto  a = BVH(shapes);
+    a.print();
+    std::cout << a.count_nodes() << std::endl;
+//    auto hits = a.intersect(r);
+//    ASSERT_EQ(hits.size(),4);
 }
 
 TEST(BVHTests,Intersect){

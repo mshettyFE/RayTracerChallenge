@@ -39,6 +39,7 @@ std::unique_ptr<AABB> Triangle::bound() const{
     output->add_point(p1);
     output->add_point(p2);
     output->add_point(p3);
+    output->set_shape(this);
     return output;
 }
 

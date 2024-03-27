@@ -30,5 +30,5 @@ void Plane::verbose_print() const{
 }
 
 std::unique_ptr<AABB> Plane::bound() const{
-    return std::make_unique<AABB>(AABB({NEG_INFTY,0,NEG_INFTY},{INFTY,0,INFTY}));
+    return std::make_unique<AABB>(AABB({NEG_INFTY,0,NEG_INFTY},{INFTY,0,INFTY},this));
 }

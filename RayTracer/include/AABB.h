@@ -19,13 +19,13 @@ private:
     std::unique_ptr<AABB> right{};
     std::array<double,3> min_bounds={INFTY,INFTY,INFTY};
     std::array<double,3> max_bounds={NEG_INFTY,NEG_INFTY,NEG_INFTY};
-    void indented_print(int indent=0) const;
+    void indented_print( const AABB* current_box, int indent=0) const;
     std::vector<double> check_axis(double origin, double direction, double min, double max) const;
 public:
     bool intersect(const Ray &other) const;
 
-    AABB(std::initializer_list<double> min_bounds, std::initializer_list<double> max_bounds);
-    AABB(Tuple min_bounds, Tuple max_bounds);
+    AABB(std::initializer_list<double> min_bounds, std::initializer_list<double> max_bounds, const Shape* shp=nullptr);
+    AABB(Tuple min_bounds, Tuple max_bounds, const Shape* shp=nullptr);
     AABB(){}
 
     void add_point(const Tuple new_point);
@@ -54,8 +54,15 @@ public:
     bool contains(const Tuple& points) const;
     bool contains(const AABB& new_box) const;
 
-    const AABB* get_left(){return this->left.get();}
-    const AABB* get_right(){return this->right.get();}
+    const AABB* get_left() const{return this->left.get();}
+    const AABB* get_right() const{return this->right.get();}
+    std::vector<const AABB*> get_center() const{
+        std::vector<const AABB*> output;
+        for(auto const& child: center){
+            output.push_back(child.get());
+        }
+        return output;
+    }
 
     std::vector<const AABB*> get_center(){
         std::vector<const AABB*> output;
@@ -63,7 +70,7 @@ public:
         return output;
     }
 
-    const Shape* contained_shape(){return enclosed_shape;}
+    const Shape* get_shape() const {return enclosed_shape;}
     void set_shape(const Shape* new_shape){this->enclosed_shape = new_shape;}
 
     void expand_box(const AABB* new_box);
