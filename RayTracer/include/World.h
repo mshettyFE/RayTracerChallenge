@@ -22,7 +22,7 @@ class World{
         bvh = std::make_unique<BVH>(BVH(shapes));
     }
     
-    std::vector<Impact> intersect(const Ray& r) const;
+    std::vector<Impact> intersect(const Ray& r, bool use_bvh=false) const;
 
     Color  shade_hit(const CollisionInfo& hit, unsigned int remaining=5) const;
 
@@ -33,6 +33,8 @@ class World{
 
     const Shape* get_shape(int i) const ;
     const LightSource* get_source(int i) const;
+
+    const BVH* get_bvh() const{return bvh.get();}
 
     void set_shape(int obj, std::unique_ptr<Shape>& other) ;
     void set_source(int obj, std::unique_ptr<LightSource>& other) ;

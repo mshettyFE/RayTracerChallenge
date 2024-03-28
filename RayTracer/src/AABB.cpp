@@ -47,30 +47,34 @@ bool AABB::operator!=(const AABB& other) const{
     return !(*this == other);
 }
 
-void AABB::print() const{
-    std::set<const AABB*> visited;
-    indented_print(this,0);
+void AABB::print(bool verbose) const{
+    indented_print(this,0, verbose);
 }
 
-void AABB::indented_print(const AABB* cur_box, int indent) const{
+void AABB::indented_print(const AABB* cur_box, int indent, bool verbose) const{
     auto indentation = std::string(indent,'\t');
     std::cout << indentation << "Depth: " << indent << std::endl;
-    std::cout << indentation << "Min Bounds: " << cur_box->get_min_x() << " " << cur_box->get_min_y() << " "<< cur_box->get_min_z()<< std::endl;
-    std::cout << indentation << "Max Bounds: " << cur_box->get_max_x() << " " << cur_box->get_max_y()<< " "<< cur_box->get_max_z() << std::endl;
-    std::cout << indentation << cur_box << std::endl;
+    std::cout << indentation << "Shape: " <<  cur_box->get_shape() << std::endl;
+    std::cout << indentation << "Is Leaf: " << cur_box->is_leaf() << std::endl;
+    if(verbose){
+        std::cout << indentation << "Min Bounds: " << cur_box->get_min_x() << " " << cur_box->get_min_y() << " "<< cur_box->get_min_z()<< std::endl;
+        std::cout << indentation << "Max Bounds: " << cur_box->get_max_x() << " " << cur_box->get_max_y()<< " "<< cur_box->get_max_z() << std::endl;
+    }
     indent++;
+    indentation = std::string(indent,'\t');
     for(auto const& box: cur_box->center){
         if(box != nullptr){
-            indented_print( box.get(), indent);
+            std::cout << indentation << "Center " << std::endl;
+            indented_print( box.get(), indent,verbose);
         }
     }
     if(cur_box->left!= nullptr){
         std::cout << indentation << "Left" << std::endl;
-        indented_print(cur_box->left.get(), indent);
+        indented_print(cur_box->left.get(), indent,verbose);
     }
     if(cur_box->right!=nullptr){
         std::cout << indentation << "Right" << std::endl;
-        indented_print(cur_box->right.get(), indent);
+        indented_print(cur_box->right.get(), indent,verbose);
     }
 }
 
@@ -143,6 +147,7 @@ std::unique_ptr<AABB> AABB::transform(Matrix mat) const{
     for(auto const& pt : points){
         new_box.add_point(mat*pt);
     }
+    new_box.set_shape(this->get_shape());
     return std::make_unique<AABB>(std::move(new_box));
 }
 
@@ -208,13 +213,6 @@ bool AABB::intersect(const Ray &other) const{
 
 bool AABB::is_leaf() const{
 // AABB is leaf is no left pointer, no right pointer, no  center boxes, and enclosed_shape is not null
-//    return (left==nullptr) && (right==nullptr) && (center.size() ==0) && (enclosed_shape !=nullptr);
-    std::cout << "Left: " << left.get() <<  " Bool: "  << (int)(left==nullptr) <<  std::endl;
-    std::cout << "Right: " << right.get() << " Bool: "  << (int)(right==nullptr) <<   std::endl;
-    std::cout << "Center: " << center.size() << " Bool: "  << (int)(center.size()==0) <<   std::endl;
-    std::cout << "Shape: " << &enclosed_shape <<  " Bool: "  << (int)(enclosed_shape!=nullptr) <<  std::endl;
-    std::cout << "Is Leaf: " << ((left==nullptr) && (right==nullptr) && (center.size() ==0) && (enclosed_shape !=nullptr)) << std::endl << std::endl;
-
     return (left==nullptr) && (right==nullptr) && (center.size() ==0) && (enclosed_shape !=nullptr);
 }
 
@@ -236,7 +234,7 @@ bool AABB::straddle(const AABB* new_box) const{
         return (new_box->get_min_x()< x) && (x < new_box->get_max_x());
     }
     else if(index==1){
-        return  (new_box->get_min_y()< y) && (y < new_box->get_max_y());        
+        return  (new_box->get_min_y()< y) && (y < new_box->get_max_y());
     }
     else if(index==2){
         return  (new_box->get_min_z()< z) && (z < new_box->get_max_z());
@@ -265,7 +263,7 @@ void AABB::split(){
     }
     else if(index==1){
         left_max = GenPoint(this->get_max_x(),middle.get_y(), this->get_max_z());
-        right_min = GenPoint(this->get_max_x(), middle.get_y(), this->get_min_z());
+        right_min = GenPoint(this->get_min_x(), middle.get_y(), this->get_min_z());
     }
     else if(index==2){
         left_max = GenPoint(this->get_max_x(),this->get_max_y(), middle.get_z());
@@ -282,6 +280,11 @@ void AABB::split(){
 
 bool AABB::insert(std::unique_ptr<AABB>& new_box, unsigned int depth){
     ++depth;
+//    std::cout << "Depth: " << depth <<  std::endl;
+//    std::cout << *new_box << std::endl;
+//    std::cout << *this << std::endl;
+//    std::cout << "Contains: " << this->contains(*new_box.get()) << std::endl;
+//    std::cout << "Straddles: " << straddle(new_box.get()) << std::endl;
 // box needs to be big enough to hold new_box. If the box is not big enough, don't change the state of the current box
 // for recursive calls, prevents too-big boxes from affecting the state of the current box
     if(!this->contains(*new_box.get())){
@@ -292,7 +295,7 @@ bool AABB::insert(std::unique_ptr<AABB>& new_box, unsigned int depth){
 // If it does fit a box, then recurse on said box, and when stack eventually unwinds, return immediately
     if(straddle(new_box.get())){
         for(int i=0; i<center.size(); ++i){
-            bool is_hit = center[i]->contains(*new_box.get()); //problem here?
+            bool is_hit = center[i]->contains(*new_box.get());
             if(is_hit){
                 center[i]->insert(new_box,depth);
                 return true;
@@ -306,12 +309,15 @@ bool AABB::insert(std::unique_ptr<AABB>& new_box, unsigned int depth){
 // OK. The box doesn't go in the center. Check if both left and right are nullptr (having only one be null shouldn't happen with this setup?)
 // If both  are nullptr, then split the current box in half
         if(this->left==nullptr && this->right==nullptr){
+//            std::cout << "Splitting..." << std::endl;
             split();
         }
 //  Split(). Not to Split(). In either case, you can then recurse on both halves
         if((this->left!=nullptr) && (this->right !=nullptr)){
+//            std::cout << "Left" << std::endl;
             bool inside_left = this->left->insert(new_box,depth);
             if (!inside_left){ // check if left took ownership. If it did not, box must go in right
+//                std::cout << "Right" << std::endl;
                 this->right->insert(new_box,depth);
             }
             return true;

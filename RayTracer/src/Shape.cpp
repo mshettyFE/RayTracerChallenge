@@ -40,7 +40,7 @@ Matrix Shape::get_aggregate_transform(std::set<const Shape*>& visited , bool ver
         }
     }
     if(visited.count(this)){
-        throw std::invalid_argument("Cycle detected in when caculating aggregate transformation. Check add_child arguments in Group (or CSG)");
+        throw std::invalid_argument("Cycle detected in when calculating aggregate transformation. Check add_child arguments in Group (or CSG)");
     }
     visited.insert(this);
     count++;
@@ -134,6 +134,10 @@ bool Shape::includes(const Shape* test) const{
 }
 
 std::ostream& operator << (std::ostream &out, const Shape* other){
+    if(other==nullptr){
+        out << "No Shape" << std::endl;
+        return out;
+    }
     out << other->get_name() << " " << other->get_id() << std::endl;
     return out;
 }

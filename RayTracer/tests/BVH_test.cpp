@@ -159,7 +159,13 @@ TEST(BVHTests, Insert){
     EXPECT_EQ(big_box->insert(left_box),true);
     EXPECT_NE(big_box->get_left(), nullptr);
     EXPECT_NE(big_box->get_right(), nullptr);
-    big_box->print();
+}
+
+TEST(BVHTests, Print){
+    auto value = Sphere().bound();
+    value->print();
+    auto bbox = AABB();
+    bbox.print();
 }
 
 TEST(BVHTests, InsertShapes){
@@ -169,18 +175,21 @@ TEST(BVHTests, InsertShapes){
     shapes.push_back(std::move(std::make_unique<Sphere>(Sphere(MatTranslation(-2,-2,-2)))));
     shapes.push_back(std::move(std::make_unique<Sphere>(Sphere(MatScaling(0.5,0.5,0.5)*MatTranslation(-2,-2,-2)))));
     auto  a = BVH(shapes);
+    EXPECT_EQ(a.count_leaves(),4);
 }
 
 TEST(BVHTests, Intersection){
     std::vector<std::unique_ptr<Shape>> shapes;
     shapes.push_back(std::move(std::make_unique<Sphere>(Sphere(MatTranslation(0,0,0.5)))));
-    shapes.push_back(std::move(std::make_unique<Sphere>(Sphere(MatTranslation(0,0,-0.5)))));
+    shapes.push_back(std::move(std::make_unique<Sphere>(Sphere(MatTranslation(0,0,-5)))));
     Ray r({0,0,2},{0,0,-1});
     auto  a = BVH(shapes);
-    a.print();
-    std::cout << a.count_nodes() << std::endl;
     auto hits = a.intersect(r);
     ASSERT_EQ(hits.size(),4);
+    EXPECT_EQ(hits[0].get_t(), 0.5);
+    EXPECT_EQ(hits[1].get_t(), 2.5);
+    EXPECT_EQ(hits[2].get_t(), 6);
+    EXPECT_EQ(hits[3].get_t(), 8);
 }
 
 TEST(BVHTests,Intersect){
@@ -216,4 +225,6 @@ TEST(BVHTests,Intersect){
 TEST(BVHTests, ReadWorld){
     auto w = default_world();
     w->init_bvh();
+    w->get_bvh()->print();
+    EXPECT_EQ(w->number_of_shapes(),w->get_bvh()->count_leaves() );
 }

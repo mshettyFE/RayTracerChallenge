@@ -20,13 +20,18 @@ int World::number_of_shapes() const{
     return shapes.size();
 }
 
-std::vector<Impact> World::intersect(const Ray& r) const{
+std::vector<Impact> World::intersect(const Ray& r, bool use_bvh) const{
     std::vector<Impact> all_hits;
-    for(auto const& shape: shapes){
-        for(auto hit: shape->intersect(r)){
-            all_hits.push_back(hit);
-        }
-    }    
+    if(use_bvh){
+        all_hits = bvh->intersect(r);        
+    }
+    else{
+        for(auto const& shape: shapes){
+            for(auto hit: shape->intersect(r)){
+                all_hits.push_back(hit);
+            }
+        }    
+    }
     std::sort(all_hits.begin(), all_hits.end(), [](const Impact& a, const Impact& b) -> bool{ return (a.get_t() < b.get_t());  });
     return all_hits;
 }

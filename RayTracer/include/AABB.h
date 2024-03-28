@@ -19,7 +19,7 @@ private:
     std::unique_ptr<AABB> right{};
     std::array<double,3> min_bounds={INFTY,INFTY,INFTY};
     std::array<double,3> max_bounds={NEG_INFTY,NEG_INFTY,NEG_INFTY};
-    void indented_print( const AABB* current_box, int indent=0) const;
+    void indented_print( const AABB* current_box, int indent=0, bool verbose=false) const;
     std::vector<double> check_axis(double origin, double direction, double min, double max) const;
 public:
     bool intersect(const Ray &other) const;
@@ -80,7 +80,7 @@ public:
 
     bool straddle(const AABB* new_box) const;
 
-    void print() const;
+    void print(bool verbose=false) const;
 
     std::unique_ptr<AABB> transform(Matrix mat) const;
 

@@ -61,6 +61,7 @@ void CSG::verbose_print() const {}
 
 std::unique_ptr<AABB> CSG::bound() const{
     AABB output;
+    output.set_shape(this);
     std::vector<std::unique_ptr<AABB>> boxes;
     for(auto const& child: children){
         auto bbox = parent_space_bounds(child.get());
