@@ -31,8 +31,8 @@ std::vector<Impact> World::intersect(const Ray& r, bool use_bvh) const{
                 all_hits.push_back(hit);
             }
         }    
+        std::sort(all_hits.begin(), all_hits.end(), [](const Impact& a, const Impact& b) -> bool{ return (a.get_t() < b.get_t());  });
     }
-    std::sort(all_hits.begin(), all_hits.end(), [](const Impact& a, const Impact& b) -> bool{ return (a.get_t() < b.get_t());  });
     return all_hits;
 }
 

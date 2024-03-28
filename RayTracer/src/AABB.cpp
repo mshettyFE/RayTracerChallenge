@@ -55,7 +55,6 @@ void AABB::indented_print(const AABB* cur_box, int indent, bool verbose) const{
     auto indentation = std::string(indent,'\t');
     std::cout << indentation << "Depth: " << indent << std::endl;
     std::cout << indentation << "Shape: " <<  cur_box->get_shape() << std::endl;
-    std::cout << indentation << "Is Leaf: " << cur_box->is_leaf() << std::endl;
     if(verbose){
         std::cout << indentation << "Min Bounds: " << cur_box->get_min_x() << " " << cur_box->get_min_y() << " "<< cur_box->get_min_z()<< std::endl;
         std::cout << indentation << "Max Bounds: " << cur_box->get_max_x() << " " << cur_box->get_max_y()<< " "<< cur_box->get_max_z() << std::endl;
@@ -208,12 +207,6 @@ bool AABB::intersect(const Ray &other) const{
         return false;
     }
     return true;
-}
-
-
-bool AABB::is_leaf() const{
-// AABB is leaf is no left pointer, no right pointer, no  center boxes, and enclosed_shape is not null
-    return (left==nullptr) && (right==nullptr) && (center.size() ==0) && (enclosed_shape !=nullptr);
 }
 
 bool AABB::straddle(const AABB* new_box) const{

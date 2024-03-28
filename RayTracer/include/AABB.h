@@ -84,8 +84,6 @@ public:
 
     std::unique_ptr<AABB> transform(Matrix mat) const;
 
-    bool is_leaf() const;
-
     friend std::ostream& operator << (std::ostream &out, const AABB& other);
 
 };

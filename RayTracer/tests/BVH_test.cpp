@@ -175,7 +175,7 @@ TEST(BVHTests, InsertShapes){
     shapes.push_back(std::move(std::make_unique<Sphere>(Sphere(MatTranslation(-2,-2,-2)))));
     shapes.push_back(std::move(std::make_unique<Sphere>(Sphere(MatScaling(0.5,0.5,0.5)*MatTranslation(-2,-2,-2)))));
     auto  a = BVH(shapes);
-    EXPECT_EQ(a.count_leaves(),4);
+    EXPECT_EQ(a.count_nodes(),21);
 }
 
 TEST(BVHTests, Intersection){
@@ -226,5 +226,6 @@ TEST(BVHTests, ReadWorld){
     auto w = default_world();
     w->init_bvh();
     w->get_bvh()->print();
-    EXPECT_EQ(w->number_of_shapes(),w->get_bvh()->count_leaves() );
+    Ray r({0,0,5}, {0,0,-1});
+    EXPECT_EQ(w->intersect(r,true).size(), w->intersect(r).size());
 }
