@@ -38,7 +38,7 @@ public:
 
     Ray ray_for_pixel(int x, int y) const;
 
-    std::unique_ptr<Canvas> render(const World* w) const;
+    std::unique_ptr<Canvas> render(World* w);
 
     bool operator==(const Camera& other) const;
     bool operator!=(const Camera& other) const;

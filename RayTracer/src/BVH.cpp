@@ -8,11 +8,15 @@ BVH::BVH(const std::vector<std::unique_ptr<Shape>>& shapes){
     std::vector<std::unique_ptr<AABB>> boxes;
     int count = 0;
     for(auto const& shape: shapes){
+        std::cout << "Start" << std::endl;
         auto current_bb = shape->bound();
+        std::cout << "Transformation" << std::endl;
         current_bb =  current_bb->transform(shape->get_aggregate_transform());
+        std::cout << "Transformation" << std::endl;
         head->expand_box(current_bb.get());
         boxes.push_back(std::move(current_bb));
         count++;
+        std::cout << "End" << std::endl;
     }
     for(int i=0; i<boxes.size(); ++i){
 //        std::cout << "Shape Number " << i << std::endl;
@@ -21,11 +25,10 @@ BVH::BVH(const std::vector<std::unique_ptr<Shape>>& shapes){
 }
 
 void BVH::private_intersect(const Ray& r, const AABB* current_node, std::vector<Impact>& out_vector  ,unsigned long depth) const{
-    // If the current node has a shape, then return the intersections of the associated shape
-    if(current_node->get_shape()){
+    // If the current node has a shape, then add the intersections of the associated shape
+    if(current_node->get_shape()!=nullptr){
         auto hits = current_node->get_shape()->intersect(r);
         out_vector.insert(out_vector.end(),hits.begin(), hits.end());
-        return;
     }
     depth++;
     // need to do central children first since it is ambiguous which side it falls in

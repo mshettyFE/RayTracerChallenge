@@ -157,7 +157,10 @@ Ray Camera::ray_for_pixel(int px, int py) const{
     return Ray(origin, direction);
 }
 
-std::unique_ptr<Canvas> Camera::render(const World* w) const{
+std::unique_ptr<Canvas> Camera::render(World* w){
+    w->init_bvh();
+    std::cout << "BVH Initialized: "  << std::endl;
+    w->get_bvh()->print();
     total_rays=0;
     Canvas image = Canvas(this->hsize, this->vsize);
     for(int y=0; y<this->vsize-1; ++y){

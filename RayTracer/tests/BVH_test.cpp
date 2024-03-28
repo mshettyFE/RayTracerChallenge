@@ -227,5 +227,6 @@ TEST(BVHTests, ReadWorld){
     w->init_bvh();
     w->get_bvh()->print();
     Ray r({0,0,5}, {0,0,-1});
-    EXPECT_EQ(w->intersect(r,true).size(), w->intersect(r).size());
+    std::vector<Impact> hits = w->intersect(r,true);
+    EXPECT_EQ(hits.size(), w->intersect(r).size());
 }

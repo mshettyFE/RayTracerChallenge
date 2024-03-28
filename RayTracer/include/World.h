@@ -22,7 +22,7 @@ class World{
         bvh = std::make_unique<BVH>(BVH(shapes));
     }
     
-    std::vector<Impact> intersect(const Ray& r, bool use_bvh=false) const;
+    std::vector<Impact> intersect(const Ray& r, bool use_bvh=true) const;
 
     Color  shade_hit(const CollisionInfo& hit, unsigned int remaining=5) const;
 
