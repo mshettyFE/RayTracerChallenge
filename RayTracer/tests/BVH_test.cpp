@@ -87,9 +87,9 @@ TEST(BVHTests, ContainsBox){
 TEST(BVHTests, Transform){
     AABB box({-1,-1,-1},{1,1,1});
     Matrix matrix = MatRotateX(pi/4.0)*MatRotateY(pi/4.0);
-    auto data = box.transform(matrix);    
-    EXPECT_EQ(data->get_min(), GenPoint(-1.41421, -1.70711, -1.70711));
-    EXPECT_EQ(data->get_max(), GenPoint(1.41421, 1.70711, 1.70711));
+    box.transform(matrix);    
+    EXPECT_EQ(box.get_min(), GenPoint(-1.41421, -1.70711, -1.70711));
+    EXPECT_EQ(box.get_max(), GenPoint(1.41421, 1.70711, 1.70711));
 }
 
 TEST(BVHTests, Parent){

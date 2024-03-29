@@ -56,6 +56,7 @@ public:
 
     const AABB* get_left() const{return this->left.get();}
     const AABB* get_right() const{return this->right.get();}
+
     std::vector<const AABB*> get_center() const{
         std::vector<const AABB*> output;
         for(auto const& child: center){
@@ -82,7 +83,7 @@ public:
 
     void print(bool verbose=false) const;
 
-    std::unique_ptr<AABB> transform(Matrix mat) const;
+    void transform(Matrix mat);
 
     friend std::ostream& operator << (std::ostream &out, const AABB& other);
 

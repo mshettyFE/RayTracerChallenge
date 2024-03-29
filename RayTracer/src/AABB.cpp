@@ -124,7 +124,7 @@ bool AABB::contains(const AABB& new_box) const{
     return contains(new_box.get_min()) && contains(new_box.get_max());
 }
 
-std::unique_ptr<AABB> AABB::transform(Matrix mat) const{
+void AABB::transform(Matrix mat) {
     double xmin, xmax, ymin,ymax, zmin,zmax;
     xmin = min_bounds[0];
     ymin = min_bounds[1];
@@ -147,7 +147,12 @@ std::unique_ptr<AABB> AABB::transform(Matrix mat) const{
         new_box.add_point(mat*pt);
     }
     new_box.set_shape(this->get_shape());
-    return std::make_unique<AABB>(std::move(new_box));
+    this->set_min_x(new_box.get_min_x());
+    this->set_min_y(new_box.get_min_y());
+    this->set_min_z(new_box.get_min_z());
+    this->set_max_x(new_box.get_max_x());
+    this->set_max_y(new_box.get_max_y());
+    this->set_max_z(new_box.get_max_z());
 }
 
 void AABB::expand_box(const AABB* new_box){
@@ -156,7 +161,9 @@ void AABB::expand_box(const AABB* new_box){
 }
 
 std::unique_ptr<AABB> parent_space_bounds(const Shape* shape){
-    return shape->bound()->transform(shape->get_transform());
+    auto s = shape->bound();
+    s->transform(shape->get_transform());
+    return s;
 }
 
 std::vector<double> AABB::check_axis(double origin, double direction, double min, double max) const{

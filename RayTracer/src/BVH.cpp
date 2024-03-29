@@ -8,15 +8,11 @@ BVH::BVH(const std::vector<std::unique_ptr<Shape>>& shapes){
     std::vector<std::unique_ptr<AABB>> boxes;
     int count = 0;
     for(auto const& shape: shapes){
-        std::cout << "Start" << std::endl;
         auto current_bb = shape->bound();
-        std::cout << "Transformation" << std::endl;
-        current_bb =  current_bb->transform(shape->get_aggregate_transform());
-        std::cout << "Transformation" << std::endl;
+        current_bb->transform(shape->get_aggregate_transform());
         head->expand_box(current_bb.get());
         boxes.push_back(std::move(current_bb));
         count++;
-        std::cout << "End" << std::endl;
     }
     for(int i=0; i<boxes.size(); ++i){
 //        std::cout << "Shape Number " << i << std::endl;
