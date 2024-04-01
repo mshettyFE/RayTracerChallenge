@@ -16,7 +16,6 @@ BVH::BVH(const std::vector<std::unique_ptr<Shape>>& shapes, unsigned int max_dep
         count++;
     }
     for(int i=0; i<boxes.size(); ++i){
-//        std::cout << "Shape Number " << i << std::endl;
         head->insert(boxes[i], 0, max_depth);
     }
 }

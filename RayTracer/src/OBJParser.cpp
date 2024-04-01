@@ -14,7 +14,6 @@ void Parser::read_line(const std::string& line){
     std::istringstream iss(line);
     std::string type;
     iss >> type;
-//    std::cout << current_line << " " << type << std::endl;
     if(iss.fail()){
         throw InvalidLineParser();
     }
@@ -165,7 +164,6 @@ void Parser::parse_face(std::istringstream& iss){
     else{
         group_name = current_group;
     }
-//    std::cout << group_name << std::endl;
     recorded_groups.insert(std::make_pair(group_name,std::make_unique<Group>(Group())));
     for(int i=0; i< recorded_triangles.size(); ++i){
         recorded_groups[group_name]->add_child(std::move(recorded_triangles[i]));

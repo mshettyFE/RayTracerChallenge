@@ -150,11 +150,6 @@ Matrix Matrix::Inverse(bool debug) const{
     // and make the output initially the identity
     Matrix out = MatIdentity(dim);
     for(int col=0; col<dim; ++col){
-        if(debug){
-            std::cout << "Start of loop " << col << std::endl;
-            std::cout << in << std::endl;
-            std::cout << out << std::endl;
-        }
         double pivot = in.data[get_index(col,col)];
         // Check for 0 pivot. If found, we need to swap rows to find a new pivot
         if(is_same(pivot,0)){
@@ -176,20 +171,10 @@ Matrix Matrix::Inverse(bool debug) const{
             if(!new_pivot_found){
                 throw std::domain_error("Inverse does not exist");
             }
-            if(debug){
-                std::cout << "Swapped "  << std::endl;
-                std::cout << in << std::endl;
-                std::cout << out << std::endl;
-            }
         }
         // scale the row so that the pivot element is 1
         in.scale(col,1.0/pivot);
         out.scale(col, 1.0/pivot);
-        if(debug){
-            std::cout << "Scaled "  << std::endl;
-            std::cout << in << std::endl;
-            std::cout << out << std::endl;
-        }
         //pivot found, need to reduce all rows above and below current row
         for(int row=0; row<dim; ++row){
             // Skip  pivot row
@@ -203,11 +188,6 @@ Matrix Matrix::Inverse(bool debug) const{
                 in.data[get_index(row,sweep)] += in.data[get_index(col,sweep)]*scaling;
                 out.data[get_index(row,sweep)] += out.data[get_index(col,sweep)]*scaling;
             }
-        }
-        if(debug){
-            std::cout << "Added "  << std::endl;
-            std::cout << in << std::endl;
-            std::cout << out << std::endl;
         }
     } // Iterated through all rows
     return out;

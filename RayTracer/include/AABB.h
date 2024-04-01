@@ -85,6 +85,8 @@ public:
 
     void transform(Matrix mat);
 
+    double bound_check(double min, double max) const;
+
     friend std::ostream& operator << (std::ostream &out, const AABB& other);
 
 };

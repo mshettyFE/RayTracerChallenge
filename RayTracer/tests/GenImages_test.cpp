@@ -460,7 +460,7 @@ TEST(GenImage, CoverImage){
     Tuple from = GenPoint(-18,18,-30);
     Tuple to = GenPoint(6,0,6);
     Tuple up = GenVec(-0.45, 1, 0);
-    Camera c(1000,1000,0.785,from,to,up);
+    Camera c(100,100,0.785,from,to,up);
     PointSource Source = PointSource(WHITE,GenPoint(50,100,-50));
     PointSource Source2 = PointSource(Color(0.2, 0.2, 0.2),GenPoint(-400, 50, -10));
     Material White = Material(0.1,0.7,0.0,200,WHITE,0.1,0.0,VACUUM);

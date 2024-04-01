@@ -116,9 +116,28 @@ bool AABB::contains(const Tuple& points) const{
     return true;
 }
 
+double AABB::bound_check(double min, double max) const{
+    if(min==INFTY){
+        if(max==NEG_INFTY){
+            return 0;
+        }        
+        return INFTY;
+    }
+    else if(min==NEG_INFTY){
+        if(max==INFTY){
+            return 0;
+        }
+        return NEG_INFTY;
+
+    }
+    return (min+max)/2.0;
+}
+
 Tuple AABB::get_min() const{    return std::move(GenPoint(get_min_x(),get_min_y(),get_min_z()));}
 Tuple AABB::get_max() const{    return std::move(GenPoint(get_max_x(),get_max_y(),get_max_z()));}
-Tuple AABB::get_mid() const{return 0.5*(GenVec(min_bounds[0],min_bounds[1],min_bounds[2])+GenVec(max_bounds[0],max_bounds[1],max_bounds[2]));}
+Tuple AABB::get_mid() const{
+    return GenVec(bound_check(min_bounds[0], max_bounds[0]), bound_check(min_bounds[1], max_bounds[1]),bound_check(min_bounds[2], max_bounds[2]));
+}
 
 bool AABB::contains(const AABB& new_box) const{
     return contains(new_box.get_min()) && contains(new_box.get_max());
@@ -217,7 +236,6 @@ bool AABB::intersect(const Ray &other) const{
 }
 
 bool AABB::straddle(const AABB* new_box) const{
-    std::cout << this->get_max() << " " << this->get_min()<< std::endl;
     Tuple delta = this->get_max()-this->get_min();
     double current_max = NEG_INFTY;
     int index = -1;
@@ -280,11 +298,6 @@ void AABB::split(){
 
 
 bool AABB::insert(std::unique_ptr<AABB>& new_box, unsigned int depth, unsigned int max_depth){
-//    std::cout << "Depth: " << depth <<  std::endl;
-//    std::cout << *new_box << std::endl;
-//    std::cout << *this << std::endl;
-//    std::cout << "Contains: " << this->contains(*new_box.get()) << std::endl;
-//    std::cout << "Straddles: " << straddle(new_box.get()) << std::endl;
 // box needs to be big enough to hold new_box. If the box is not big enough, don't change the state of the current box
 // for recursive calls, prevents too-big boxes from affecting the state of the current box
     if(!this->contains(*new_box.get())){
@@ -314,15 +327,12 @@ bool AABB::insert(std::unique_ptr<AABB>& new_box, unsigned int depth, unsigned i
 // OK. The box doesn't go in the center. Check if both left and right are nullptr (having only one be null shouldn't happen with this setup?)
 // If both  are nullptr, then split the current box in half
         if(this->left==nullptr && this->right==nullptr){
-//            std::cout << "Splitting..." << std::endl;
             split();
         }
 //  Split(). Not to Split(). In either case, you can then recurse on both halves
         if((this->left!=nullptr) && (this->right !=nullptr)){
-//            std::cout << "Left" << std::endl;
             bool inside_left = this->left->insert(new_box,depth, max_depth);
             if (!inside_left){ // check if left took ownership. If it did not, box must go in right
-//                std::cout << "Right" << std::endl;
                 this->right->insert(new_box,depth, max_depth);
             }
             return true;

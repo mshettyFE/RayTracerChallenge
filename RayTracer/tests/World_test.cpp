@@ -56,7 +56,6 @@ TEST(WorldTest,IntersectionTest){
     Ray r(Tuple({0,0,0}, TupType::POINT), Tuple({0,0,1}));
     Impact hit(0.5,w.get_shape(1));
     CollisionInfo i(std::make_unique<Impact>(hit),r);
-    std::cout << i << std::endl;
     Color c = w.shade_hit(i);
     EXPECT_EQ(c,Color({0.90498, 0.90498, 0.90498}));
 }
@@ -176,7 +175,6 @@ TEST(WorldTest, InfiniteRecursion){
     w.add_shape(std::make_unique<Plane>(std::move(lower)));
     w.add_shape(std::make_unique<Plane>(std::move(upper)));
     w.init_bvh();
-    std::cout << "Infinite Recursion" << std::endl;
     w.color_at(r); // should terminate and not Segfault
 }
 
