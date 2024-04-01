@@ -127,7 +127,7 @@ TEST(GenImage, GradPatternTest){
 // camera
     Tuple from = Tuple({0,1.5,-5}, TupType::POINT);
     Tuple to = Tuple({0,1,0}, TupType::POINT);
-    Tuple up = Tuple({1,0,0});
+    Tuple up = Tuple({0,1,0});
     Camera c(100,100, pi/3.0, from, to, up );
     World w;
     w.add_shape(std::make_unique<Plane>(std::move(floor)));
@@ -171,7 +171,7 @@ TEST(GenImage, Planes){
 // camera
     Tuple from = Tuple({0,1.5,-5}, TupType::POINT);
     Tuple to = Tuple({0,1,0}, TupType::POINT);
-    Tuple up = Tuple({1,0,0});
+    Tuple up = Tuple({0,1,0});
     Camera c(100,100, pi/3.0, from, to, up );
     World w;
     w.add_shape(std::make_unique<Plane>(std::move(floor)));
@@ -281,7 +281,7 @@ TEST(GenImage, FresnelEffect){
     w.add_source(std::make_unique<PointSource>(std::move(ps)));
     Tuple from({-10,1,0}, TupType::POINT);
     Tuple to({0,1,0}, TupType::POINT);
-    Tuple up({0,0,-1});
+    Tuple up({0,1,0});
     Camera cam(100,100,pi/2.0, from, to, up);
     
     auto img = cam.render(&w);
@@ -320,7 +320,7 @@ TEST(GenImage,AirBubble){
     w.add_source(std::make_unique<PointSource>(std::move(ps)));
     Tuple from({-5,0,0}, TupType::POINT);
     Tuple to({0,0,0}, TupType::POINT);
-    Tuple up({0,0,-1});
+    Tuple up({0,1,0});
     Camera cam(100,100,pi/2.0, from, to, up);
     
     auto img = cam.render(&w);
@@ -340,7 +340,7 @@ TEST(GenImage, SimpleTeapot){
     w.add_source(std::make_unique<PointSource>(std::move(ps)));
     Tuple from({-4.5,4.5,0}, TupType::POINT);
     Tuple to({0,0,0}, TupType::POINT);
-    Tuple up({0,0,-1});
+    Tuple up({0,1,0});
     Camera cam(100,100,pi/2.0, from, to, up);    
     auto img = cam.render(&w);
     img->save_ppm("SimpleTeapot");
@@ -358,7 +358,7 @@ TEST(GenImage, SimpleInterpolateTeapot){
     w.add_source(std::make_unique<PointSource>(std::move(ps)));
     Tuple from({4,0,0}, TupType::POINT);
     Tuple to({0,0,0}, TupType::POINT);
-    Tuple up({0,0,-1});
+    Tuple up({0,1,0});
     Camera cam(100,100,pi/2.0, from, to, up);    
     auto img = cam.render(&w);
     img->save_ppm("SimpleInterpTeapot");
@@ -418,7 +418,7 @@ TEST(GenImage, RandomSpheres){
     }
     Tuple from({-4,2,5}, TupType::POINT);
     Tuple to({0,1,0}, TupType::POINT);
-    Tuple up({0,0,-1});
+    Tuple up({0,1,0});
     Camera cam(100,100,pi/2.0, from, to, up);
     auto img = cam.render(&w);
     img->save_ppm("RandomSpheres");
