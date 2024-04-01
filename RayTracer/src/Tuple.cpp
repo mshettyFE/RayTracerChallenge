@@ -213,7 +213,13 @@ Tuple operator* (const Matrix& cur, const Tuple& other){
     for(int i=0; i<cur.get_dim(); ++i){
         double sum = 0.0;
         for(int j=0; j< total_dims; ++j){
-            sum += other.data[j]*cur(i,j);
+            double new_add = other.data[j]*cur(i,j);
+            if(std::isnan(new_add)){
+              sum += 0;
+            }
+            else{
+              sum += new_add;
+            }
         }
         out.data[i]=  sum;
     }

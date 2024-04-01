@@ -91,7 +91,13 @@ Matrix Matrix::operator*(const Matrix& other) const{
         for(int j=0; j<other.dim; ++j){
             double sum = 0.0;
             for(int k=0; k<other.dim; ++k ){
-                sum += this->data[get_index(i,k)]*other.data[get_index(k,j)];
+                double new_add = this->data[get_index(i,k)]*other.data[get_index(k,j)];
+                if(std::isnan(new_add)){
+                    sum += 0;
+                }
+                else{
+                    sum += new_add;
+                }
             }
             out.data[get_index(i,j)] = sum;
         }

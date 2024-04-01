@@ -75,7 +75,7 @@ public:
     void set_shape(const Shape* new_shape){this->enclosed_shape = new_shape;}
 
     void expand_box(const AABB* new_box);
-    bool insert(std::unique_ptr<AABB>& new_box, unsigned int depth=0);
+    bool insert(std::unique_ptr<AABB>& new_box, unsigned int depth=0, unsigned int max_depth = 20);
 
     void split();
 

@@ -2,21 +2,22 @@
 #include "Shape.h"
 #include <algorithm>
 
-BVH::BVH(const std::vector<std::unique_ptr<Shape>>& shapes){
+BVH::BVH(const std::vector<std::unique_ptr<Shape>>& shapes, unsigned int max_depth){
 // define empty head
     this->head = std::make_unique<AABB>(std::move(AABB()));
     std::vector<std::unique_ptr<AABB>> boxes;
     int count = 0;
     for(auto const& shape: shapes){
         auto current_bb = shape->bound();
-        current_bb->transform(shape->get_aggregate_transform());
+        Matrix new_mat = shape->get_aggregate_transform();
+        current_bb->transform(new_mat);
         head->expand_box(current_bb.get());
         boxes.push_back(std::move(current_bb));
         count++;
     }
     for(int i=0; i<boxes.size(); ++i){
 //        std::cout << "Shape Number " << i << std::endl;
-        head->insert(boxes[i]);
+        head->insert(boxes[i], 0, max_depth);
     }
 }
 

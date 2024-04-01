@@ -135,6 +135,7 @@ std::unique_ptr<World> default_world(){
     w->add_shape(std::move(s1));
     w->add_shape(std::move(s2));
     w->add_source(std::move(source));
+    w->init_bvh();
     return w;
 }
 

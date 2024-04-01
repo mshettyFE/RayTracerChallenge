@@ -217,6 +217,7 @@ bool AABB::intersect(const Ray &other) const{
 }
 
 bool AABB::straddle(const AABB* new_box) const{
+    std::cout << this->get_max() << " " << this->get_min()<< std::endl;
     Tuple delta = this->get_max()-this->get_min();
     double current_max = NEG_INFTY;
     int index = -1;
@@ -239,7 +240,7 @@ bool AABB::straddle(const AABB* new_box) const{
     else if(index==2){
         return  (new_box->get_min_z()< z) && (z < new_box->get_max_z());
     }
-    throw std::invalid_argument("Something went wrong in AABB::saddle");
+    throw std::invalid_argument("Something went wrong in AABB::straddle");
 }
 
 void AABB::split(){
@@ -278,8 +279,7 @@ void AABB::split(){
 }
 
 
-bool AABB::insert(std::unique_ptr<AABB>& new_box, unsigned int depth){
-    ++depth;
+bool AABB::insert(std::unique_ptr<AABB>& new_box, unsigned int depth, unsigned int max_depth){
 //    std::cout << "Depth: " << depth <<  std::endl;
 //    std::cout << *new_box << std::endl;
 //    std::cout << *this << std::endl;
@@ -290,6 +290,11 @@ bool AABB::insert(std::unique_ptr<AABB>& new_box, unsigned int depth){
     if(!this->contains(*new_box.get())){
         return false;
     }
+    if(depth >= max_depth){
+        center.push_back(std::move(new_box));
+        return true;
+    }
+    ++depth;
 // If the box is small enough, and straddles  the center, you can't really assign it to either left or right
 // Hence, run through vector of center boxes.
 // If it does fit a box, then recurse on said box, and when stack eventually unwinds, return immediately
@@ -297,7 +302,7 @@ bool AABB::insert(std::unique_ptr<AABB>& new_box, unsigned int depth){
         for(int i=0; i<center.size(); ++i){
             bool is_hit = center[i]->contains(*new_box.get());
             if(is_hit){
-                center[i]->insert(new_box,depth);
+                center[i]->insert(new_box,depth, max_depth);
                 return true;
             }
         }
@@ -315,10 +320,10 @@ bool AABB::insert(std::unique_ptr<AABB>& new_box, unsigned int depth){
 //  Split(). Not to Split(). In either case, you can then recurse on both halves
         if((this->left!=nullptr) && (this->right !=nullptr)){
 //            std::cout << "Left" << std::endl;
-            bool inside_left = this->left->insert(new_box,depth);
+            bool inside_left = this->left->insert(new_box,depth, max_depth);
             if (!inside_left){ // check if left took ownership. If it did not, box must go in right
 //                std::cout << "Right" << std::endl;
-                this->right->insert(new_box,depth);
+                this->right->insert(new_box,depth, max_depth);
             }
             return true;
         }

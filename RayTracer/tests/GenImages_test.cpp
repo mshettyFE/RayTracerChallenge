@@ -134,8 +134,7 @@ TEST(GenImage, GradPatternTest){
     w.add_shape(std::make_unique<Sphere>(std::move(middle)));
     w.add_shape(std::make_unique<Sphere>(std::move(right)));
     w.add_shape(std::make_unique<Sphere>(std::move(smallest)));
-    w.add_source(std::make_unique<PointSource>(std::move(ps)));
-    
+    w.add_source(std::make_unique<PointSource>(std::move(ps)));    
     std::unique_ptr<Canvas> img = c.render(&w);
     img->save_ppm("GradPlaneScene");
 }

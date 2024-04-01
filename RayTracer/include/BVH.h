@@ -12,7 +12,7 @@ private:
     void private_intersect(const Ray& r, const AABB* current_node, std::vector<Impact>& out_vector  ,unsigned long depth=0) const;
     unsigned long private_count_nodes (const AABB* node) const;
 public:
-    BVH(const std::vector<std::unique_ptr<Shape>>& shapes);
+    BVH(const std::vector<std::unique_ptr<Shape>>& shapes, unsigned max_depth=20);
     unsigned long count_nodes() const;
     std::vector<Impact> intersect(const Ray& r) const;
     void print(bool verbose=false) const;

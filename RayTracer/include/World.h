@@ -18,8 +18,8 @@ class World{
         std::unique_ptr<BVH> bvh=nullptr;
     public:
 
-    void init_bvh(){
-        bvh = std::make_unique<BVH>(BVH(shapes));
+    void init_bvh(unsigned int max_depth = 20){
+        bvh = std::make_unique<BVH>(BVH(shapes, max_depth));
     }
     
     std::vector<Impact> intersect(const Ray& r, bool use_bvh=true) const;
