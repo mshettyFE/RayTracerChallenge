@@ -23,11 +23,13 @@ private:
     void parse_face(std::istringstream& iss);
     unsigned long invalid_reads=0;
     unsigned long current_line=0;
+    bool verbose=false;
     std::string current_group="";
     std::vector<Tuple> vertices = {GenPoint(0,0,0)};
     std::vector<Tuple> normals = {GenVec(0,0,0)};
     std::map<std::string, std::unique_ptr<Group>> recorded_groups;
 public:
+    Parser(bool verbose=false);
     void read(const std::string& fname, bool file=true);
     unsigned long get_invalid_reads() const;
     unsigned long get_current_line() const;

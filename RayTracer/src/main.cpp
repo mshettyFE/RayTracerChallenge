@@ -11,6 +11,7 @@ int main(){
     Parser p;
     p.read(teapot_obj,true);
     auto group = p.emit();
+    group->set_transform(Chain({MatRotateY(pi),MatRotateX(pi/2)}));
     World w;
     w.add_shape(std::move(group));
     PointSource ps(WHITE,Tuple({-10,10,-10}, TupType::POINT));

@@ -346,22 +346,22 @@ TEST(GenImage, SimpleTeapot){
     img->save_ppm("SimpleTeapot");
 }
 
-TEST(GenImage, SimpleInterpolateTeapot){
+TEST(GenImage, Apple){
 // Assumes that tests are run in build folder which is parallel to obj file
-    std::string teapot_obj = "../obj/inter_teapot.obj";
-    Parser p;
+    std::string teapot_obj = "../obj/Apple.obj";
+    Parser p(true);
     p.read(teapot_obj,true);
     auto group = p.emit();
     World w;
     w.add_shape(std::move(group));
     PointSource ps(WHITE,Tuple({-10,10,-10}, TupType::POINT));
     w.add_source(std::make_unique<PointSource>(std::move(ps)));
-    Tuple from({4,0,0}, TupType::POINT);
+    Tuple from({-4,5,0}, TupType::POINT);
     Tuple to({0,0,0}, TupType::POINT);
     Tuple up({0,1,0});
-    Camera cam(100,100,pi/2.0, from, to, up);    
+    Camera cam(500,500,pi/2.0, from, to, up);    
     auto img = cam.render(&w);
-    img->save_ppm("SimpleInterpTeapot");
+    img->save_ppm("Apple");
 }
 
 std::vector<std::tuple<double,double,double,double>> place_random_spheres(int total_spheres=10){

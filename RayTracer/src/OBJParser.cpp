@@ -9,6 +9,10 @@
 #include "Group.h"
 #include "Tuple.h"
 
+Parser::Parser(bool verbose){
+    this->verbose= verbose;
+}
+
 void Parser::read_line(const std::string& line){
     current_line++;
     std::istringstream iss(line);
@@ -79,6 +83,7 @@ void Parser::parse_normal(std::istringstream& iss){
         points.push_back(temp_num);
     }
     if(points.size() != 3){throw std::invalid_argument(error_message);}
+    if(verbose){        std::cout <<  "n" <<  std::endl;}
     normals.push_back(GenVec(points[0],points[1],points[2]));
 }
 
@@ -168,6 +173,7 @@ void Parser::parse_face(std::istringstream& iss){
     for(int i=0; i< recorded_triangles.size(); ++i){
         recorded_groups[group_name]->add_child(std::move(recorded_triangles[i]));
     }
+    if(verbose){        std::cout <<  "f" <<  std::endl;}
 }
 
 std::string Parser::gen_group_id(){
@@ -191,6 +197,7 @@ void Parser::parse_group(std::istringstream& iss){
     if(iss.fail()){throw std::invalid_argument(error_message);}
     if(!iss.eof()){throw std::invalid_argument(error_message);}
     std::string current_group=temp;
+    if(verbose){        std::cout <<  "g" << " "<< temp << std::endl;}
 }
 
 void Parser::parse_vertex(std::istringstream& iss){
@@ -202,6 +209,7 @@ void Parser::parse_vertex(std::istringstream& iss){
         points.push_back(temp_num);
     }
     if(points.size() != 3){throw std::invalid_argument(error_message);}
+    if(verbose){        std::cout <<  "v" << " "<< GenPoint(points[0],points[1],points[2]) << std::endl;}
     vertices.push_back(GenPoint(points[0],points[1],points[2]));
 }
 
