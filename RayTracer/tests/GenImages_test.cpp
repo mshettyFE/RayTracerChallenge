@@ -349,9 +349,10 @@ TEST(GenImage, SimpleTeapot){
 TEST(GenImage, Apple){
 // Assumes that tests are run in build folder which is parallel to obj file
     std::string teapot_obj = "../obj/Apple.obj";
-    Parser p(true);
+    Parser p;
     p.read(teapot_obj,true);
     auto group = p.emit();
+    group->set_transform(MatScaling(1.5,1.5,1.5));
     World w;
     w.add_shape(std::move(group));
     PointSource ps(WHITE,Tuple({-10,10,-10}, TupType::POINT));
@@ -359,7 +360,7 @@ TEST(GenImage, Apple){
     Tuple from({-4,5,0}, TupType::POINT);
     Tuple to({0,0,0}, TupType::POINT);
     Tuple up({0,1,0});
-    Camera cam(500,500,pi/2.0, from, to, up);    
+    Camera cam(100,100,pi/2.0, from, to, up);    
     auto img = cam.render(&w);
     img->save_ppm("Apple");
 }
