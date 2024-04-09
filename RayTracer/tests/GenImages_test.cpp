@@ -352,7 +352,7 @@ TEST(GenImage, Apple){
     Parser p;
     p.read(teapot_obj,true);
     auto group = p.emit();
-//    group->set_transform(MatScaling(0.5,0.5,0.5));
+//    group->set_transform(MatScaling(1,1,1.5));
     World w;
     w.add_shape(std::move(group));
     PointSource ps(WHITE,Tuple({-10,10,-10}, TupType::POINT));
@@ -360,7 +360,7 @@ TEST(GenImage, Apple){
     Tuple from({-4,5,0}, TupType::POINT);
     Tuple to({0,0,0}, TupType::POINT);
     Tuple up({0,1,0});
-    Camera cam(100,100,pi/2.0, from, to, up);    
+    Camera cam(400,400,pi/2.0, from, to, up);    
     auto img = cam.render(&w);
     img->save_ppm("Apple");
 }
@@ -424,6 +424,25 @@ TEST(GenImage, RandomSpheres){
     auto img = cam.render(&w);
     img->save_ppm("RandomSpheres");
 }
+
+/*
+TEST(GenImage, Groups){
+    World w;
+    PointSource Source1 = PointSource(WHITE,GenPoint(-10,10,10));
+    w.add_source(std::make_unique<PointSource>(std::move(Source1)));
+    Group g;
+    g.add_child(std::make_unique<Sphere>(std::move(Sphere())));
+    w.add_shape(std::make_unique<Group>(std::move(g)));
+//    w.add_shape(std::make_unique<Sphere>(Sphere()));
+    Tuple from({-4,2,5}, TupType::POINT);
+    Tuple to({0,0,0}, TupType::POINT);
+    Tuple up({0,1,0});
+    Camera cam(100,100,pi/2.0, from, to, up);
+    Ray r({0,0,5},{0,0,-1});
+    auto hit = w.intersect(r);
+    EXPECT_EQ(hit.size(),2);
+}
+*/
 
 TEST(GenImage, Orientation){
     Material Red = Material(0.1,0.7,0.0,200,RED,0.1,0.0,VACUUM);

@@ -33,7 +33,7 @@ TEST(GroupTest,AggTransform){
     g1.add_child(std::make_unique<Group>(std::move(g2)));
     g1.set_transform(MatTranslation(-2,0,0));
     Ray r({0,0,-5},{0,0,1});
-    auto child = g1.get_children()[0].get()->get_children()[0].get();
+    auto child = g1.get_child(0)->get_child(0);
     auto hits = child->intersect(r);
     EXPECT_EQ(hits.size(),2);    
 }

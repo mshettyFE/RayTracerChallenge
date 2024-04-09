@@ -117,10 +117,6 @@ int Shape::get_total_children() const{
     return this->children.size();
 }
 
-const std::vector<std::unique_ptr<Shape>>& Shape::get_children() const{
-    return children;
-}
-
 bool Shape::includes(const Shape* test) const{
     if(this==test){
         return true;
