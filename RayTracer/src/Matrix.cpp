@@ -169,6 +169,7 @@ Matrix Matrix::Inverse(bool debug) const{
             }
             // If no pivots found, this means entire column of matrix if 0(ish). Hence  inverse doesn't exist
             if(!new_pivot_found){
+                std::cout << in << std::endl;
                 throw std::domain_error("Inverse does not exist");
             }
         }

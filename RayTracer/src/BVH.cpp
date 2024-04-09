@@ -15,7 +15,7 @@ BVH::BVH(const std::vector<std::unique_ptr<Shape>>& shapes, unsigned int max_dep
         boxes.push_back(std::move(current_bb));
         count++;
     }
-    for(int i=0; i<boxes.size(); ++i){
+    for(unsigned int i=0; i<boxes.size(); ++i){
         head->insert(boxes[i], 0, max_depth);
     }
 }
@@ -52,6 +52,9 @@ void BVH::private_intersect(const Ray& r, const AABB* current_node, std::vector<
 
 
 std::vector<Impact> BVH::intersect(const Ray& r) const{
+    if(this->head==nullptr){
+        return {};
+    }
     std::vector<Impact> current_level_outputs;
     if(this->head->intersect(r)){ // check if the ray intersects the world. If it doesn't, return nothing
         private_intersect(r, this->head.get(),current_level_outputs); // Recursively get all the intersections inside the world, then return

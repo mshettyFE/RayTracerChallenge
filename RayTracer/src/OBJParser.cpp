@@ -148,7 +148,7 @@ void Parser::parse_face(std::istringstream& iss){
         first_normal_node = recorded_normals[0];
         n1 = get_normal(first_normal_node);
     }
-    for(int i=1; i<recorded_vertices.size()-1; ++i){
+    for(unsigned int i=1; i<recorded_vertices.size()-1; ++i){
         int second_vertex_node = recorded_vertices[i];
         int third_vertex_node = recorded_vertices[i+1];
         Tuple p2 = get_vertex(second_vertex_node); 
@@ -170,7 +170,7 @@ void Parser::parse_face(std::istringstream& iss){
         group_name = current_group;
     }
     recorded_groups.insert(std::make_pair(group_name,std::make_unique<Group>(Group())));
-    for(int i=0; i< recorded_triangles.size(); ++i){
+    for(unsigned int i=0; i< recorded_triangles.size(); ++i){
         recorded_groups[group_name]->add_child(std::move(recorded_triangles[i]));
     }
     if(verbose){        std::cout <<  "f" <<  std::endl;}

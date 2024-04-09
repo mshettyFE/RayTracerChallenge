@@ -56,7 +56,6 @@ Color Color::operator*(const Color& other) const{
 }
 
 void Color::clamp(){
-    double temp = 0;
     for(int i=0; i< dim; ++i){
         if(data[i]<0){
             data[i] = 0.0;

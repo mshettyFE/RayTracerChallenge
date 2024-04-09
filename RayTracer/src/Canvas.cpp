@@ -51,8 +51,8 @@ void Canvas::write_pixel(unsigned int cand_w, unsigned int cand_h, const Color& 
 }
 
 std::ostream& operator << (std::ostream &out, const Canvas& other){
-    for(int i=0; i< other.width; ++i){
-        for(int j=0; j<other.height; ++j){
+    for(unsigned int i=0; i< other.width; ++i){
+        for(unsigned int j=0; j<other.height; ++j){
             out << "Row: " << i << '\t' << "Col: " << j << '\t' << "Index:" << '\t' << other.get_index(i,j) << '\t'<<  other.pixels[other.get_index(i,j)]  << std::endl;
         }
     }

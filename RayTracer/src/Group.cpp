@@ -12,7 +12,6 @@ void Group::verbose_print() const{
 }
 
 std::vector<Impact> Group::local_intersect(const Ray &r) const {
-    throw std::invalid_argument("Group local intersect called. Use a BVH instead!");
     std::vector<Impact> out;
     for(auto const& child: children){
         for(auto hit: child->intersect(r)){
@@ -34,7 +33,7 @@ std::unique_ptr<AABB> Group::bound() const{
         output.expand_box(bbox.get());
         boxes.push_back(std::move(bbox));
     }
-    for(int i=0; i<boxes.size(); ++i){
+    for(unsigned int i=0; i<boxes.size(); ++i){
         output.insert(boxes[i]);
     }
     return std::make_unique<AABB>(std::move(output));

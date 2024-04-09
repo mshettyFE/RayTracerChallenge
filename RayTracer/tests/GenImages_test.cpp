@@ -365,7 +365,7 @@ TEST(GenImage, Apple){
     img->save_ppm("Apple");
 }
 
-std::vector<std::tuple<double,double,double,double>> place_random_spheres(int total_spheres=10){
+std::vector<std::tuple<double,double,double,double>> place_random_spheres(unsigned int total_spheres=10){
     assert(total_spheres>0);
     RNG rng;
     std::vector<std::tuple<double,double,double,double>> output;
@@ -397,7 +397,6 @@ std::vector<std::tuple<double,double,double,double>> place_random_spheres(int to
 }
 
 TEST(GenImage, RandomSpheres){
-    RNG rng;
     World w;
     Material m = Material();
     Plane floor = Plane(MatScaling(10,0.01,10), m);
@@ -425,24 +424,24 @@ TEST(GenImage, RandomSpheres){
     img->save_ppm("RandomSpheres");
 }
 
-/*
 TEST(GenImage, Groups){
     World w;
     PointSource Source1 = PointSource(WHITE,GenPoint(-10,10,10));
     w.add_source(std::make_unique<PointSource>(std::move(Source1)));
     Group g;
-    g.add_child(std::make_unique<Sphere>(std::move(Sphere())));
+    g.add_child(std::make_unique<Sphere>(std::move(Sphere(MatTranslation(-5,0,0)))));
+    g.set_transform(MatTranslation(5,0,0));
     w.add_shape(std::make_unique<Group>(std::move(g)));
-//    w.add_shape(std::make_unique<Sphere>(Sphere()));
     Tuple from({-4,2,5}, TupType::POINT);
     Tuple to({0,0,0}, TupType::POINT);
     Tuple up({0,1,0});
     Camera cam(100,100,pi/2.0, from, to, up);
-    Ray r({0,0,5},{0,0,-1});
+    Ray r({0,0,10},{0,0,-1});
+    w.init_bvh();
     auto hit = w.intersect(r);
     EXPECT_EQ(hit.size(),2);
 }
-*/
+
 
 TEST(GenImage, Orientation){
     Material Red = Material(0.1,0.7,0.0,200,RED,0.1,0.0,VACUUM);

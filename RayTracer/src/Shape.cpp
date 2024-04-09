@@ -30,7 +30,7 @@ Matrix Shape::get_aggregate_transform(bool verbose) const{
 
 
 Matrix Shape::get_aggregate_transform(std::set<const Shape*>& visited , bool verbose, int count) const{
-    Matrix output;
+    Matrix output = MatIdentity(4);
     if(verbose){
         if(get_parent() == nullptr){
             std::cout << "Level: " << count << " Current: " << this->get_id() <<   " Parent: NULL" << std::endl;
@@ -46,11 +46,10 @@ Matrix Shape::get_aggregate_transform(std::set<const Shape*>& visited , bool ver
     count++;
     if(get_parent() == nullptr){
         output = Transformation;
+        return output;
     }
-    else{
-        Matrix parent_matrix = get_parent()->get_aggregate_transform(visited,verbose,count);
-        output = parent_matrix*this->Transformation;
-    }
+    Matrix parent_matrix = get_parent()->get_aggregate_transform(visited,verbose,count);
+    output = parent_matrix*this->Transformation;
     return output;
 }
 

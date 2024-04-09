@@ -31,7 +31,7 @@ Tuple::Tuple(std::vector<double> args,  const TupType a_type){
 
 
 Tuple::Tuple(unsigned int a_dim, const TupType a_type){
-  for(int i=0; i< a_dim; ++i){
+  for(unsigned int i=0; i< a_dim; ++i){
     data.push_back(0);
   }
   dim = data.size();
@@ -45,7 +45,7 @@ bool Tuple::operator==(const Tuple& other) const {
   if(this->data.size() != other.data.size()){
     return false;
   }
-  for(int i=0; i< this->data.size(); ++i){
+  for(unsigned int i=0; i< this->data.size(); ++i){
     if(!is_same(this->data[i], other.data[i])){
       return false;
     }
@@ -57,7 +57,7 @@ bool Tuple::operator!=(const Tuple& other) const {
   if(this->data.size() != other.data.size()){
     return true;
   }
-  for(int i=0; i< this->data.size(); ++i){
+  for(unsigned int i=0; i< this->data.size(); ++i){
     if(!is_same(this->data[i], other.data[i])){
       return true;
     }
@@ -75,7 +75,7 @@ Tuple Tuple::operator+=(const Tuple& other){
   if(is_same(this->type(),TupType::POINT) && is_same(other.type(),TupType::POINT)){
     throw std::invalid_argument("Can't Add points together");
   }
-  for(int i=0; i< this->data.size(); ++i){
+  for(unsigned int i=0; i< this->data.size(); ++i){
     this->data[i] += other.data[i];
   }
   return *this;
@@ -89,7 +89,7 @@ Tuple Tuple::operator+(const Tuple& other) const{
     throw std::invalid_argument("Can't Add points together");
   }
   Tuple out = other;
-  for(int i=0; i< other.data.size(); ++i){
+  for(unsigned int i=0; i< other.data.size(); ++i){
     out.data[i] += this->data[i];
   }
   return out;
@@ -99,7 +99,7 @@ Tuple Tuple::operator-=(const Tuple& other){
   if(this->data.size() != other.data.size()){
     throw std::invalid_argument("Dimensions don't match");
   }
-  for(int i=0; i< this->data.size(); ++i){
+  for(unsigned int i=0; i< this->data.size(); ++i){
     this->data[i] -= other.data[i];
   }
   return *this;
@@ -110,7 +110,7 @@ Tuple Tuple::operator-(const Tuple& other) const{
     throw std::invalid_argument("Dimensions don't match");
   }
   Tuple out = *this;
-  for(int i=0; i< other.data.size(); ++i){
+  for(unsigned int i=0; i< other.data.size(); ++i){
     out.data[i] -= other.data[i];
   }
   return out;
@@ -164,7 +164,7 @@ double Tuple::dot(const Tuple& other) const{
     throw std::invalid_argument("Dimensions don't match");
   }
   double tally = 0.0;
-  for(int i=0; i< this->data.size(); ++i){
+  for(unsigned int i=0; i< this->data.size(); ++i){
     tally += this->data[i]*other.data[i];
   }
   return tally;
@@ -227,7 +227,7 @@ Tuple operator* (const Matrix& cur, const Tuple& other){
 }
 
 std::ostream& operator << (std::ostream &out, const Tuple& other){
-  for(int i=0; i<other.data.size(); ++i){
+  for(unsigned int i=0; i<other.data.size(); ++i){
     out << other.data[i] << " ";
   }
   out << '\n';

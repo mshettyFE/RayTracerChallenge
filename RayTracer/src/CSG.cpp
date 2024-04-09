@@ -68,7 +68,7 @@ std::unique_ptr<AABB> CSG::bound() const{
         output.expand_box(bbox.get());
         boxes.push_back(std::move(bbox));
     }
-    for(int i=0; i<boxes.size(); ++i){
+    for(unsigned int i=0; i<boxes.size(); ++i){
         output.insert(boxes[i]);
     }
     return std::make_unique<AABB>(std::move(output));

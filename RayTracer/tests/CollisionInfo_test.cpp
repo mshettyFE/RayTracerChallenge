@@ -66,7 +66,7 @@ TEST(CollisionInfoTest, IndexInfo){
     hits.push_back(Impact(6, &A));
     std::vector<CollisionInfo> comps;
     Impact base = hits[5];
-    CollisionInfo cmp(std::make_unique<Impact>(hits[5]),r,hits);
+    CollisionInfo cmp(std::make_unique<Impact>(base),r,hits);
 
     for(auto hit : hits){
         comps.push_back(CollisionInfo(std::make_unique<Impact>(hit),r, hits));

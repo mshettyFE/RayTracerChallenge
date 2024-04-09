@@ -23,7 +23,7 @@ int World::number_of_shapes() const{
 std::vector<Impact> World::intersect(const Ray& r, bool use_bvh) const{
     std::vector<Impact> all_hits;
     if(use_bvh){
-        all_hits = bvh->intersect(r);        
+        all_hits = bvh->intersect(r);
     }
     else{
         for(auto const& shape: shapes){
@@ -104,7 +104,7 @@ Color World::color_at(const Ray& r, unsigned int remaining) const{
     Color out = BLACK;
     if (hits.size() > 0){
         int lowest_positive_index=-1;
-        for(int i=0; i<hits.size(); ++i){
+        for(unsigned int i=0; i<hits.size(); ++i){
             if(hits[i].get_t() >= 0){
                 lowest_positive_index = i;
                 break;
@@ -114,9 +114,7 @@ Color World::color_at(const Ray& r, unsigned int remaining) const{
         if(lowest_positive_index==-1){
             return out;
         }
-        for(auto const& source : sources){
-            out += shade_hit(CollisionInfo(std::make_unique<Impact>(hits[lowest_positive_index]),r), remaining);
-        }
+        out += shade_hit(CollisionInfo(std::make_unique<Impact>(hits[lowest_positive_index]),r), remaining);
     }
     return out;
 }

@@ -29,7 +29,7 @@ AABB::AABB(Tuple min_bounds, Tuple max_bounds, const Shape* shp){
 bool AABB::operator==(const AABB& other) const{
     if(this->enclosed_shape!=other.enclosed_shape){return false;}
     if(other.center.size() != this->center.size()){return false;}
-    for(int i=0; i< other.center.size(); ++i){
+    for(unsigned int i=0; i< other.center.size(); ++i){
         if(other.center[i]->get_shape() != this->center[i]->get_shape() ){
             return false;
         }
@@ -312,7 +312,7 @@ bool AABB::insert(std::unique_ptr<AABB>& new_box, unsigned int depth, unsigned i
 // Hence, run through vector of center boxes.
 // If it does fit a box, then recurse on said box, and when stack eventually unwinds, return immediately
     if(straddle(new_box.get())){
-        for(int i=0; i<center.size(); ++i){
+        for(unsigned int i=0; i<center.size(); ++i){
             bool is_hit = center[i]->contains(*new_box.get());
             if(is_hit){
                 center[i]->insert(new_box,depth, max_depth);
