@@ -352,7 +352,7 @@ TEST(GenImage, Apple){
     Parser p;
     p.read(teapot_obj,true);
     auto group = p.emit();
-    group->set_transform(MatScaling(1.5,1.5,1.5));
+//    group->set_transform(MatScaling(0.5,0.5,0.5));
     World w;
     w.add_shape(std::move(group));
     PointSource ps(WHITE,Tuple({-10,10,-10}, TupType::POINT));

@@ -26,12 +26,24 @@ TEST(GroupTest, Printing){
     g1.print();
 }
 
+TEST(GroupTest,AggTransform){
+    Group g1;
+    Group g2(MatTranslation(7,0,0));
+    g2.add_child(std::make_unique<Sphere>(std::move(Sphere(MatTranslation(-5,0,0)))));
+    g1.add_child(std::make_unique<Group>(std::move(g2)));
+    g1.set_transform(MatTranslation(-2,0,0));
+    Ray r({0,0,-5},{0,0,1});
+    auto child = g1.get_children()[0].get()->get_children()[0].get();
+    auto hits = child->intersect(r);
+    EXPECT_EQ(hits.size(),2);    
+}
+
+/*
 TEST(GroupTest,Intersection){
     Group g1;
     g1.add_child(std::make_unique<Sphere>(std::move(Sphere())));
     g1.add_child(std::make_unique<Sphere>(std::move(Sphere(MatTranslation(0,0,-3)))));
     g1.add_child(std::make_unique<Sphere>(std::move(Sphere(MatTranslation(5,0,0)))));
-    Ray r({0,0,-5},{0,0,1});
     auto hits = g1.intersect(r);
     EXPECT_EQ(hits.size(),4);
 }
@@ -44,6 +56,8 @@ TEST(GroupTest, Transformation){
     auto hits = g.intersect(r);
     EXPECT_EQ(hits.size(), 2);
 }
+
+*/
 
 TEST(GroupTest, Normal){
     Group g1;

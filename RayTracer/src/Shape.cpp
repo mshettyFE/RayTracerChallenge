@@ -109,7 +109,7 @@ Tuple Shape::normal_at(const Tuple& world_pt, const Impact& impt) const{
 }
 
 std::vector<Impact> Shape::intersect(const Ray &other) const{
-    Ray TransformedRay = other.transform(get_transform().Inverse());
+    Ray TransformedRay = other.transform(get_aggregate_transform().Inverse());
     return local_intersect(TransformedRay);
 }
 
