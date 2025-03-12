@@ -32,30 +32,28 @@ TEST(WorldTest,IntersectionTest){
  TEST(WorldTest, Lighting){
     auto w = default_world();
     Ray r = Ray(Tuple({0,0,-5}, TupType::POINT), Tuple({0,0,1}));
-    Impact hit(4,w->get_shape(0));
-    CollisionInfo i(std::make_unique<Impact>(hit),r);
+    CollisionInfo i(std::make_unique<Impact>(4,w->get_shape(0)),r);
     Color c = w->shade_hit(i);
     EXPECT_EQ(c,Color({0.38066, 0.47583, 0.2855}));
  }
 
  TEST(WorldTest, InsideLight){
-    std::unique_ptr<LightSource> source = std::make_unique<PointSource>(PointSource(Color(1,1,1), Tuple({0,0.25,0}, TupType::POINT)));
+    std::unique_ptr<LightSource> source = std::make_unique<PointSource>(Color(1,1,1), Tuple({0,0.25,0}, TupType::POINT));
     Material mat1(0.1,0.7,0.2,200.0,Color({0.8,1.0,0.6}));
     Material mat2(0.1,0.9,0.9,200.0, WHITE);
     mat1.set_reflectance(0);
     mat1.set_transparency(0);
     mat2.set_reflectance(0);
     mat2.set_transparency(0);
-    std::unique_ptr<Sphere> s1 = std::make_unique<Sphere>(Sphere(MatIdentity(4),mat1));
-    std::unique_ptr<Sphere> s2 = std::make_unique<Sphere>(Sphere(MatScaling(0.5,0.5,0.5),mat2));
+    std::unique_ptr<Sphere> s1 = std::make_unique<Sphere>(MatIdentity(4),mat1);
+    std::unique_ptr<Sphere> s2 = std::make_unique<Sphere>(MatScaling(0.5,0.5,0.5),mat2);
     World w;
     w.add_shape(std::move(s1));
     w.add_shape(std::move(s2));
     w.add_source(std::move(source));
     w.init_bvh();
     Ray r(Tuple({0,0,0}, TupType::POINT), Tuple({0,0,1}));
-    Impact hit(0.5,w.get_shape(1));
-    CollisionInfo i(std::make_unique<Impact>(hit),r);
+    CollisionInfo i(std::make_unique<Impact>(0.5,w.get_shape(1)),r);
     Color c = w.shade_hit(i);
     EXPECT_EQ(c,Color({0.90498, 0.90498, 0.90498}));
 }
@@ -77,10 +75,10 @@ TEST(WorldTest,Hit){
 
 TEST(WorldTest, Nested){
     Material mat(1,0.9,0.9,200.0,Color({0.8,1.0,0.6}));
-    std::unique_ptr<Sphere> s1 = std::make_unique<Sphere>(Sphere(MatIdentity(4),mat));
+    std::unique_ptr<Sphere> s1 = std::make_unique<Sphere>(MatIdentity(4),mat);
     Material mat2(1,0.9,0.9,200.0,Color({1,1,1}));
-    std::unique_ptr<Sphere> s2 = std::make_unique<Sphere>(Sphere(MatScaling(0.5,0.5,0.5),mat2));
-    std::unique_ptr<PointSource> source = std::make_unique<PointSource>(PointSource(Color(1,1,1), Tuple({-10,10,-10}, TupType::POINT)));
+    std::unique_ptr<Sphere> s2 = std::make_unique<Sphere>(MatScaling(0.5,0.5,0.5),mat2);
+    std::unique_ptr<PointSource> source = std::make_unique<PointSource>(Color(1,1,1), Tuple({-10,10,-10}, TupType::POINT));
     World w;
     w.add_shape(std::move(s1));
     w.add_shape(std::move(s2));
@@ -104,34 +102,29 @@ TEST(WorldTest, InShadow){
 }
 
 TEST(WorldTest, Shadows){
-    PointSource ps(WHITE, Tuple({0,0,-10}, TupType::POINT));
-    Sphere s1;
-    Sphere s2(MatTranslation(0,0,10));
     Ray r  = Ray(Tuple({0, 0, 5}, TupType::POINT), Tuple({0, 0, 1}));
     World w;
-    w.add_shape(std::make_unique<Sphere>(std::move(s1)));
-    w.add_shape(std::make_unique<Sphere>(std::move(s2)));
-    w.add_source(std::make_unique<PointSource> (std::move(ps)));
+    w.add_shape(std::make_unique<Sphere>());
+    w.add_shape(std::make_unique<Sphere>(MatTranslation(0,0,10)));
+    w.add_source(std::make_unique<PointSource> (WHITE, Tuple({0,0,-10}, TupType::POINT)));
     w.init_bvh();
-    Impact i(4,w.get_shape(1));
-    CollisionInfo c(std::make_unique<Impact>(i),r);
+    CollisionInfo c(std::make_unique<Impact>(4,w.get_shape(1)),r);
     Color out = w.shade_hit(c);
     EXPECT_EQ(out, Color({0.1,0.1,0.1}));
 }
 
 TEST(WorldTest, NonReflecting){
     Material mat(1,0.7,0.2,200.0,Color({0.8,1.0,0.6}));
-    std::unique_ptr<Sphere> s1 = std::make_unique<Sphere>(Sphere(MatIdentity(4),mat));
-    std::unique_ptr<Sphere> s2 = std::make_unique<Sphere>(Sphere(MatScaling(0.5,0.5,0.5)));
-    std::unique_ptr<PointSource> source = std::make_unique<PointSource>(PointSource(Color(1,1,1), Tuple({-10,10,-10}, TupType::POINT)));
+    std::unique_ptr<Sphere> s1 = std::make_unique<Sphere>(MatIdentity(4),mat);
+    std::unique_ptr<Sphere> s2 = std::make_unique<Sphere>(MatScaling(0.5,0.5,0.5));
+    std::unique_ptr<PointSource> source = std::make_unique<PointSource>(Color(1,1,1), Tuple({-10,10,-10}, TupType::POINT));
     World w;
     w.add_shape(std::move(s1));
     w.add_shape(std::move(s2));
     w.add_source(std::move(source));
     w.init_bvh();
     Ray r = Ray(Tuple({0, 0, 0}, TupType::POINT), Tuple({0, 0, 1}));
-    Impact i(1,w.get_shape(1));
-    CollisionInfo c(std::make_unique<Impact>(i),r);
+    CollisionInfo c(std::make_unique<Impact>(1,w.get_shape(1)),r);
     Color out =  w.reflect_color(c);
     EXPECT_EQ(out, BLACK);
 }
@@ -139,13 +132,11 @@ TEST(WorldTest, NonReflecting){
 TEST(WorldTest, ReflectColor){
     Material floor_mat = Material();
     floor_mat.set_reflectance(0.5);
-    Plane p(MatTranslation(0,-1,0),floor_mat);
     auto w = default_world();
-    w->add_shape(std::make_unique<Plane>(std::move(p)));
+    w->add_shape(std::make_unique<Plane>(MatTranslation(0,-1,0),floor_mat));
     w->init_bvh();
     Ray r = Ray(Tuple({0, 0, -3}, TupType::POINT), Tuple({0, -std::sqrt(2)/2.0, std::sqrt(2)/2.0}));
-    Impact i = Impact(std::sqrt(2),w->get_shape(2));
-    CollisionInfo c  = CollisionInfo(std::make_unique<Impact>(i),r);
+    CollisionInfo c  = CollisionInfo(std::make_unique<Impact>(std::sqrt(2),w->get_shape(2)),r);
     EXPECT_EQ(c.get_reflect(), Tuple({0, std::sqrt(2)/2.0, std::sqrt(2)/2.0}));
     Color out =  w->reflect_color(c);
     EXPECT_EQ(out, Color({0.19033, 0.23791, 0.142749}));
@@ -154,26 +145,22 @@ TEST(WorldTest, ReflectColor){
 TEST(WorldTest, ShadeReflection){
     Material floor_mat = Material();
     floor_mat.set_reflectance(0.5);
-    Plane p(MatTranslation(0,-1,0),floor_mat);
     auto w = default_world();
-    w->add_shape(std::make_unique<Plane>(std::move(p)));
+    w->add_shape(std::make_unique<Plane>(MatTranslation(0,-1,0),floor_mat));
     w->init_bvh();
     Ray r = Ray(Tuple({0, 0, -3}, TupType::POINT), Tuple({0, -std::sqrt(2)/2.0, std::sqrt(2)/2.0}));
-    Impact i = Impact(std::sqrt(2),w->get_shape(2));
-    CollisionInfo c  = CollisionInfo(std::make_unique<Impact>(i),r);
+    CollisionInfo c  = CollisionInfo(std::make_unique<Impact>(std::sqrt(2),w->get_shape(2)),r);
     EXPECT_EQ(w->shade_hit(c), Color({0.87676, 0.92435, 0.829175}));
 }
 
 TEST(WorldTest, InfiniteRecursion){
     Material wall;
     wall.set_reflectance(1);
-    Plane lower(MatTranslation(0,-1,0), wall);
-    Plane upper(MatTranslation(0,1,0), wall);
     Ray r(Tuple({0,0,0}, TupType::POINT), Tuple({0,1,0}));
     World w;
     w.add_source(std::move(std::make_unique<PointSource>(Color({1,1,1}), Tuple({0,0,0}, TupType::POINT))));
-    w.add_shape(std::make_unique<Plane>(std::move(lower)));
-    w.add_shape(std::make_unique<Plane>(std::move(upper)));
+    w.add_shape(std::make_unique<Plane>(MatTranslation(0,-1,0), wall));
+    w.add_shape(std::make_unique<Plane>(MatTranslation(0,1,0), wall));
     w.init_bvh();
     w.color_at(r); // should terminate and not Segfault
 }
@@ -181,13 +168,11 @@ TEST(WorldTest, InfiniteRecursion){
 TEST(WorldTest, CapRecursion){
     Material floor_mat = Material();
     floor_mat.set_reflectance(0.5);
-    Plane p(MatTranslation(0,-1,0),floor_mat);
     auto w = default_world();
-    w->add_shape(std::make_unique<Plane>(std::move(p)));
+    w->add_shape(std::make_unique<Plane>(MatTranslation(0,-1,0),floor_mat));
     w->init_bvh();
     Ray r = Ray({0, 0, -3}, {0, -std::sqrt(2)/2.0, std::sqrt(2)/2.0});
-    Impact i = Impact(std::sqrt(2),w->get_shape(2));
-    CollisionInfo c  = CollisionInfo(std::make_unique<Impact>(i),r);
+    CollisionInfo c  = CollisionInfo(std::make_unique<Impact>(std::sqrt(2),w->get_shape(2)),r);
     EXPECT_EQ(w->reflect_color(c,0), BLACK);
 }
 
@@ -208,7 +193,7 @@ TEST(WorldTest, MaxRecursionRefracted){
     Material mat = shp->get_material();
     mat.set_transparency(1.0);
     mat.set_refractive_index(1.5);
-    auto shape = std::make_unique<Sphere>(Sphere(shp->get_transform(), mat));
+    auto shape = std::make_unique<Sphere>(shp->get_transform(), mat);
     Ray r({0,0,-5},{0,0,1});
     Impact one(4,shape.get());
     Impact two(6,shape.get());
@@ -223,7 +208,7 @@ TEST(WorldTest, InternalReflect){
     Material mat = shp->get_material();
     mat.set_transparency(1.0);
     mat.set_refractive_index(1.5);
-    auto shape = std::make_unique<Sphere>(Sphere(shp->get_transform(), mat));
+    auto shape = std::make_unique<Sphere>(shp->get_transform(), mat);
     Ray r({0,0,std::sqrt(2)/2.0},{0,1,0});
     Impact one(-std::sqrt(2)/2.0,shape.get());
     Impact two(std::sqrt(2)/2.0,shape.get());
@@ -233,14 +218,13 @@ TEST(WorldTest, InternalReflect){
 }
 
 TEST(WorldTest, ColorRefracted){
-    TestPattern tp;
-    Material mat1(1,0.7,0.2,200.0,Color({0.8,1.0,0.6}),std::make_unique<TestPattern>(tp));
-    std::unique_ptr<Sphere> s1 = std::make_unique<Sphere>(Sphere(MatIdentity(4),mat1));
+    Material mat1(1,0.7,0.2,200.0,Color({0.8,1.0,0.6}),std::make_unique<TestPattern>());
+    std::unique_ptr<Sphere> s1 = std::make_unique<Sphere>(MatIdentity(4),mat1);
     Material mat2;
     mat2.set_transparency(1.0);
     mat2.set_refractive_index(1.5);
-    std::unique_ptr<Sphere> s2 = std::make_unique<Sphere>(Sphere(MatScaling(0.5,0.5,0.5),mat2));
-    std::unique_ptr<PointSource> source = std::make_unique<PointSource>(PointSource(Color(1,1,1), Tuple({-10,10,-10}, TupType::POINT)));
+    std::unique_ptr<Sphere> s2 = std::make_unique<Sphere>(MatScaling(0.5,0.5,0.5),mat2);
+    std::unique_ptr<PointSource> source = std::make_unique<PointSource>(Color(1,1,1), Tuple({-10,10,-10}, TupType::POINT));
     World w;
     w.add_shape(std::move(s1));
     w.add_shape(std::move(s2));
@@ -257,17 +241,14 @@ TEST(WorldTest, ShadeWithRefraction){
     Material plane_mat;
     plane_mat.set_transparency(0.5);
     plane_mat.set_refractive_index(1.5);
-    Plane p(MatTranslation(0,-1,0),plane_mat);
-    w->add_shape(std::make_unique<Plane>(std::move(p)));
+    w->add_shape(std::make_unique<Plane>(MatTranslation(0,-1,0),plane_mat));
     Material ball_mat;
     ball_mat.set_color(Color({1,0,0}));
     ball_mat.set_ambient(0.5);
-    Sphere ball(MatTranslation(0,-3.5,-0.5), ball_mat);
-    w->add_shape(std::make_unique<Sphere>(std::move(ball)));
+    w->add_shape(std::make_unique<Sphere>(MatTranslation(0,-3.5,-0.5), ball_mat));
     w->init_bvh();
     Ray r({0,0,-3},{0,-std::sqrt(2)/2.0,std::sqrt(2)/2.0});
-    Impact i(std::sqrt(2), w->get_shape(2));
-    CollisionInfo comps(std::make_unique<Impact>(i),r);
+    CollisionInfo comps(std::make_unique<Impact>(std::sqrt(2), w->get_shape(2)),r);
     EXPECT_EQ(w->shade_hit(comps), Color({0.93642, 0.68642, 0.68642}));
 }
 
@@ -277,16 +258,13 @@ TEST(WorldTest, ReflectiveTransparentAtOnce){
     plane_mat.set_transparency(0.5);
     plane_mat.set_reflectance(0.5);
     plane_mat.set_refractive_index(1.5);
-    Plane p(MatTranslation(0,-1,0),plane_mat);
-    w->add_shape(std::make_unique<Plane>(std::move(p)));
+    w->add_shape(std::make_unique<Plane>(MatTranslation(0,-1,0),plane_mat));
     Material ball_mat;
     ball_mat.set_color(Color({1,0,0}));
     ball_mat.set_ambient(0.5);
-    Sphere ball(MatTranslation(0,-3.5,-0.5), ball_mat);
-    w->add_shape(std::make_unique<Sphere>(std::move(ball)));
+    w->add_shape(std::make_unique<Sphere>(MatTranslation(0,-3.5,-0.5), ball_mat));
     w->init_bvh();
     Ray r({0,0,-3}, {0,-std::sqrt(2)/2.0,std::sqrt(2)/2.0});
-    Impact i(std::sqrt(2),w->get_shape(2));
-    CollisionInfo comps(std::make_unique<Impact>(i),r);
+    CollisionInfo comps(std::make_unique<Impact>(std::sqrt(2),w->get_shape(2)),r);
     EXPECT_EQ(w->shade_hit(comps), Color({0.93391, 0.69643, 0.69243}));
 }

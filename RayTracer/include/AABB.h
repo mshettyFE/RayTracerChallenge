@@ -8,6 +8,7 @@
 #include <memory>
 #include <map>
 #include <type_traits>
+#include <array>
 
 class Shape;
 

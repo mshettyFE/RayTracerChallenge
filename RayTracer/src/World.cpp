@@ -121,15 +121,15 @@ Color World::color_at(const Ray& r, unsigned int remaining) const{
 
 std::unique_ptr<World> default_world(){
     Material mat(0.1,0.7,0.2,200.0,Color({0.8,1.0,0.6}));
-    std::unique_ptr<Sphere> s1 = std::make_unique<Sphere>(Sphere(MatIdentity(4),mat));
-    std::unique_ptr<Sphere> s2 = std::make_unique<Sphere>(Sphere(MatScaling(0.5,0.5,0.5)));
+    std::unique_ptr<Sphere> s1 = std::make_unique<Sphere>(MatIdentity(4),mat);
+    std::unique_ptr<Sphere> s2 = std::make_unique<Sphere>(MatScaling(0.5,0.5,0.5));
 //    std::vector<std::unique_ptr<Shape>> shapes;
 //    shapes.push_back(std::move(s1));
 //    shapes.push_back(std::move(s2));
-    std::unique_ptr<PointSource> source = std::make_unique<PointSource>(PointSource(Color(1,1,1), Tuple({-10,10,-10}, TupType::POINT)));
+    std::unique_ptr<PointSource> source = std::make_unique<PointSource>(Color(1,1,1), Tuple({-10,10,-10}, TupType::POINT));
 //    std::vector<std::unique_ptr<LightSource>> sources;
 //    sources.push_back(std::move(source));
-    auto w = std::make_unique<World>(World());
+    auto w = std::make_unique<World>();
     w->add_shape(std::move(s1));
     w->add_shape(std::move(s2));
     w->add_source(std::move(source));

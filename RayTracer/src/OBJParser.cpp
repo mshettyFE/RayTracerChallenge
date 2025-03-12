@@ -156,10 +156,10 @@ void Parser::parse_face(std::istringstream& iss){
         if(accept_normals){
             int second_normal_node = recorded_normals[i];
             int third_normal_mode = recorded_normals[i+1];
-            recorded_triangles.push_back(std::move(std::make_unique<SmoothTriangle>(std::move(SmoothTriangle(vertices[first_vertex_node],vertices[second_vertex_node],vertices[third_vertex_node], normals[first_normal_node], normals[second_normal_node],normals[third_normal_mode])))));
+            recorded_triangles.push_back(std::make_unique<SmoothTriangle>(vertices[first_vertex_node],vertices[second_vertex_node],vertices[third_vertex_node], normals[first_normal_node], normals[second_normal_node],normals[third_normal_mode]));
         }
         else{
-            recorded_triangles.push_back(std::move(std::make_unique<Triangle>(std::move(Triangle(vertices[first_vertex_node],vertices[second_vertex_node],vertices[third_vertex_node])))));
+            recorded_triangles.push_back(std::make_unique<Triangle>(vertices[first_vertex_node],vertices[second_vertex_node],vertices[third_vertex_node]));
         }
     }
     std::string group_name;
@@ -169,7 +169,7 @@ void Parser::parse_face(std::istringstream& iss){
     else{
         group_name = current_group;
     }
-    recorded_groups.insert(std::make_pair(group_name,std::make_unique<Group>(Group())));
+    recorded_groups.insert(std::make_pair(group_name,std::make_unique<Group>()));
     for(unsigned int i=0; i< recorded_triangles.size(); ++i){
         recorded_groups[group_name]->add_child(std::move(recorded_triangles[i]));
     }
@@ -239,7 +239,7 @@ unsigned long Parser::get_total_vertices() const{
 }
 
 std::unique_ptr<Group> Parser::emit(){
-    auto g = std::make_unique<Group>(Group());
+    auto g = std::make_unique<Group>();
     for(auto &pair : recorded_groups){
         g->add_child(std::move(pair.second));
     }

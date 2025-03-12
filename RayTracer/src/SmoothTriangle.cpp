@@ -82,7 +82,7 @@ return this->n2 * impt.get_u() +this->n3 * impt.get_v() + this->n1 * (1 - impt.g
 }
 
 std::unique_ptr<AABB> SmoothTriangle::bound() const{
-    auto output = std::make_unique<AABB>(AABB());
+    auto output = std::make_unique<AABB>();
     output->add_point(p1);
     output->add_point(p2);
     output->add_point(p3);

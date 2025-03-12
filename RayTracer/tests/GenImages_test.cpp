@@ -106,7 +106,7 @@ TEST(GenImage, GradPatternTest){
     middle_mat.set_diffuse(0.7);
     middle_mat.set_specular(0.3);
     middle_mat.set_color(Color({0.1,1,0.5}));
-    middle_mat.set_pattern(std::make_unique<GradientPattern>(GradientPattern(WHITE,BLACK, MatScaling(2,2,2))));
+    middle_mat.set_pattern(std::make_unique<GradientPattern>(WHITE,BLACK, MatScaling(2,2,2)));
     Sphere middle = Sphere(middle_transform, middle_mat);
 // right sphere
     Matrix right_transform = MatTranslation(1.5,0.5,-0.5)*MatScaling(0.5,0.5,0.5);
@@ -264,7 +264,7 @@ TEST(GenImage, FresnelEffect){
     PointSource ps(WHITE,Tuple({-100,0,0}, TupType::POINT));
     Material base_mat;
     base_mat.set_reflectance(1);
-    base_mat.set_pattern(std::make_unique<Checkers>(Checkers(RED, BLUE)));
+    base_mat.set_pattern(std::make_unique<Checkers>(RED, BLUE));
     Plane base(MatTranslation(0,-1,0), base_mat);
     Material water_mat;
     water_mat.set_reflectance(0);
@@ -272,7 +272,7 @@ TEST(GenImage, FresnelEffect){
     water_mat.set_refractive_index(WATER);
     Plane water(MatIdentity(4), water_mat);
     Material background_mat;
-    background_mat.set_pattern(std::make_unique<Checkers>(Checkers(WHITE, BLACK)));
+    background_mat.set_pattern(std::make_unique<Checkers>(WHITE, BLACK));
     Plane back(MatTranslation(100,0,0)*MatRotateZ(pi/2.0));
     World w;
     w.add_shape(std::make_unique<Plane>(std::move(base)));
@@ -307,8 +307,7 @@ TEST(GenImage,AirBubble){
     air.set_reflectance(0);
     air.set_transparency(0);
     air.set_cast_shadow(false);
-    auto pat =  Checkers(WHITE,RED);
-    wall_mat.set_pattern(std::make_unique<Checkers>(pat));
+    wall_mat.set_pattern(std::make_unique<Checkers>(WHITE,RED));
     
     std::vector<Matrix> operations{MatRotateZ(pi/4.0),MatTranslation(7,0,0)};
     Plane wall(Chain(operations),wall_mat);
@@ -336,8 +335,7 @@ TEST(GenImage, SimpleTeapot){
     auto group = p.emit();
     World w;
     w.add_shape(std::move(group));
-    PointSource ps(WHITE,Tuple({-10,10,-10}, TupType::POINT));
-    w.add_source(std::make_unique<PointSource>(std::move(ps)));
+    w.add_source(std::make_unique<PointSource>(WHITE,Tuple({-10,10,-10}, TupType::POINT)));
     Tuple from({-4.5,4.5,0}, TupType::POINT);
     Tuple to({0,0,0}, TupType::POINT);
     Tuple up({0,1,0});
@@ -355,8 +353,7 @@ TEST(GenImage, Apple){
 //    group->set_transform(MatScaling(1,1,1.5));
     World w;
     w.add_shape(std::move(group));
-    PointSource ps(WHITE,Tuple({-10,10,-10}, TupType::POINT));
-    w.add_source(std::make_unique<PointSource>(std::move(ps)));
+    w.add_source(std::make_unique<PointSource>(WHITE,Tuple({-10,10,-10}, TupType::POINT)));
     Tuple from({-4,5,0}, TupType::POINT);
     Tuple to({0,0,0}, TupType::POINT);
     Tuple up({0,1,0});
@@ -399,10 +396,8 @@ std::vector<std::tuple<double,double,double,double>> place_random_spheres(unsign
 TEST(GenImage, RandomSpheres){
     World w;
     Material m = Material();
-    Plane floor = Plane(MatScaling(10,0.01,10), m);
-    w.add_shape(std::make_unique<Plane>(std::move(floor)));
-    PointSource ps(WHITE, Tuple({-30,30,-30}, TupType::POINT));
-    w.add_source(std::make_unique<PointSource>(std::move(ps)));
+    w.add_shape(std::make_unique<Plane>(Plane(MatScaling(10,0.01,10), m)));
+    w.add_source(std::make_unique<PointSource>(WHITE, Tuple({-30,30,-30}, TupType::POINT)));
     auto sphere_dat = place_random_spheres(50);
     for(auto const& data: sphere_dat){
         Color rc = random_color();
@@ -414,7 +409,7 @@ TEST(GenImage, RandomSpheres){
         double rad = std::get<3>(data);
         Matrix scaling = MatScaling(rad,rad,rad);
         Matrix transformation = Chain({scaling, translation});
-        w.add_shape(std::make_unique<Sphere>(Sphere(transformation,shiny))); 
+        w.add_shape(std::make_unique<Sphere>(transformation,shiny)); 
     }
     Tuple from({-4,2,5}, TupType::POINT);
     Tuple to({0,1,0}, TupType::POINT);
@@ -426,10 +421,9 @@ TEST(GenImage, RandomSpheres){
 
 TEST(GenImage, Groups){
     World w;
-    PointSource Source1 = PointSource(WHITE,GenPoint(-10,10,10));
-    w.add_source(std::make_unique<PointSource>(std::move(Source1)));
+    w.add_source(std::make_unique<PointSource>(WHITE,GenPoint(-10,10,10)));
     Group g;
-    g.add_child(std::make_unique<Sphere>(std::move(Sphere(MatTranslation(-5,0,0)))));
+    g.add_child(std::make_unique<Sphere>(MatTranslation(-5,0,0)));
     g.set_transform(MatTranslation(5,0,0));
     w.add_shape(std::make_unique<Group>(std::move(g)));
     Tuple from({-4,2,5}, TupType::POINT);

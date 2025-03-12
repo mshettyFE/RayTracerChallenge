@@ -113,9 +113,7 @@ TEST(BVHTests, Groups){
 }
 
 TEST(BVHTests, CSGAgg){
-    Sphere left;
-    Sphere right(MatTranslation(2,3,4));
-    CSG agg(CSG_OPS::DIFFERENCE, std::make_unique<Sphere>(std::move(left)), std::make_unique<Sphere>(std::move(right)));
+    CSG agg(CSG_OPS::DIFFERENCE, std::make_unique<Sphere>(), std::make_unique<Sphere>(MatTranslation(2,3,4)));
     auto bb  = agg.bound();
     EXPECT_EQ(bb->get_min(), GenPoint(-1,-1,-1));
     EXPECT_EQ(bb->get_max(), GenPoint(3,4,5));
@@ -170,18 +168,18 @@ TEST(BVHTests, Print){
 
 TEST(BVHTests, InsertShapes){
     std::vector<std::unique_ptr<Shape>> shapes;
-    shapes.push_back(std::move(std::make_unique<Sphere>(Sphere(MatScaling(2,2,2)))));
-    shapes.push_back(std::move(std::make_unique<Sphere>(Sphere(MatTranslation(2,2,2)))));
-    shapes.push_back(std::move(std::make_unique<Sphere>(Sphere(MatTranslation(-2,-2,-2)))));
-    shapes.push_back(std::move(std::make_unique<Sphere>(Sphere(MatScaling(0.5,0.5,0.5)*MatTranslation(-2,-2,-2)))));
+    shapes.push_back(std::move(std::make_unique<Sphere>(MatScaling(2,2,2))));
+    shapes.push_back(std::move(std::make_unique<Sphere>(MatTranslation(2,2,2))));
+    shapes.push_back(std::move(std::make_unique<Sphere>(MatTranslation(-2,-2,-2))));
+    shapes.push_back(std::move(std::make_unique<Sphere>(MatScaling(0.5,0.5,0.5)*MatTranslation(-2,-2,-2))));
     auto  a = BVH(shapes);
     EXPECT_EQ(a.count_nodes(),21);
 }
 
 TEST(BVHTests, Intersection){
     std::vector<std::unique_ptr<Shape>> shapes;
-    shapes.push_back(std::move(std::make_unique<Sphere>(Sphere(MatTranslation(0,0,0.5)))));
-    shapes.push_back(std::move(std::make_unique<Sphere>(Sphere(MatTranslation(0,0,-5)))));
+    shapes.push_back(std::move(std::make_unique<Sphere>(MatTranslation(0,0,0.5))));
+    shapes.push_back(std::move(std::make_unique<Sphere>(MatTranslation(0,0,-5))));
     Ray r({0,0,2},{0,0,-1});
     auto  a = BVH(shapes);
     auto hits = a.intersect(r);

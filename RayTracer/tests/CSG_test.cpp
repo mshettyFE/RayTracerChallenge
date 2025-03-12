@@ -7,12 +7,12 @@
 #include "Cube.h"
 
 TEST(CSG_TEST, Creation){
-    CSG temp(CSG_OPS::UNION,std::make_unique<Sphere>(Sphere()), std::make_unique<Cube>(Cube()));
+    CSG temp(CSG_OPS::UNION,std::make_unique<Sphere>(), std::make_unique<Cube>());
     EXPECT_EQ(temp.get_left()->get_parent() , temp.get_right()->get_parent());
 }
 
 TEST(CSG_TEST, Union){
-    CSG temp(CSG_OPS::UNION,std::make_unique<Sphere>(Sphere()), std::make_unique<Cube>(Cube()));
+    CSG temp(CSG_OPS::UNION,std::make_unique<Sphere>(), std::make_unique<Cube>());
     EXPECT_EQ(temp.intersection_allowed(true,true,true), false);
     EXPECT_EQ(temp.intersection_allowed(true,true,false), true);
     EXPECT_EQ(temp.intersection_allowed(true,false,true), false);
@@ -24,7 +24,7 @@ TEST(CSG_TEST, Union){
 }
 
 TEST(CSG_TEST, Intersect){
-    CSG temp(CSG_OPS::INTERSECTION,std::make_unique<Sphere>(Sphere()), std::make_unique<Cube>(Cube()));
+    CSG temp(CSG_OPS::INTERSECTION,std::make_unique<Sphere>(), std::make_unique<Cube>());
     EXPECT_EQ(temp.intersection_allowed(true,true,true), true);
     EXPECT_EQ(temp.intersection_allowed(true,true,false), false);
     EXPECT_EQ(temp.intersection_allowed(true,false,true), true);
@@ -36,7 +36,7 @@ TEST(CSG_TEST, Intersect){
 }
 
 TEST(CSG_TEST, Difference){
-    CSG temp(CSG_OPS::DIFFERENCE,std::make_unique<Sphere>(Sphere()), std::make_unique<Cube>(Cube()));
+    CSG temp(CSG_OPS::DIFFERENCE,std::make_unique<Sphere>(), std::make_unique<Cube>());
     EXPECT_EQ(temp.intersection_allowed(true,true,true), false);
     EXPECT_EQ(temp.intersection_allowed(true,true,false), true);
     EXPECT_EQ(temp.intersection_allowed(true,false,true), false);
@@ -48,7 +48,7 @@ TEST(CSG_TEST, Difference){
 }
 
 TEST(CSG_TEST, Filter){
-    CSG temp(CSG_OPS::UNION,std::make_unique<Sphere>(Sphere()), std::make_unique<Cube>(Cube()));
+    CSG temp(CSG_OPS::UNION,std::make_unique<Sphere>(), std::make_unique<Cube>());
     const Shape* left = temp.get_left();
     const Shape* right = temp.get_right();
     std::vector<Impact> hits = {Impact(1,left), Impact(2,right), Impact(3,left), Impact(4,right)};
@@ -57,7 +57,7 @@ TEST(CSG_TEST, Filter){
     EXPECT_EQ(filtered[0], hits[0]);
     EXPECT_EQ(filtered[1], hits[3]);
 
-    temp = CSG(CSG_OPS::INTERSECTION,std::make_unique<Sphere>(Sphere()), std::make_unique<Cube>(Cube()));
+    temp = CSG(CSG_OPS::INTERSECTION,std::make_unique<Sphere>(), std::make_unique<Cube>());
     left = temp.get_left();
     right = temp.get_right();
     hits = {Impact(1,left), Impact(2,right), Impact(3,left), Impact(4,right)};
@@ -66,7 +66,7 @@ TEST(CSG_TEST, Filter){
     EXPECT_EQ(filtered[0], hits[1]);
     EXPECT_EQ(filtered[1], hits[2]);
 
-    temp = CSG(CSG_OPS::DIFFERENCE,std::make_unique<Sphere>(Sphere()), std::make_unique<Cube>(Cube()));
+    temp = CSG(CSG_OPS::DIFFERENCE,std::make_unique<Sphere>(), std::make_unique<Cube>());
     left = temp.get_left();
     right = temp.get_right();
     hits = {Impact(1,left), Impact(2,right), Impact(3,left), Impact(4,right)};
@@ -77,16 +77,14 @@ TEST(CSG_TEST, Filter){
 }
 
 TEST(CSG_TEST, Miss){
-    CSG temp(CSG_OPS::UNION,std::make_unique<Sphere>(Sphere()), std::make_unique<Cube>(Cube()));
+    CSG temp(CSG_OPS::UNION,std::make_unique<Sphere>(), std::make_unique<Cube>());
     Ray r({0,2,-5},{0,0,1});
     auto hits = temp.local_intersect(r);
     EXPECT_EQ(hits.size(), 0);
 }
 
 TEST(CSG_TEST, Hit){
-    Sphere s1;
-    Sphere s2(MatTranslation(0,0,0.5));
-    CSG temp(CSG_OPS::UNION,std::make_unique<Sphere>(std::move(s1)), std::make_unique<Sphere>(std::move(s2)));
+    CSG temp(CSG_OPS::UNION,std::make_unique<Sphere>(), std::make_unique<Sphere>(MatTranslation(0,0,0.5)));
     auto left = temp.get_left();
     auto right = temp.get_right();
     Ray r({0,0,-5},{0,0,1});

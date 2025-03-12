@@ -13,8 +13,7 @@
 TEST(CollisionInfoTest, CollisionInfoInit){
     Ray r = Ray({0,0,-5}, {0,0,1});
     Sphere  s;
-    Impact hit(4,&s);
-    CollisionInfo i (std::make_unique<Impact>(hit), r);
+    CollisionInfo i (std::make_unique<Impact>(4,&s), r);
     EXPECT_EQ(i.get_impact().get_t(), 4);
     EXPECT_EQ(i.get_impact().get_obj(), &s);
     EXPECT_EQ(i.get_pnt(), Tuple({0,0,-1},TupType::POINT));
@@ -22,8 +21,7 @@ TEST(CollisionInfoTest, CollisionInfoInit){
     EXPECT_EQ(i.get_normal(), Tuple({0,0,-1}));
     EXPECT_EQ(i.is_inside(), false);
     r = Ray({0,0,0}, {0,0,1});
-    hit = Impact(1,&s);
-    i  = CollisionInfo(std::make_unique<Impact>(hit), r);
+    i  = CollisionInfo(std::make_unique<Impact>(1,&s), r);
     EXPECT_EQ(i.get_impact().get_t(), 1);
     EXPECT_EQ(i.get_impact().get_obj(), &s);
     EXPECT_EQ(i.get_pnt(), Tuple({0,0,1},TupType::POINT));
@@ -35,8 +33,7 @@ TEST(CollisionInfoTest, CollisionInfoInit){
  TEST(CollisionInfoTest, Over){
     Ray r = Ray({0,0,-5}, {0,0,1});
     Sphere s;
-    Impact hit(4,&s);
-    CollisionInfo i (std::make_unique<Impact>(hit), r);
+    CollisionInfo i (std::make_unique<Impact>(4,&s), r);
     EXPECT_LE(i.get_over_pnt()[2], -glob_resolution/2.0);
     EXPECT_GE(i.get_pnt()[2],i.get_over_pnt()[2]);
 }
@@ -44,8 +41,7 @@ TEST(CollisionInfoTest, CollisionInfoInit){
 TEST(CollisionInfoTest, Reflect){
     Plane p;
     Ray r({0,1,-1}, {0,-std::sqrt(2)/2.0,std::sqrt(2)/2.0});
-    Impact i(std::sqrt(2), &p);
-    CollisionInfo c(std::make_unique<Impact>(i),r);
+    CollisionInfo c(std::make_unique<Impact>(std::sqrt(2), &p),r);
     EXPECT_EQ(c.get_reflect(),Tuple({0,std::sqrt(2)/2.0,std::sqrt(2)/2.0}));
 }
 
@@ -65,8 +61,7 @@ TEST(CollisionInfoTest, IndexInfo){
     hits.push_back(Impact(5.25, &C));
     hits.push_back(Impact(6, &A));
     std::vector<CollisionInfo> comps;
-    Impact base = hits[5];
-    CollisionInfo cmp(std::make_unique<Impact>(base),r,hits);
+    CollisionInfo cmp(std::make_unique<Impact>(hits[5]),r,hits);
 
     for(auto hit : hits){
         comps.push_back(CollisionInfo(std::make_unique<Impact>(hit),r, hits));
