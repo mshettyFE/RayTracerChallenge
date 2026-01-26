@@ -51,7 +51,7 @@ TEST(WorldTest,IntersectionTest){
     w.add_shape(std::move(s1));
     w.add_shape(std::move(s2));
     w.add_source(std::move(source));
-    w.init_bvh();
+   
     Ray r(Tuple({0,0,0}, TupType::POINT), Tuple({0,0,1}));
     CollisionInfo i(std::make_unique<Impact>(0.5,w.get_shape(1)),r);
     Color c = w.shade_hit(i);
@@ -83,7 +83,7 @@ TEST(WorldTest, Nested){
     w.add_shape(std::move(s1));
     w.add_shape(std::move(s2));
     w.add_source(std::move(source));
-    w.init_bvh();
+   
     Ray r =  Ray(Tuple({0, 0, 0.75}, TupType::POINT), Tuple({0, 0, -1}));
     Color c = w.color_at(r);
     EXPECT_EQ(c, w.get_shape(1)->get_material().get_color());
@@ -107,7 +107,7 @@ TEST(WorldTest, Shadows){
     w.add_shape(std::make_unique<Sphere>());
     w.add_shape(std::make_unique<Sphere>(MatTranslation(0,0,10)));
     w.add_source(std::make_unique<PointSource> (WHITE, Tuple({0,0,-10}, TupType::POINT)));
-    w.init_bvh();
+   
     CollisionInfo c(std::make_unique<Impact>(4,w.get_shape(1)),r);
     Color out = w.shade_hit(c);
     EXPECT_EQ(out, Color({0.1,0.1,0.1}));
@@ -122,7 +122,7 @@ TEST(WorldTest, NonReflecting){
     w.add_shape(std::move(s1));
     w.add_shape(std::move(s2));
     w.add_source(std::move(source));
-    w.init_bvh();
+   
     Ray r = Ray(Tuple({0, 0, 0}, TupType::POINT), Tuple({0, 0, 1}));
     CollisionInfo c(std::make_unique<Impact>(1,w.get_shape(1)),r);
     Color out =  w.reflect_color(c);
@@ -134,7 +134,6 @@ TEST(WorldTest, ReflectColor){
     floor_mat.set_reflectance(0.5);
     auto w = default_world();
     w->add_shape(std::make_unique<Plane>(MatTranslation(0,-1,0),floor_mat));
-    w->init_bvh();
     Ray r = Ray(Tuple({0, 0, -3}, TupType::POINT), Tuple({0, -std::sqrt(2)/2.0, std::sqrt(2)/2.0}));
     CollisionInfo c  = CollisionInfo(std::make_unique<Impact>(std::sqrt(2),w->get_shape(2)),r);
     EXPECT_EQ(c.get_reflect(), Tuple({0, std::sqrt(2)/2.0, std::sqrt(2)/2.0}));
@@ -147,7 +146,7 @@ TEST(WorldTest, ShadeReflection){
     floor_mat.set_reflectance(0.5);
     auto w = default_world();
     w->add_shape(std::make_unique<Plane>(MatTranslation(0,-1,0),floor_mat));
-    w->init_bvh();
+    
     Ray r = Ray(Tuple({0, 0, -3}, TupType::POINT), Tuple({0, -std::sqrt(2)/2.0, std::sqrt(2)/2.0}));
     CollisionInfo c  = CollisionInfo(std::make_unique<Impact>(std::sqrt(2),w->get_shape(2)),r);
     EXPECT_EQ(w->shade_hit(c), Color({0.87676, 0.92435, 0.829175}));
@@ -161,7 +160,7 @@ TEST(WorldTest, InfiniteRecursion){
     w.add_source(std::move(std::make_unique<PointSource>(Color({1,1,1}), Tuple({0,0,0}, TupType::POINT))));
     w.add_shape(std::make_unique<Plane>(MatTranslation(0,-1,0), wall));
     w.add_shape(std::make_unique<Plane>(MatTranslation(0,1,0), wall));
-    w.init_bvh();
+   
     w.color_at(r); // should terminate and not Segfault
 }
 
@@ -170,7 +169,7 @@ TEST(WorldTest, CapRecursion){
     floor_mat.set_reflectance(0.5);
     auto w = default_world();
     w->add_shape(std::make_unique<Plane>(MatTranslation(0,-1,0),floor_mat));
-    w->init_bvh();
+    
     Ray r = Ray({0, 0, -3}, {0, -std::sqrt(2)/2.0, std::sqrt(2)/2.0});
     CollisionInfo c  = CollisionInfo(std::make_unique<Impact>(std::sqrt(2),w->get_shape(2)),r);
     EXPECT_EQ(w->reflect_color(c,0), BLACK);
@@ -229,7 +228,7 @@ TEST(WorldTest, ColorRefracted){
     w.add_shape(std::move(s1));
     w.add_shape(std::move(s2));
     w.add_source(std::move(source));
-    w.init_bvh();
+   
     Ray r({0,0,0.1},{0,1,0});
     std::vector<Impact> xs{Impact(-0.9899,w.get_shape(0)), Impact(-0.4899,w.get_shape(1)), Impact(0.4899,w.get_shape(1)), Impact(0.9899,w.get_shape(0))};
     CollisionInfo comps(std::make_unique<Impact>(xs[2]),r, xs);
@@ -246,7 +245,7 @@ TEST(WorldTest, ShadeWithRefraction){
     ball_mat.set_color(Color({1,0,0}));
     ball_mat.set_ambient(0.5);
     w->add_shape(std::make_unique<Sphere>(MatTranslation(0,-3.5,-0.5), ball_mat));
-    w->init_bvh();
+    
     Ray r({0,0,-3},{0,-std::sqrt(2)/2.0,std::sqrt(2)/2.0});
     CollisionInfo comps(std::make_unique<Impact>(std::sqrt(2), w->get_shape(2)),r);
     EXPECT_EQ(w->shade_hit(comps), Color({0.93642, 0.68642, 0.68642}));
@@ -263,7 +262,7 @@ TEST(WorldTest, ReflectiveTransparentAtOnce){
     ball_mat.set_color(Color({1,0,0}));
     ball_mat.set_ambient(0.5);
     w->add_shape(std::make_unique<Sphere>(MatTranslation(0,-3.5,-0.5), ball_mat));
-    w->init_bvh();
+    
     Ray r({0,0,-3}, {0,-std::sqrt(2)/2.0,std::sqrt(2)/2.0});
     CollisionInfo comps(std::make_unique<Impact>(std::sqrt(2),w->get_shape(2)),r);
     EXPECT_EQ(w->shade_hit(comps), Color({0.93391, 0.69643, 0.69243}));

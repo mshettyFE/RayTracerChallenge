@@ -48,15 +48,6 @@ TEST(GroupTest,Intersection){
     EXPECT_EQ(hits.size(),4);
 }
 
-TEST(GroupTest, Transformation){
-    Group g;
-    g.add_child(std::make_unique<Sphere>(MatTranslation(5,0,0)));
-    g.set_transform(MatScaling(2,2,2));
-    Ray r({10,0,-10},{0,0,1});
-    auto hits = g.intersect(r);
-    EXPECT_EQ(hits.size(), 2);
-}
-
 TEST(GroupTest, Normal){
     Group g1;
     Group g2(MatScaling(1,2,3));

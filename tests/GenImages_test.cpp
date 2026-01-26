@@ -13,6 +13,9 @@
 #include <vector>
 #include <tuple>
 
+#include "tools/cpp/runfiles/runfiles.h"
+using bazel::tools::cpp::runfiles::Runfiles;
+
 TEST(GenImage, OnlySpheres){
 // floor
     Material floor_mat = Material();
@@ -328,8 +331,13 @@ TEST(GenImage,AirBubble){
 
 
 TEST(GenImage, SimpleTeapot){
-// Assumes that tests are run in build folder which is parallel to obj file
-    std::string teapot_obj = "../obj/teapot.obj";
+    std::string error;
+    std::unique_ptr<Runfiles> runfiles(Runfiles::CreateForTest(&error));
+    ASSERT_NE(runfiles, nullptr) << "Could not initialize runfiles: " << error;
+    // Format: "my_workspace_name/path/to/file.obj"
+    std::string teapot_obj = runfiles->Rlocation("ray_tracer/obj/teapot.obj");
+    ASSERT_FALSE(teapot_obj.empty()) << "Could not find teapot.obj in runfiles";
+
     Parser p;
     p.read(teapot_obj,true);
     auto group = p.emit();
@@ -345,10 +353,15 @@ TEST(GenImage, SimpleTeapot){
 }
 
 TEST(GenImage, Apple){
+    std::string error;
+    std::unique_ptr<Runfiles> runfiles(Runfiles::CreateForTest(&error));
+    ASSERT_NE(runfiles, nullptr) << "Could not initialize runfiles: " << error;
+    // Format: "my_workspace_name/path/to/file.obj"
+    std::string apple_obj = runfiles->Rlocation("ray_tracer/obj/Apple.obj");
+    ASSERT_FALSE(apple_obj.empty()) << "Could not find Apple.obj in runfiles";
 // Assumes that tests are run in build folder which is parallel to obj file
-    std::string teapot_obj = "../obj/Apple.obj";
     Parser p;
-    p.read(teapot_obj,true);
+    p.read(apple_obj,true);
     auto group = p.emit();
 //    group->set_transform(MatScaling(1,1,1.5));
     World w;
@@ -431,7 +444,6 @@ TEST(GenImage, Groups){
     Tuple up({0,1,0});
     Camera cam(100,100,pi/2.0, from, to, up);
     Ray r({0,0,10},{0,0,-1});
-    w.init_bvh();
     auto hit = w.intersect(r);
     EXPECT_EQ(hit.size(),2);
 }

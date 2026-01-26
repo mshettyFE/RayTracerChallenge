@@ -13,16 +13,20 @@ cc_library(
 cc_binary(
     name = "Tracer",
     srcs = ["src/main.cpp"],
-    deps = [":tracer_lib"],
+    data = ["obj/Apple.obj", "obj/teapot.obj"],
+    deps = [":tracer_lib",
+        "@bazel_tools//tools/cpp/runfiles"],
 )
 
 # 3. The Test Suite
 cc_test(
     name = "Tracer_tests",
     srcs = glob(["tests/*.cpp"]),
+    data = ["obj/Apple.obj", "obj/teapot.obj"],
     deps = [
         ":tracer_lib",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
+        "@bazel_tools//tools/cpp/runfiles"
     ],
 )

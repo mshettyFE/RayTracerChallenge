@@ -20,19 +20,14 @@ int World::number_of_shapes() const{
     return shapes.size();
 }
 
-std::vector<Impact> World::intersect(const Ray& r, bool use_bvh) const{
+std::vector<Impact> World::intersect(const Ray& r) const{
     std::vector<Impact> all_hits;
-    if(use_bvh){
-        all_hits = bvh->intersect(r);
-    }
-    else{
-        for(auto const& shape: shapes){
-            for(auto hit: shape->intersect(r)){
-                all_hits.push_back(hit);
-            }
-        }    
-        std::sort(all_hits.begin(), all_hits.end(), [](const Impact& a, const Impact& b) -> bool{ return (a.get_t() < b.get_t());  });
-    }
+    for(auto const& shape: shapes){
+        for(auto hit: shape->intersect(r)){
+            all_hits.push_back(hit);
+        }
+    }    
+    std::sort(all_hits.begin(), all_hits.end(), [](const Impact& a, const Impact& b) -> bool{ return (a.get_t() < b.get_t());  });
     return all_hits;
 }
 
@@ -133,7 +128,6 @@ std::unique_ptr<World> default_world(){
     w->add_shape(std::move(s1));
     w->add_shape(std::move(s2));
     w->add_source(std::move(source));
-    w->init_bvh();
     return w;
 }
 

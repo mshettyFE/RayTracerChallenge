@@ -58,7 +58,7 @@ void Parser::read(const std::string& fname, bool file){
             myfile.close();
         }
         else{
-            throw std::invalid_argument("Bad file name");
+            throw std::invalid_argument("Bad file name: " + fname);
         }
     }
     else{
