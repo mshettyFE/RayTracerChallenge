@@ -24,6 +24,7 @@ private:
     std::vector<double> check_axis(double origin, double direction, double min, double max) const;
 public:
     bool intersect(const Ray &other) const;
+    void collect_candidates(const Ray& r, std::vector<const Shape*>& candidates) const;
 
     AABB(std::initializer_list<double> min_bounds, std::initializer_list<double> max_bounds, const Shape* shp=nullptr);
     AABB(Tuple min_bounds, Tuple max_bounds, const Shape* shp=nullptr);

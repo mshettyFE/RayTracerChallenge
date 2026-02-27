@@ -11,7 +11,37 @@ void Group::verbose_print() const{
     std::cout << this->get_material() << std::endl;
 }
 
+void Group::build_bvh() const {
+    if (bvh_built) return;
+    if (children.empty()) {
+        bvh_built = true;
+        return;
+    }
+    bvh_cache = bound();
+    bvh_built = true;
+}
+
 std::vector<Impact> Group::local_intersect(const Ray &r) const {
+    if (children.empty()) return {};
+
+    if (!bvh_built) build_bvh();
+
+    if (bvh_cache) {
+        if (!bvh_cache->intersect(r)) return {};
+
+        std::vector<const Shape*> candidates;
+        bvh_cache->collect_candidates(r, candidates);
+
+        std::vector<Impact> out;
+        for (auto const* shape : candidates) {
+            for (auto hit : shape->intersect(r)) {
+                out.push_back(hit);
+            }
+        }
+        return out;
+    }
+
+    // Fallback: brute-force
     std::vector<Impact> out;
     for(auto const& child: children){
         for(auto hit: child->intersect(r)){

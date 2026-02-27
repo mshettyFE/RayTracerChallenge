@@ -235,6 +235,19 @@ bool AABB::intersect(const Ray &other) const{
     return true;
 }
 
+void AABB::collect_candidates(const Ray& r, std::vector<const Shape*>& candidates) const {
+    if (!intersect(r)) return;
+
+    if (enclosed_shape != nullptr)
+        candidates.push_back(enclosed_shape);
+
+    for (auto const& box : center)
+        if (box) box->collect_candidates(r, candidates);
+
+    if (left)  left->collect_candidates(r, candidates);
+    if (right) right->collect_candidates(r, candidates);
+}
+
 bool AABB::straddle(const AABB* new_box) const{
     Tuple delta = this->get_max()-this->get_min();
     double current_max = NEG_INFTY;

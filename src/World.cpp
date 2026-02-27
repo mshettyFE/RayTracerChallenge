@@ -20,13 +20,63 @@ int World::number_of_shapes() const{
     return shapes.size();
 }
 
+void World::build_bvh() const {
+    if (bvh_built) return;
+
+    unbounded_shapes.clear();
+    AABB root_box;
+    std::vector<std::unique_ptr<AABB>> bounded_boxes;
+
+    for (auto const& shape : shapes) {
+        auto bbox = parent_space_bounds(shape.get());
+        bool is_unbounded = (bbox->get_min_x() <= NEG_INFTY || bbox->get_max_x() >= INFTY ||
+                             bbox->get_min_y() <= NEG_INFTY || bbox->get_max_y() >= INFTY ||
+                             bbox->get_min_z() <= NEG_INFTY || bbox->get_max_z() >= INFTY);
+        if (is_unbounded) {
+            unbounded_shapes.push_back(shape.get());
+        } else {
+            root_box.expand_box(bbox.get());
+            bounded_boxes.push_back(std::move(bbox));
+        }
+    }
+
+    if (!bounded_boxes.empty()) {
+        for (unsigned int i = 0; i < bounded_boxes.size(); ++i) {
+            root_box.insert(bounded_boxes[i]);
+        }
+        bvh_cache = std::make_unique<AABB>(std::move(root_box));
+    }
+
+    bvh_built = true;
+}
+
 std::vector<Impact> World::intersect(const Ray& r) const{
     std::vector<Impact> all_hits;
-    for(auto const& shape: shapes){
-        for(auto hit: shape->intersect(r)){
-            all_hits.push_back(hit);
+
+    if (bvh_built && bvh_cache) {
+        // BVH-accelerated path
+        std::vector<const Shape*> candidates;
+        bvh_cache->collect_candidates(r, candidates);
+        for (auto const* shape : candidates) {
+            for (auto hit : shape->intersect(r)) {
+                all_hits.push_back(hit);
+            }
         }
-    }    
+        // Always test unbounded shapes
+        for (auto const* shape : unbounded_shapes) {
+            for (auto hit : shape->intersect(r)) {
+                all_hits.push_back(hit);
+            }
+        }
+    } else {
+        // Brute-force fallback
+        for(auto const& shape: shapes){
+            for(auto hit: shape->intersect(r)){
+                all_hits.push_back(hit);
+            }
+        }
+    }
+
     std::sort(all_hits.begin(), all_hits.end(), [](const Impact& a, const Impact& b) -> bool{ return (a.get_t() < b.get_t());  });
     return all_hits;
 }
@@ -165,6 +215,7 @@ bool World::is_shadowed(const Tuple& pt) const{
 
 void World::add_shape(std::unique_ptr<Shape> new_shape){
     shapes.push_back(std::move(new_shape));
+    invalidate_bvh();
 };
 
 void World::add_source(std::unique_ptr<LightSource> new_source){

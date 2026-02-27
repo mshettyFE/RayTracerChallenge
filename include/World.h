@@ -7,6 +7,7 @@
 #include "CollisionInfo.h"
 #include "Color.h"
 #include "LightSource.h"
+#include "AABB.h"
 #include <memory>
 #include <vector>
 
@@ -14,9 +15,13 @@ class World{
     private:
         std::vector<std::unique_ptr<LightSource>> sources;
         std::vector<std::unique_ptr<Shape>> shapes;
+        mutable std::unique_ptr<AABB> bvh_cache;
+        mutable bool bvh_built = false;
+        mutable std::vector<const Shape*> unbounded_shapes;
+        void invalidate_bvh() const { bvh_built = false; bvh_cache.reset(); unbounded_shapes.clear(); }
     public:
 
-   
+    void build_bvh() const;
     std::vector<Impact> intersect(const Ray& r) const;
 
     Color  shade_hit(const CollisionInfo& hit, unsigned int remaining=5) const;

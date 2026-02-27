@@ -158,7 +158,8 @@ Ray Camera::ray_for_pixel(int px, int py) const{
 }
 
 std::unique_ptr<Canvas> Camera::render(World* w, unsigned int max_depth ){
-    std::cout << "BVH Initialized: "  << std::endl;
+    w->build_bvh();
+    std::cout << "BVH Initialized" << std::endl;
     total_rays=0;
     Canvas image = Canvas(this->hsize, this->vsize);
     for(int y=0; y<this->vsize-1; ++y){
