@@ -136,7 +136,7 @@ void World::set_source(int obj, std::unique_ptr<LightSource>& other) {
     if(obj<0){
         throw std::invalid_argument("Index is negative");
     }
-    if(obj >= this->number_of_shapes()){
+    if(obj >= this->number_of_sources()){
         throw std::invalid_argument("Index is out of bounds");
     }
     this->sources[obj] = std::move(other);

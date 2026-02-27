@@ -162,11 +162,11 @@ std::unique_ptr<Canvas> Camera::render(World* w, unsigned int max_depth ){
     std::cout << "BVH Initialized" << std::endl;
     total_rays=0;
     Canvas image = Canvas(this->hsize, this->vsize);
-    for(int y=0; y<this->vsize-1; ++y){
-        for(int x=0; x<this->hsize-1; ++x){
+    for(int y=0; y<this->vsize; ++y){
+        for(int x=0; x<this->hsize; ++x){
             Ray r = ray_for_pixel(x,y);
             Color c = w->color_at(r);
-            image.write_pixel(y,x,c);
+            image.write_pixel(x,y,c);
         }
     }
     std::cout << "Total Rays Created: " << Camera::total_rays << std::endl;
