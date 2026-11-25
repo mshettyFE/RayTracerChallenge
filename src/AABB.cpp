@@ -182,22 +182,34 @@ AABB world_space_bounds(const Shape* shape){
     return s;
 }
 
-bool AABB::intersect(const Ray &other) const{
-    const Tuple& o = other.get_origin();
-    const Tuple& d = other.get_direction();
-    const double origin[3] = {o.get_x(), o.get_y(), o.get_z()};
+AABB::RayBoxQuery::RayBoxQuery(const Ray& r){
+    const Tuple& o = r.get_origin();
+    const Tuple& d = r.get_direction();
     const double direction[3] = {d.get_x(), d.get_y(), d.get_z()};
+    origin[0] = o.get_x(); origin[1] = o.get_y(); origin[2] = o.get_z();
+    for(int axis = 0; axis < 3; ++axis){
+        parallel[axis] = std::abs(direction[axis]) < glob_resolution;
+        inverse_direction[axis] = parallel[axis] ? 0.0 : 1.0 / direction[axis];
+    }
+}
+
+bool AABB::intersect(const Ray &other) const{
+    return intersect(RayBoxQuery(other));
+}
+
+bool AABB::intersect(const RayBoxQuery& q) const{
+    const double* origin = q.origin;
     double largest_entry = NEG_INFTY;
     double smallest_exit = INFTY;
     for(int axis = 0; axis < 3; ++axis){
-        if(std::abs(direction[axis]) < glob_resolution){
+        if(q.parallel[axis]){
             // Parallel to this slab: the ray is either always inside it (no constraint) or
             // never (a miss). A ray lying exactly in a face's plane counts as inside.
             if(origin[axis] < min_bounds[axis] || origin[axis] > max_bounds[axis]){return false;}
             continue;
         }
-        double t_enter = (min_bounds[axis] - origin[axis]) / direction[axis];
-        double t_exit = (max_bounds[axis] - origin[axis]) / direction[axis];
+        double t_enter = (min_bounds[axis] - origin[axis]) * q.inverse_direction[axis];
+        double t_exit = (max_bounds[axis] - origin[axis]) * q.inverse_direction[axis];
         if(t_enter > t_exit){std::swap(t_enter, t_exit);}
         if(t_enter > largest_entry){largest_entry = t_enter;}
         if(t_exit < smallest_exit){smallest_exit = t_exit;}
@@ -208,16 +220,20 @@ bool AABB::intersect(const Ray &other) const{
 }
 
 void AABB::collect_candidates(const Ray& r, std::vector<const Shape*>& candidates) const {
-    if (!intersect(r)) return;
+    collect_candidates(RayBoxQuery(r), candidates);   // prepare the ray once for the whole walk
+}
+
+void AABB::collect_candidates(const RayBoxQuery& q, std::vector<const Shape*>& candidates) const {
+    if (!intersect(q)) return;
 
     if (enclosed_shape != nullptr)
         candidates.push_back(enclosed_shape);
 
     for (auto const& box : center)
-        if (box) box->collect_candidates(r, candidates);
+        if (box) box->collect_candidates(q, candidates);
 
-    if (left)  left->collect_candidates(r, candidates);
-    if (right) right->collect_candidates(r, candidates);
+    if (left)  left->collect_candidates(q, candidates);
+    if (right) right->collect_candidates(q, candidates);
 }
 
 std::ostream& operator << (std::ostream &out, const AABB& other){

@@ -14,6 +14,15 @@ class Shape;
 
 class AABB{
 private:
+    // Cache some computations once per ray, then reused for every box in the BVH.
+    // Box tests multiply by 1/direction instead of dividing by direction.
+    struct RayBoxQuery{
+        explicit RayBoxQuery(const Ray& r);
+        double origin[3];
+        double inverse_direction[3];   // 1 / direction; 0 on parallel axes (unused there)
+        bool parallel[3];              // direction is (near) zero along this axis
+    };
+    bool intersect(const RayBoxQuery& q) const;
     const Shape* enclosed_shape=nullptr;
     std::vector<std::unique_ptr<AABB>> center{};
     std::unique_ptr<AABB> left{};
@@ -21,6 +30,7 @@ private:
     std::array<double,3> min_bounds={INFTY,INFTY,INFTY};
     std::array<double,3> max_bounds={NEG_INFTY,NEG_INFTY,NEG_INFTY};
     void indented_print( const AABB* current_box, int indent=0, bool verbose=false) const;
+    void collect_candidates(const RayBoxQuery& q, std::vector<const Shape*>& candidates) const;
     static std::unique_ptr<AABB> build_range(std::vector<std::unique_ptr<AABB>>& boxes, size_t begin, size_t end);
 public:
     // Nodes with at most this many objects become leaves (objects kept in the center list).
