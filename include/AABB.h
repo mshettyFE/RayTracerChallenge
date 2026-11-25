@@ -21,7 +21,15 @@ private:
     std::array<double,3> min_bounds={INFTY,INFTY,INFTY};
     std::array<double,3> max_bounds={NEG_INFTY,NEG_INFTY,NEG_INFTY};
     void indented_print( const AABB* current_box, int indent=0, bool verbose=false) const;
+    static std::unique_ptr<AABB> build_range(std::vector<std::unique_ptr<AABB>>& boxes, size_t begin, size_t end);
 public:
+    // Nodes with at most this many objects become leaves (objects kept in the center list).
+    static constexpr size_t MAX_LEAF_OBJECTS = 2;
+
+    // Builds a bounding volume hierarchy over boxes by median splitting
+    // Returns nullptr for no boxes.
+    static std::unique_ptr<AABB> build_bvh(std::vector<std::unique_ptr<AABB>> boxes);
+
     bool intersect(const Ray &other) const;
     void collect_candidates(const Ray& r, std::vector<const Shape*>& candidates) const;
 
@@ -33,7 +41,6 @@ public:
 
     Tuple get_min() const;
     Tuple get_max() const;
-    Tuple get_mid() const;
 
     double get_min_x() const{return min_bounds[0];}
     double get_min_y() const{return min_bounds[1];}
@@ -76,17 +83,10 @@ public:
     void set_shape(const Shape* new_shape){this->enclosed_shape = new_shape;}
 
     void expand_box(const AABB* new_box);
-    bool insert(std::unique_ptr<AABB>& new_box, unsigned int depth=0, unsigned int max_depth = 20);
-
-    void split();
-
-    bool straddle(const AABB* new_box) const;
 
     void print(bool verbose=false) const;
 
     void transform(Matrix mat);
-
-    double bound_check(double min, double max) const;
 
     // True if all six bounds are finite (false for planes, empty boxes, and NaN from transforming infinities)
     bool is_finite() const;

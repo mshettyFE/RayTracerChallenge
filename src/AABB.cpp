@@ -2,6 +2,7 @@
 #include "Shape.h"
 #include <utility>
 #include <set>
+#include <algorithm>
 
 AABB::AABB(std::initializer_list<double> min_bounds, std::initializer_list<double> max_bounds, const Shape* shp){
     if(min_bounds.size() != 3){throw std::invalid_argument("min_bounds must have a length of 3");}
@@ -117,28 +118,8 @@ bool AABB::contains(const Tuple& points) const{
     return true;
 }
 
-double AABB::bound_check(double min, double max) const{
-    if(min==INFTY){
-        if(max==NEG_INFTY){
-            return 0;
-        }        
-        return INFTY;
-    }
-    else if(min==NEG_INFTY){
-        if(max==INFTY){
-            return 0;
-        }
-        return NEG_INFTY;
-
-    }
-    return (min+max)/2.0;
-}
-
 Tuple AABB::get_min() const{    return std::move(GenPoint(get_min_x(),get_min_y(),get_min_z()));}
 Tuple AABB::get_max() const{    return std::move(GenPoint(get_max_x(),get_max_y(),get_max_z()));}
-Tuple AABB::get_mid() const{
-    return GenVec(bound_check(min_bounds[0], max_bounds[0]), bound_check(min_bounds[1], max_bounds[1]),bound_check(min_bounds[2], max_bounds[2]));
-}
 
 bool AABB::contains(const AABB& new_box) const{
     return contains(new_box.get_min()) && contains(new_box.get_max());
@@ -239,118 +220,53 @@ void AABB::collect_candidates(const Ray& r, std::vector<const Shape*>& candidate
     if (right) right->collect_candidates(r, candidates);
 }
 
-bool AABB::straddle(const AABB* new_box) const{
-    Tuple delta = this->get_max()-this->get_min();
-    double current_max = NEG_INFTY;
-    int index = -1;
-    for(int i=0; i<3; ++i){
-        if(delta[i] > current_max){
-            current_max=  delta[i];
-            index = i;
-        }
-    }
-    auto middle = this->get_mid();
-    double x = middle.get_x();
-    double y = middle.get_y();
-    double z = middle.get_z();
-    if(index==0){
-        return (new_box->get_min_x()< x) && (x < new_box->get_max_x());
-    }
-    else if(index==1){
-        return  (new_box->get_min_y()< y) && (y < new_box->get_max_y());
-    }
-    else if(index==2){
-        return  (new_box->get_min_z()< z) && (z < new_box->get_max_z());
-    }
-    throw std::invalid_argument("Something went wrong in AABB::straddle");
-}
-
-void AABB::split(){
-    auto middle = this->get_mid();
-    Tuple delta = this->get_max()-this->get_min();
-    double current_max = NEG_INFTY;
-    int index = -1;
-    for(int i=0; i<3; ++i){
-        if(delta[i] > current_max){
-            current_max=  delta[i];
-            index = i;
-        }
-    }
-    Tuple left_max;
-    Tuple right_min;
-// To split box, divide, split along largest axis, and get the new min and max of left and right
-// The largest axis coordinate gets replaced by the corresponding middle coordinate, while the others get replaced by the min/max
-    if(index==0){
-        left_max = GenPoint(middle.get_x(),this->get_max_y(), this->get_max_z());
-        right_min = GenPoint(middle.get_x(), this->get_min_y(), this->get_min_z());
-    }
-    else if(index==1){
-        left_max = GenPoint(this->get_max_x(),middle.get_y(), this->get_max_z());
-        right_min = GenPoint(this->get_min_x(), middle.get_y(), this->get_min_z());
-    }
-    else if(index==2){
-        left_max = GenPoint(this->get_max_x(),this->get_max_y(), middle.get_z());
-        right_min = GenPoint(this->get_min_x(), this->get_min_y(), middle.get_z());
-    }
-    else{
-        throw std::invalid_argument("Something went horribly wrong when spliting");
-    }
-// assign left and right bounding box
-    this->left = std::make_unique<AABB>(this->get_min(), left_max);
-    this->right = std::make_unique<AABB>(right_min, this->get_max());
-}
-
-
-bool AABB::insert(std::unique_ptr<AABB>& new_box, unsigned int depth, unsigned int max_depth){
-// box needs to be big enough to hold new_box. If the box is not big enough, don't change the state of the current box
-// for recursive calls, prevents too-big boxes from affecting the state of the current box
-    if(!this->contains(*new_box.get())){
-        return false;
-    }
-    if(depth >= max_depth){
-        center.push_back(std::move(new_box));
-        return true;
-    }
-    ++depth;
-// If the box is small enough, and straddles  the center, you can't really assign it to either left or right
-// Hence, run through vector of center boxes.
-// If it does fit a box, then recurse on said box, and when stack eventually unwinds, return immediately
-    if(straddle(new_box.get())){
-        for(unsigned int i=0; i<center.size(); ++i){
-            bool is_hit = center[i]->contains(*new_box.get());
-            if(is_hit){
-                center[i]->insert(new_box,depth, max_depth);
-                return true;
-            }
-        }
-// If you got here, then the new_box doesn't fit in any of the present sub boxes. Add to vector, then return
-        center.push_back(std::move(new_box));
-        return true;
-    }
-    else{
-// OK. The box doesn't go in the center. Check if both left and right are nullptr (having only one be null shouldn't happen with this setup?)
-// If both  are nullptr, then split the current box in half
-        if(this->left==nullptr && this->right==nullptr){
-            split();
-        }
-//  Split(). Not to Split(). In either case, you can then recurse on both halves
-        if((this->left!=nullptr) && (this->right !=nullptr)){
-            bool inside_left = this->left->insert(new_box,depth, max_depth);
-            if (!inside_left){ // check if left took ownership. If it did not, box must go in right
-                this->right->insert(new_box,depth, max_depth);
-            }
-            return true;
-        }
-        throw std::invalid_argument("Both right and left should be set in insert...");
-    }
-// assuming you got here, this means that the box doesn't fit in the center, left, or right groups.
-// Also, due to the first contains call, we know the new_box fits in the current, so it must be in one of the groups
-// What the above means is that something went horribly wrong for you to arrive here...
-    throw std::invalid_argument("Something went horrible wrong in AABB::insert");
-}
-
 std::ostream& operator << (std::ostream &out, const AABB& other){
     out << other.get_min() << std::endl;
     out << other.get_max() << std::endl;
     return out;
+}
+
+std::unique_ptr<AABB> AABB::build_bvh(std::vector<std::unique_ptr<AABB>> boxes){
+    if(boxes.empty()){return nullptr;}
+    return build_range(boxes, 0, boxes.size());
+}
+
+// Builds the node for boxes[begin, end). Only ever looks at those boxes, and reorders them in place.
+std::unique_ptr<AABB> AABB::build_range(std::vector<std::unique_ptr<AABB>>& boxes, size_t begin, size_t end){
+    const size_t count = end - begin;
+    if(count == 1){return std::move(boxes[begin]);}   
+
+    auto node = std::make_unique<AABB>();
+    for(size_t i = begin; i < end; ++i){node->expand_box(boxes[i].get());}
+    if(count <= MAX_LEAF_OBJECTS){
+        for(size_t i = begin; i < end; ++i){node->center.push_back(std::move(boxes[i]));}
+        return node;
+    }
+
+    // Split along the axis where the objects' centre points are most spread out. Centres, not
+    // box extents, so a few huge objects can't skew the choice.
+    auto centre = [](const AABB& b, int axis){return 0.5 * (b.min_bounds[axis] + b.max_bounds[axis]);};
+    std::array<double,3> lo = {INFTY, INFTY, INFTY}, hi = {NEG_INFTY, NEG_INFTY, NEG_INFTY};
+    for(size_t i = begin; i < end; ++i){
+        for(int axis = 0; axis < 3; ++axis){
+            lo[axis] = std::min(lo[axis], centre(*boxes[i], axis));
+            hi[axis] = std::max(hi[axis], centre(*boxes[i], axis));
+        }
+    }
+    int axis = 0;
+    for(int a = 1; a < 3; ++a){
+        if(hi[a] - lo[a] > hi[axis] - lo[axis]){axis = a;}
+    }
+
+    // Split by count at the median, not by space at the midpoint: both halves are always
+    // non-empty, even if many centres coincide, so the recursion always terminates.
+    // nth_element puts the median in place and partitions around it in linear time.
+    const size_t mid = begin + count / 2;
+    std::nth_element(boxes.begin() + begin, boxes.begin() + mid, boxes.begin() + end,
+                     [&](const std::unique_ptr<AABB>& a, const std::unique_ptr<AABB>& b){
+                         return centre(*a, axis) < centre(*b, axis);
+                     });
+    node->left = build_range(boxes, begin, mid);
+    node->right = build_range(boxes, mid, end);
+    return node;
 }

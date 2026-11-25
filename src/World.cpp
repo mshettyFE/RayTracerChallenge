@@ -52,16 +52,7 @@ void World::build_bvh() const {
         collect_primitives(shape.get(), bounded_boxes, unbounded_shapes);
     }
 
-    if (!bounded_boxes.empty()) {
-        auto root_box = std::make_unique<AABB>();
-        for (auto const& bbox : bounded_boxes) {
-            root_box->expand_box(bbox.get());
-        }
-        for (auto& bbox : bounded_boxes) {
-            root_box->insert(bbox);
-        }
-        bvh_cache = std::move(root_box);
-    }
+    bvh_cache = AABB::build_bvh(std::move(bounded_boxes));   // nullptr if nothing is bounded
 
     bvh_built = true;
 }
