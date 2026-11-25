@@ -20,9 +20,12 @@ class Tuple{
 
   public:
     // Constructors
-    // Defaults to internally being Vectors unless constructed as Point
+    // Defaults to internally being TupType::VECTOR unless constructed as Point
     // The zero vector.
     Tuple();
+    // Direct construction from coordinates, without the initializer_list size check and loop.
+    Tuple(double x, double y, double z, TupType a_type=TupType::VECTOR)
+      : data{x, y, z, static_cast<double>(a_type)}{}
     // args must be exactly 3 coordinates (x, y, z); throws otherwise.
     Tuple(std::initializer_list<double> args,  const TupType a_type=TupType::VECTOR);
     Tuple(std::vector<double> args,  const TupType a_type=TupType::VECTOR);
@@ -31,16 +34,16 @@ class Tuple{
     bool operator==(const Tuple& other) const;
     bool operator!=(const Tuple& other) const;
 
-    Tuple operator+=(const Tuple& other);
+    Tuple& operator+=(const Tuple& other);
     Tuple operator+(const Tuple& other) const;
 
-    Tuple operator-=(const Tuple& other);
+    Tuple& operator-=(const Tuple& other);
     Tuple operator-(const Tuple& other) const;
 
     double operator[](int index) const;
 
     // negation
-    Tuple operator-();
+    Tuple operator-() const;
 
     // templated overloads need to be in header to be in same translation unit
     template <  typename T>

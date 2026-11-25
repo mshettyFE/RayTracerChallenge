@@ -58,7 +58,7 @@ public:
     std::string get_name() const;
 
     void set_material(Material new_mat);
-    Material get_material() const;
+    const Material& get_material() const{return mat;}
     unsigned long get_id() const;
 
     const Shape* get_parent() const;

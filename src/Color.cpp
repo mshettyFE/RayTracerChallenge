@@ -2,20 +2,11 @@
 #include <stdexcept>
 #include <cmath>
 
-Color::Color(){
-    data = {0, 0, 0, TupType::VECTOR};
-}
+Color::Color() : Tuple(0, 0, 0){}
 
-Color::Color(double red, double green, double blue){
-    data = {red, green, blue, TupType::VECTOR};
-}
+Color::Color(double red, double green, double blue) : Tuple(red, green, blue){}
 
-Color::Color(int hex){
-    double red = RED_CHANNEL(hex);
-    double green = GREEN_CHANNEL(hex);
-    double blue = BLUE_CHANNEL(hex);
-    data = {red/255.0, green/255.0, blue/255.0, TupType::VECTOR};
-}
+Color::Color(int hex) : Tuple(RED_CHANNEL(hex)/255.0, GREEN_CHANNEL(hex)/255.0, BLUE_CHANNEL(hex)/255.0){}
 
 
 const double Color::get_red() const {return data[0];}

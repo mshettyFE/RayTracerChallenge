@@ -1,27 +1,18 @@
 #include "Ray.h"
 #include <stdexcept>
 
-Ray::Ray(Tuple a_origin, Tuple a_direction){
-    if(a_origin.type() != TupType::POINT){
+Ray::Ray(const Tuple& a_origin, const Tuple& a_direction) : origin(a_origin), direction(a_direction){
+    if(origin.type() != TupType::POINT){
         throw std::invalid_argument("Ray Origin is not a point");
     }
-    if(a_direction.type() != TupType::VECTOR){
+    if(direction.type() != TupType::VECTOR){
         throw std::invalid_argument("Ray Direction is not a vector");
     }
-    origin = a_origin;
-    direction = a_direction;
 }
 
-Ray::Ray(std::initializer_list<double> a_origin, std::initializer_list<double> a_direction){
-    if(a_origin.size() != 3){
-        throw std::invalid_argument("Ray origin is not of length 3");
-    }
-    if(a_direction.size() != 3){
-        throw std::invalid_argument("Ray direction is not of length 3");
-    }
-    origin = Tuple(a_origin, TupType::POINT);
-    direction = Tuple(a_direction, TupType::VECTOR);
-}
+// The Tuple constructor rejects lists that aren't exactly 3 coordinates.
+Ray::Ray(std::initializer_list<double> a_origin, std::initializer_list<double> a_direction)
+    : origin(a_origin, TupType::POINT), direction(a_direction, TupType::VECTOR){}
 
 bool Ray::operator==(const Ray& other) const{
     return (this->origin ==other.origin) && (this->direction == other.direction);
@@ -31,8 +22,6 @@ bool Ray::operator!=(const Ray& other) const{
     return !v;
 }
 
-Tuple Ray::get_origin() const{return origin;};
-Tuple Ray::get_direction() const{return direction;};
 
 
 Tuple Ray::position(double t) const{

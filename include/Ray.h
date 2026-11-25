@@ -9,11 +9,13 @@ class Ray{
         Tuple origin; // Must be a Point
         Tuple direction; // Must be a Direction
     public:
-        Ray(Tuple a_origin, Tuple a_direction);
+        // a_origin must be a point and a_direction a vector; throws otherwise.
+        Ray(const Tuple& a_origin, const Tuple& a_direction);
+        // Each list must be exactly 3 coordinates; throws otherwise.
         Ray(std::initializer_list<double> a_origin, std::initializer_list<double> a_direction);
 
-        Tuple get_origin() const;
-        Tuple get_direction() const;
+        const Tuple& get_origin() const{return origin;}
+        const Tuple& get_direction() const{return direction;}
 
 
         bool operator==(const Ray& other) const;

@@ -3,16 +3,8 @@
 #include <set>
 #include <stdexcept>
 
-Shape::Shape(const Matrix& Transformation, const Material& material, const Shape* parent, std::string name){
-    if (Transformation.get_dim() != 4){
-        throw std::invalid_argument("Invalid Transformation Matrix");
-    }
-    mat = material;
-    this->parent = parent;
-    id = GlobalID;
-    GlobalID += 1;
-    this->name = name;
-    this->Transformation = Transformation;
+Shape::Shape(const Matrix& Transformation, const Material& material, const Shape* parent, std::string name)
+    : Transformation(Transformation), id(GlobalID++), mat(material), parent(parent), name(std::move(name)){
     update_world_transform();
 }
 
@@ -89,7 +81,6 @@ void Shape::set_material(Material new_mat){
     this->mat = new_mat;
 }
 
-Material Shape::get_material() const{return mat;}
 
 const Shape* Shape::get_parent() const{
     return this->parent;

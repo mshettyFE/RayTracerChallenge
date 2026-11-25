@@ -51,7 +51,7 @@ bool Tuple::operator!=(const Tuple& other) const {
 }
 
 
-Tuple Tuple::operator+=(const Tuple& other){
+Tuple& Tuple::operator+=(const Tuple& other){
   // Remember that this->dim represents the number of physical dimensions. The true length of data is dim+1.
   // Hence, the index of the last element (the w component) is dim
   if(is_same(this->type(),TupType::POINT) && is_same(other.type(),TupType::POINT)){
@@ -74,7 +74,7 @@ Tuple Tuple::operator+(const Tuple& other) const{
   return out;
 }
 
-Tuple Tuple::operator-=(const Tuple& other){
+Tuple& Tuple::operator-=(const Tuple& other){
   for(unsigned int i=0; i< this->data.size(); ++i){
     this->data[i] -= other.data[i];
   }
@@ -99,7 +99,7 @@ double Tuple::operator[](int index) const{
     return data[index];
 }
 
-Tuple Tuple::operator-(){
+Tuple Tuple::operator-() const{
   Tuple out = *this;
   for(int i=0; i< this->dim; ++i){
     out.data[i] = -out.data[i];
@@ -205,5 +205,5 @@ Tuple Tuple::reflect(const Tuple& normal) const{
   return *this-normal*2*this->dot(normal); // Subtracts of twice the component in the same direction of normal from the input
 }
 
-Tuple GenVec(double x,double y,double z){return Tuple({x,y,z},TupType::VECTOR);};
-Tuple GenPoint(double x,double y,double z){return Tuple({x,y,z},TupType::POINT);};
+Tuple GenVec(double x,double y,double z){return Tuple(x, y, z, TupType::VECTOR);}
+Tuple GenPoint(double x,double y,double z){return Tuple(x, y, z, TupType::POINT);}
