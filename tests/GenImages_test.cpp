@@ -9,6 +9,7 @@
 #include "Checkers.h"
 #include "OBJParser.h"
 #include "Cube.h"
+#include "Mandelbulb.h"
 #include <random>
 #include <vector>
 #include <tuple>
@@ -587,4 +588,24 @@ TEST(GenImage, CoverImage){
     w.add_shape(std::make_unique<Cube>(std::move(c19)));
     std::unique_ptr<Canvas> img = c.render(&w);
     img->save_ppm("Cover");
+}
+// A gold Mandelbulb, pole pointing up, over a reflective checkerboard.
+static std::unique_ptr<Canvas> render_mandelbulb_scene(int width, int height){
+    World w;
+    Material floor_mat(0.1, 0.8, 0.2, 100.0, WHITE, 0.25, 0.0, 1.0,
+                       std::make_shared<Checkers>(Color({0.15,0.15,0.2}), Color({0.85,0.85,0.9}), MatScaling(0.5,0.5,0.5)));
+    w.add_shape(std::make_unique<Plane>(MatIdentity(4), floor_mat));
+
+    Material gold(0.15, 0.75, 0.6, 60.0, Color({1.0, 0.72, 0.25}));
+    gold.set_reflectance(0.15);
+    // The bulb's symmetry axis is object-space z; rotate it to point up, then lift it off the floor.
+    w.add_shape(std::make_unique<Mandelbulb>(MatTranslation(0, 1.55, 0) * MatScaling(1.5, 1.5, 1.5) * MatRotateX(-pi/2), gold));
+
+    w.add_source(std::make_unique<PointSource>(WHITE, Tuple({-6, 9, -7}, TupType::POINT)));
+    Camera cam(width, height, pi/3.0, Tuple({0, 2.6, -5.2}, TupType::POINT), Tuple({0, 1.3, 0}, TupType::POINT), Tuple({0, 1, 0}));
+    return cam.render(&w);
+}
+
+TEST(GenImage, Mandelbulb){
+    render_mandelbulb_scene(400, 300)->save_ppm("Mandelbulb");
 }
