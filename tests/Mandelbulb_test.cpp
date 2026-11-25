@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <cmath>
+#include <random>
 #include "Mandelbulb.h"
 #include "Constants.h"
 
@@ -79,4 +80,18 @@ TEST(Mandelbulb, NoSelfHitLeavingSurface){
     Tuple n = mb.normal_at(p);
     Tuple over = p + n * glob_resolution;
     EXPECT_TRUE(mb.intersect(Ray(over, n)).empty());
+}
+
+TEST(Mandelbulb, TrigFreeEstimateMatchesTrigFormula){
+    std::mt19937 g(7);
+    std::uniform_real_distribution<double> u(-1.3, 1.3);
+    for(double power : {2.0, 4.0, 8.0}){
+        Mandelbulb mb(MatIdentity(4), Material(), nullptr, power);
+        for(int i = 0; i < 20000; ++i){
+            double x = u(g), y = u(g), z = u(g);
+            if(i % 100 == 0){x = 0; y = 0;}
+            ASSERT_NEAR(mb.distance_estimate(x, y, z), mb.distance_estimate_trig(x, y, z), 1e-9)
+                << "power " << power << " at " << x << ", " << y << ", " << z;
+        }
+    }
 }
