@@ -8,6 +8,7 @@
 #include "Shape.h"
 #include "PointSource.h"
 #include "LightSource.h"
+#include "Plane.h"
 #include "World.h"
 
 TEST(CameraTests, ViewTransformations){
@@ -85,11 +86,27 @@ TEST(CameraTests, Render){
 TEST(CameraTest, TiledRenderMatchesSingleThread){
     auto wrd = default_world();
     Camera cam(37, 23, pi/2.0, Tuple({0,0,-5}, TupType::POINT), Tuple({0,0,0}, TupType::POINT), Tuple({0,1,0}));
-    auto single = cam.render(wrd.get(), 20, 1, 1000);
-    auto tiled = cam.render(wrd.get(), 20, 8, 7);
+    auto single = cam.render(wrd.get(), 5, 1, 1000);
+    auto tiled = cam.render(wrd.get(), 5, 8, 7);
     for(int y=0; y<23; ++y){
         for(int x=0; x<37; ++x){
             ASSERT_EQ((*single)(x,y), (*tiled)(x,y)) << "pixel " << x << "," << y;
         }
     }
+}
+
+// render()'s max_depth must reach World::color_at: a pixel that sees a reflection should match
+// color_at called directly with the same depth, and depth 0 (no reflections) must differ.
+TEST(CameraTest, RenderPassesMaxDepthToColorAt){
+    auto wrd = default_world();
+    Material mirror;
+    mirror.set_reflectance(0.5);
+    wrd->add_shape(std::make_unique<Plane>(MatTranslation(0, -1, 0), mirror));
+    // Looking down at 45 degrees from (0,0,-3): the centre ray hits the floor and reflects up.
+    Camera cam(1, 1, pi/2.0, Tuple({0, 0, -3}, TupType::POINT), Tuple({0, -1, -2}, TupType::POINT), Tuple({0, 1, 0}));
+    const Ray centre = cam.ray_for_pixel(0, 0);
+    for(unsigned int depth : {0u, 1u, 5u}){
+        EXPECT_EQ((*cam.render(wrd.get(), depth, 1, 16, false))(0, 0), wrd->color_at(centre, depth)) << "depth " << depth;
+    }
+    EXPECT_NE((*cam.render(wrd.get(), 0, 1, 16, false))(0, 0), (*cam.render(wrd.get(), 5, 1, 16, false))(0, 0));
 }

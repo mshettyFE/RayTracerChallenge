@@ -68,7 +68,7 @@ static int run_in_terminal(World& world){
         if(width < 1 || height < 2){continue;}
 
         const auto start = std::chrono::steady_clock::now();
-        auto image = fly.make_camera(width, height, FIELD_OF_VIEW).render(&world, 20, 0, TERMINAL_TILE_SIZE, false);
+        auto image = fly.make_camera(width, height, FIELD_OF_VIEW).render(&world, 5, 0, TERMINAL_TILE_SIZE, false);
         const double ms = std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - start).count();
 
         char status[160];

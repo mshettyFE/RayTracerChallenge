@@ -160,10 +160,10 @@ Ray Camera::ray_for_pixel(int px, int py) const{
     return Ray(origin, direction);
 }
 
-void Camera::render_tile(const World* w, Canvas& image, int x0, int y0, int x1, int y1) const{
+void Camera::render_tile(const World* w, Canvas& image, int x0, int y0, int x1, int y1, unsigned int max_depth) const{
     for(int y = y0; y < y1; ++y){
         for(int x = x0; x < x1; ++x){
-            image.write_pixel(x, y, w->color_at(ray_for_pixel(x, y)));
+            image.write_pixel(x, y, w->color_at(ray_for_pixel(x, y), max_depth));
         }
     }
 }
@@ -188,14 +188,14 @@ std::unique_ptr<Canvas> Camera::render(World* w, unsigned int max_depth, unsigne
     // Each worker grabs the next unrendered tile until none are left. Tiles never overlap,
     // so every pixel is written by exactly one thread and the canvas needs no locking.
     // Shared state is captured by reference (canvas, next_tile).
-    auto worker = [this, w, &canvas, &next_tile, tiles_x, n_tiles, tile_size]{
+    auto worker = [this, w, &canvas, &next_tile, tiles_x, n_tiles, tile_size, max_depth]{
         thread_rays = 0;
         while(true){
             const int t = next_tile.fetch_add(1);
             if(t >= n_tiles){ break; }
             const int x0 = (t % tiles_x) * tile_size;
             const int y0 = (t / tiles_x) * tile_size;
-            render_tile(w, canvas, x0, y0, std::min(x0 + tile_size, this->hsize), std::min(y0 + tile_size, this->vsize));
+            render_tile(w, canvas, x0, y0, std::min(x0 + tile_size, this->hsize), std::min(y0 + tile_size, this->vsize), max_depth);
         }
         total_rays += thread_rays;
     };

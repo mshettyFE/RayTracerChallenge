@@ -20,7 +20,7 @@ private:
     double half_height;
     Matrix view_trans;
     // Renders pixels [x0, x1) x [y0, y1) into image. Safe to call concurrently for non-overlapping tiles.
-    void render_tile(const World* w, Canvas& image, int x0, int y0, int x1, int y1) const;
+    void render_tile(const World* w, Canvas& image, int x0, int y0, int x1, int y1, unsigned int max_depth) const;
 public:
     // Total rays cast by the last render(). 
     static inline std::atomic<unsigned long long> total_rays{0};
@@ -45,9 +45,11 @@ public:
     Ray ray_for_pixel(int x, int y) const;
 
     // Renders in tile_size x tile_size tiles handed out to worker threads on demand.
+    // max_depth: how many reflection/refraction bounces each pixel may follow (World::color_at's
+    // "remaining"); 0 means no reflections or refraction. Lower is faster.
     // num_threads = 0 uses one thread per hardware core. verbose = false suppresses the
     // progress output (needed when the terminal itself is the display).
-    std::unique_ptr<Canvas> render(World* w, unsigned int depth =20, unsigned int num_threads = 0, int tile_size = 16, bool verbose = true);
+    std::unique_ptr<Canvas> render(World* w, unsigned int max_depth = 5, unsigned int num_threads = 0, int tile_size = 16, bool verbose = true);
 
     bool operator==(const Camera& other) const;
     bool operator!=(const Camera& other) const;
