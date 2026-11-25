@@ -7,6 +7,7 @@ cc_library(
     hdrs = glob(["include/*.h"]),
     includes = ["include"],
     copts = ["-Wall"], # Equivalent to your GCC_COVERAGE_COMPILE_FLAGS
+    linkopts = ["-pthread"],
 )
 
 # 2. The Main Executable (Your "Tracer" app)

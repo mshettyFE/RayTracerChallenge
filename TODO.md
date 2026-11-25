@@ -1,5 +1,4 @@
 # Major
-* Bounding box Hierarchy (for faster rendering)
 
 ## Minor
 * Cone Primitive

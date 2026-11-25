@@ -4,6 +4,9 @@
 #include "Constants.h"
 #include <stdexcept>
 #include <cmath>
+#include <algorithm>
+#include <thread>
+#include <vector>
 
 Camera::Camera(int hsize, int vsize, double field_of_view){
     if(hsize <=0){
@@ -157,19 +160,58 @@ Ray Camera::ray_for_pixel(int px, int py) const{
     return Ray(origin, direction);
 }
 
-std::unique_ptr<Canvas> Camera::render(World* w, unsigned int max_depth ){
-    w->build_bvh();
-    std::cout << "BVH Initialized" << std::endl;
-    total_rays=0;
-    auto image = std::make_unique<Canvas>(this->hsize, this->vsize);
-    for(int y=0; y<this->vsize; ++y){
-        for(int x=0; x<this->hsize; ++x){
-            Ray r = ray_for_pixel(x,y);
-            Color c = w->color_at(r);
-            image->write_pixel(x,y,c);
+void Camera::render_tile(const World* w, Canvas& image, int x0, int y0, int x1, int y1) const{
+    for(int y = y0; y < y1; ++y){
+        for(int x = x0; x < x1; ++x){
+            image.write_pixel(x, y, w->color_at(ray_for_pixel(x, y)));
         }
     }
-    std::cout << "Total Rays Created: " << Camera::total_rays << std::endl;
+}
+
+std::unique_ptr<Canvas> Camera::render(World* w, unsigned int max_depth, unsigned int num_threads, int tile_size){
+    if(tile_size <= 0){
+        throw std::invalid_argument("tile_size must be positive");
+    }
+    // Must happen before any threads start: building the BVH writes to the World, and the
+    // workers only read from it.
+    w->build_bvh();
+    std::cout << "BVH Initialized" << std::endl;
+    total_rays = 0;
+    auto image = std::make_unique<Canvas>(this->hsize, this->vsize);
+    Canvas& canvas = *image;
+
+    const int tiles_x = (this->hsize + tile_size - 1) / tile_size;
+    const int tiles_y = (this->vsize + tile_size - 1) / tile_size;
+    const int n_tiles = tiles_x * tiles_y;
+    std::atomic<int> next_tile{0};
+
+    // Each worker grabs the next unrendered tile until none are left. Tiles never overlap,
+    // so every pixel is written by exactly one thread and the canvas needs no locking.
+    // Shared state is captured by reference (canvas, next_tile).
+    auto worker = [this, w, &canvas, &next_tile, tiles_x, n_tiles, tile_size]{
+        thread_rays = 0;
+        while(true){
+            const int t = next_tile.fetch_add(1);
+            if(t >= n_tiles){ break; }
+            const int x0 = (t % tiles_x) * tile_size;
+            const int y0 = (t / tiles_x) * tile_size;
+            render_tile(w, canvas, x0, y0, std::min(x0 + tile_size, this->hsize), std::min(y0 + tile_size, this->vsize));
+        }
+        total_rays += thread_rays;
+    };
+
+    unsigned int threads = num_threads > 0 ? num_threads : std::max(1u, std::thread::hardware_concurrency());
+    threads = std::min(threads, static_cast<unsigned int>(n_tiles));
+    std::vector<std::thread> pool;
+    pool.reserve(threads);
+    for(unsigned int i = 0; i < threads; ++i){
+        pool.emplace_back(worker);
+    }
+    for(auto& th : pool){
+        th.join();
+    }
+
+    std::cout << "Rendered " << n_tiles << " tiles on " << threads << " threads. Total Rays Created: " << total_rays << std::endl;
     return image;
 }
 

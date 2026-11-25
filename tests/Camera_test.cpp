@@ -79,3 +79,17 @@ TEST(CameraTests, Render){
     std::unique_ptr<Canvas> img2 = cam.render(wrd.get());
     EXPECT_EQ((*img2)(5,5), Color({0.38066, 0.47583, 0.2855}));
 }
+
+// Threaded tiled render must match a single-threaded one pixel for pixel. Tile size 7 doesn't
+// divide the image, so the partial tiles on the right and bottom edges are exercised too.
+TEST(CameraTest, TiledRenderMatchesSingleThread){
+    auto wrd = default_world();
+    Camera cam(37, 23, pi/2.0, Tuple({0,0,-5}, TupType::POINT), Tuple({0,0,0}, TupType::POINT), Tuple({0,1,0}));
+    auto single = cam.render(wrd.get(), 20, 1, 1000);
+    auto tiled = cam.render(wrd.get(), 20, 8, 7);
+    for(int y=0; y<23; ++y){
+        for(int x=0; x<37; ++x){
+            ASSERT_EQ((*single)(x,y), (*tiled)(x,y)) << "pixel " << x << "," << y;
+        }
+    }
+}

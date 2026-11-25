@@ -6,6 +6,7 @@
 #include "Canvas.h"
 #include "Ray.h"
 #include "World.h"
+#include <atomic>
 #include <memory>
 
 class Camera{
@@ -18,8 +19,13 @@ private:
     double half_width;
     double half_height;
     Matrix view_trans;
+    // Renders pixels [x0, x1) x [y0, y1) into image. Safe to call concurrently for non-overlapping tiles.
+    void render_tile(const World* w, Canvas& image, int x0, int y0, int x1, int y1) const;
 public:
-    static inline unsigned long long total_rays=0;
+    // Total rays cast by the last render(). 
+    static inline std::atomic<unsigned long long> total_rays{0};
+    // thread local count of rays cast. Aggregate at end
+    static inline thread_local unsigned long long thread_rays = 0;
     Camera(int hsize, int vsize, double field_of_view);
     Camera(int hsize, int vsize, double field_of_view, const Tuple& camera_loc, const Tuple& pointed_at, const Tuple& upwards);
 
@@ -38,7 +44,9 @@ public:
 
     Ray ray_for_pixel(int x, int y) const;
 
-    std::unique_ptr<Canvas> render(World* w, unsigned int depth =20);
+    // Renders in tile_size x tile_size tiles handed out to worker threads on demand.
+    // num_threads = 0 uses one thread per hardware core.
+    std::unique_ptr<Canvas> render(World* w, unsigned int depth =20, unsigned int num_threads = 0, int tile_size = 16);
 
     bool operator==(const Camera& other) const;
     bool operator!=(const Camera& other) const;
