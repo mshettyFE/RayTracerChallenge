@@ -17,7 +17,7 @@
 #define GRAY Color(0.5,0.5,0.5)
 #define RED_CHANNEL(hex) ((hex >> 16)&0x0000FF)
 #define GREEN_CHANNEL(hex) ((hex >> 8)&0x0000FF)
-#define BLUE_CHANNEL(hex) hex & 0x0000FF
+#define BLUE_CHANNEL(hex) ((hex)&0x0000FF)
 
 class Color : public Tuple{
 
