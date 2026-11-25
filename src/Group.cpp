@@ -11,40 +11,15 @@ void Group::verbose_print() const{
     std::cout << this->get_material() << std::endl;
 }
 
-void Group::build_bvh() const {
-    if (bvh_built) return;
-    if (children.empty()) {
-        bvh_built = true;
-        return;
-    }
-    bvh_cache = bound();
-    bvh_built = true;
-}
-
+// Groups are flattened into World's BVH, so this is only hit when a Group is intersected directly.
+// Shape::intersect expects a world-space ray (it applies the aggregate transform), but `r` here is
+// already in this group's local space, so convert it back before handing it to the children.
 std::vector<Impact> Group::local_intersect(const Ray &r) const {
     if (children.empty()) return {};
-
-    if (!bvh_built) build_bvh();
-
-    if (bvh_cache) {
-        if (!bvh_cache->intersect(r)) return {};
-
-        std::vector<const Shape*> candidates;
-        bvh_cache->collect_candidates(r, candidates);
-
-        std::vector<Impact> out;
-        for (auto const* shape : candidates) {
-            for (auto hit : shape->intersect(r)) {
-                out.push_back(hit);
-            }
-        }
-        return out;
-    }
-
-    // Fallback: brute-force
+    Ray world_ray = r.transform(get_aggregate_transform());
     std::vector<Impact> out;
     for(auto const& child: children){
-        for(auto hit: child->intersect(r)){
+        for(auto hit: child->intersect(world_ray)){
             out.push_back(hit);
         }
     }
@@ -55,16 +30,18 @@ Tuple Group::local_normal_at(const Tuple& pt, const Impact& impt) const{
     throw std::invalid_argument("Group has no local normal");
 }
 
+// A single box (in group space) tagged with this group -- not a tree. If this returned a tree of
+// child boxes, a parent BVH would hand out the children as candidates, and their boxes would be
+// in the wrong space since AABB::transform only moves the root box.
 std::unique_ptr<AABB> Group::bound() const{
-    AABB output;
-    std::vector<std::unique_ptr<AABB>> boxes;
+    auto output = std::make_unique<AABB>();
     for(auto const& child: children){
         auto bbox = parent_space_bounds(child.get());
-        output.expand_box(bbox.get());
-        boxes.push_back(std::move(bbox));
+        if(!bbox->is_finite()){
+            return std::make_unique<AABB>(AABB({NEG_INFTY,NEG_INFTY,NEG_INFTY},{INFTY,INFTY,INFTY},this));
+        }
+        output->expand_box(bbox.get());
     }
-    for(unsigned int i=0; i<boxes.size(); ++i){
-        output.insert(boxes[i]);
-    }
-    return std::make_unique<AABB>(std::move(output));
+    output->set_shape(this);
+    return output;
 }

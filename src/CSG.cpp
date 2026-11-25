@@ -47,8 +47,11 @@ std::vector<Impact> CSG::filter_impacts(const std::vector<Impact>& hits) const{
 }
 
 std::vector<Impact> CSG::local_intersect(const Ray &other) const {
-    auto left_hits = get_left()->intersect(other);
-    auto right_hits = get_right()->intersect(other);
+    // Children's Shape::intersect expects a world-space ray;
+    // `other` is in CSG-local space.
+    Ray world_ray = other.transform(get_aggregate_transform());
+    auto left_hits = get_left()->intersect(world_ray);
+    auto right_hits = get_right()->intersect(world_ray);
     std::sort(left_hits.begin(), left_hits.end());
     std::sort(right_hits.begin(), right_hits.end());
     std::vector<Impact> all_hits(left_hits.size()+right_hits.size());
@@ -60,17 +63,17 @@ Tuple CSG::local_normal_at(const Tuple& pt, const Impact& impt) const{std::inval
 void CSG::verbose_print() const {}
 
 std::unique_ptr<AABB> CSG::bound() const{
-    AABB output;
-    output.set_shape(this);
-    std::vector<std::unique_ptr<AABB>> boxes;
+    // Single box tagged with the CSG. Must not contain child boxes, or a BVH would return the
+    // children as candidates directly and bypass filter_impacts.
+    auto output = std::make_unique<AABB>();
     for(auto const& child: children){
         auto bbox = parent_space_bounds(child.get());
-        output.expand_box(bbox.get());
-        boxes.push_back(std::move(bbox));
+        if(!bbox->is_finite()){
+            return std::make_unique<AABB>(AABB({NEG_INFTY,NEG_INFTY,NEG_INFTY},{INFTY,INFTY,INFTY},this));
+        }
+        output->expand_box(bbox.get());
     }
-    for(unsigned int i=0; i<boxes.size(); ++i){
-        output.insert(boxes[i]);
-    }
-    return std::make_unique<AABB>(std::move(output));
+    output->set_shape(this);
+    return output;
 }
  

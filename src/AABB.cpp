@@ -179,9 +179,24 @@ void AABB::expand_box(const AABB* new_box){
     add_point(new_box->get_max());
 }
 
+bool AABB::is_finite() const{
+    for(int i=0; i<3; ++i){
+        if(!std::isfinite(min_bounds[i]) || !std::isfinite(max_bounds[i])){return false;}
+    }
+    return true;
+}
+
+// Infinite boxes are left untransformed: transforming them computes 0*inf = NaN.
+// Callers check is_finite() and treat such shapes as unbounded.
 std::unique_ptr<AABB> parent_space_bounds(const Shape* shape){
     auto s = shape->bound();
-    s->transform(shape->get_transform());
+    if(s->is_finite()){s->transform(shape->get_transform());}
+    return s;
+}
+
+std::unique_ptr<AABB> world_space_bounds(const Shape* shape){
+    auto s = shape->bound();
+    if(s->is_finite()){s->transform(shape->get_aggregate_transform());}
     return s;
 }
 

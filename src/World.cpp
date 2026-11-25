@@ -8,6 +8,7 @@
 #include "Ray.h"
 #include "PointSource.h"
 #include "Camera.h"
+#include "Group.h"
 #include <algorithm>
 #include <vector>
 #include <memory>
@@ -20,24 +21,39 @@ int World::number_of_shapes() const{
     return shapes.size();
 }
 
+// Groups are flattened: their leaves go straight into the world BVH with world-space boxes.
+// That works because Shape::intersect takes a world-space ray (it applies the aggregate transform).
+// CSGs are kept as single leaves so their hit filtering still runs.
+static void collect_primitives(const Shape* shape,
+                               std::vector<std::unique_ptr<AABB>>& bounded,
+                               std::vector<const Shape*>& unbounded){
+    if (dynamic_cast<const Group*>(shape) != nullptr) {
+        for (int i = 0; i < shape->get_total_children(); ++i) {
+            collect_primitives(shape->get_child(i), bounded, unbounded);
+        }
+        return;
+    }
+    auto bbox = world_space_bounds(shape);
+    if (bbox->is_finite()) {
+        bounded.push_back(std::move(bbox));
+    } else {
+        unbounded.push_back(shape);
+    }
+}
+
 void World::build_bvh() const {
     if (bvh_built) return;
 
     unbounded_shapes.clear();
+    bvh_cache.reset();
     AABB root_box;
     std::vector<std::unique_ptr<AABB>> bounded_boxes;
 
     for (auto const& shape : shapes) {
-        auto bbox = parent_space_bounds(shape.get());
-        bool is_unbounded = (bbox->get_min_x() <= NEG_INFTY || bbox->get_max_x() >= INFTY ||
-                             bbox->get_min_y() <= NEG_INFTY || bbox->get_max_y() >= INFTY ||
-                             bbox->get_min_z() <= NEG_INFTY || bbox->get_max_z() >= INFTY);
-        if (is_unbounded) {
-            unbounded_shapes.push_back(shape.get());
-        } else {
-            root_box.expand_box(bbox.get());
-            bounded_boxes.push_back(std::move(bbox));
-        }
+        collect_primitives(shape.get(), bounded_boxes, unbounded_shapes);
+    }
+    for (auto const& bbox : bounded_boxes) {
+        root_box.expand_box(bbox.get());
     }
 
     if (!bounded_boxes.empty()) {

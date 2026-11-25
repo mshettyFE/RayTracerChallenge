@@ -89,10 +89,15 @@ public:
 
     double bound_check(double min, double max) const;
 
+    // True if all six bounds are finite (false for planes, empty boxes, and NaN from transforming infinities)
+    bool is_finite() const;
+
     friend std::ostream& operator << (std::ostream &out, const AABB& other);
 
 };
 
 std::unique_ptr<AABB> parent_space_bounds(const Shape* shape);
+// Bounds of shape in world space (applies the full parent chain, matching Shape::intersect)
+std::unique_ptr<AABB> world_space_bounds(const Shape* shape);
 
 #endif
