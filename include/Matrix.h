@@ -44,7 +44,7 @@ class Matrix{
         void scale(int row, double scaling);
 
         // Operator overloads for convinience
-        double operator()(unsigned int row, unsigned int col) const;
+        double operator()(unsigned int row, unsigned int col) const{return data[get_index(row, col)];}
         bool operator==(const Matrix& other) const;
         bool operator!=(const Matrix& other) const;
         Matrix operator*(const Matrix& other) const;

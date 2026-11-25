@@ -108,30 +108,6 @@ Tuple Tuple::operator-() const{
 }
 
 
-void Tuple::normalize(){
-  // normalize physical dimensions (ie. leave last entry of data alone)
-  double scaling = L2Norm();
-  scaling = pow(scaling, 0.5);
-  for(int i=0; i< this->dim; ++i){
-    if(scaling< glob_resolution){
-      this->data[i] = 0;
-    }
-    else{
-      this->data[i] = this->data[i]/scaling;
-    }
-  }
-}
-
-double Tuple::L2Norm() const{
-  // Return L2Norm
-  double scaling = 0.0;
-  for(int i=0; i< this->dim; ++i){
-    double d = this->data[i];
-    scaling += d*d;
-  }
-  return scaling;
-}
-
 double Tuple::dot(const Tuple& other) const{
   double tally = 0.0;
   for(unsigned int i=0; i< this->data.size(); ++i){
@@ -168,36 +144,11 @@ bool Tuple::is_same(double one, double two) const{
   return false;
 }
 
-Tuple operator* (const Matrix& cur, const Tuple& other){
-    const int total_dims = Tuple::dim + 1;   // plus 1 for w 
-    Tuple out;
-    for(int i=0; i<cur.get_dim(); ++i){
-        double sum = 0.0;
-        for(int j=0; j< total_dims; ++j){
-            double new_add = other.data[j]*cur(i,j);
-            if(std::isnan(new_add)){
-              sum += 0;
-            }
-            else{
-              sum += new_add;
-            }
-        }
-        out.data[i]=  sum;
-    }
-    return out;
-}
-
 std::ostream& operator << (std::ostream &out, const Tuple& other){
   for(unsigned int i=0; i<other.data.size(); ++i){
     out << other.data[i] << " ";
   }
   out << '\n';
-  return out;
-}
-
-Tuple normalize(const Tuple& other){
-  Tuple out = other;
-  out.normalize();
   return out;
 }
 

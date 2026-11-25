@@ -35,10 +35,6 @@ int Matrix::get_dim() const{
     return dim;
 }
 
-double Matrix::operator() (unsigned int row, unsigned int col) const{
-    return data[get_index(row, col)];
-}
-
 bool Matrix::operator==(const Matrix& other) const{
     for(int i=0; i<other.dim; ++i){
         for(int j=0; j<other.dim; ++j){
