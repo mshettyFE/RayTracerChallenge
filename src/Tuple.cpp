@@ -6,45 +6,33 @@
 #include <iostream>
 #include <cmath>
 
-Tuple::Tuple(){
-  // Empty tuple
-  dim = 1;
-  data.push_back(0);
-  data.push_back(TupType::VECTOR);
-}
+Tuple::Tuple() : data{0, 0, 0, TupType::VECTOR}{}
 
 Tuple::Tuple(std::initializer_list<double> args, const TupType a_type){
-  for (double item: args){
-    data.push_back(item);
+  if(args.size() != dim){
+    throw std::invalid_argument("A Tuple needs exactly 3 coordinates");
   }
-  dim = data.size();
-  data.push_back(a_type);
+  int i = 0;
+  for (double item: args){
+    data[i++] = item;
+  }
+  data[dim] = a_type;
 }
 
 Tuple::Tuple(std::vector<double> args,  const TupType a_type){
-  for (double item: args){
-    data.push_back(item);
+  if(args.size() != dim){
+    throw std::invalid_argument("A Tuple needs exactly 3 coordinates");
   }
-  dim = data.size();
-  data.push_back(a_type);
-}
-
-
-Tuple::Tuple(unsigned int a_dim, const TupType a_type){
-  for(unsigned int i=0; i< a_dim; ++i){
-    data.push_back(0);
+  for(int i = 0; i < dim; ++i){
+    data[i] = args[i];
   }
-  dim = data.size();
-  data.push_back(a_type);
+  data[dim] = a_type;
 }
 
 double Tuple::get_dim() const{return dim;}
 
 
 bool Tuple::operator==(const Tuple& other) const {
-  if(this->data.size() != other.data.size()){
-    return false;
-  }
   for(unsigned int i=0; i< this->data.size(); ++i){
     if(!is_same(this->data[i], other.data[i])){
       return false;
@@ -54,9 +42,6 @@ bool Tuple::operator==(const Tuple& other) const {
 }
 
 bool Tuple::operator!=(const Tuple& other) const {
-  if(this->data.size() != other.data.size()){
-    return true;
-  }
   for(unsigned int i=0; i< this->data.size(); ++i){
     if(!is_same(this->data[i], other.data[i])){
       return true;
@@ -67,9 +52,6 @@ bool Tuple::operator!=(const Tuple& other) const {
 
 
 Tuple Tuple::operator+=(const Tuple& other){
-  if(this->data.size() != other.data.size()){
-    throw std::invalid_argument("Dimensions don't match");
-  }
   // Remember that this->dim represents the number of physical dimensions. The true length of data is dim+1.
   // Hence, the index of the last element (the w component) is dim
   if(is_same(this->type(),TupType::POINT) && is_same(other.type(),TupType::POINT)){
@@ -82,9 +64,6 @@ Tuple Tuple::operator+=(const Tuple& other){
 }
 
 Tuple Tuple::operator+(const Tuple& other) const{
-  if (this->data.size() != other.data.size()){
-    throw std::invalid_argument("Dimensions don't match");
-  }
   if(is_same(this->data[this->dim],TupType::POINT) && is_same(other.data[other.dim],TupType::POINT)){
     throw std::invalid_argument("Can't Add points together");
   }
@@ -96,9 +75,6 @@ Tuple Tuple::operator+(const Tuple& other) const{
 }
 
 Tuple Tuple::operator-=(const Tuple& other){
-  if(this->data.size() != other.data.size()){
-    throw std::invalid_argument("Dimensions don't match");
-  }
   for(unsigned int i=0; i< this->data.size(); ++i){
     this->data[i] -= other.data[i];
   }
@@ -106,9 +82,6 @@ Tuple Tuple::operator-=(const Tuple& other){
 }
 
 Tuple Tuple::operator-(const Tuple& other) const{
-  if (this->data.size() != other.data.size()){
-    throw std::invalid_argument("Dimensions don't match");
-  }
   Tuple out = *this;
   for(unsigned int i=0; i< other.data.size(); ++i){
     out.data[i] -= other.data[i];
@@ -160,9 +133,6 @@ double Tuple::L2Norm() const{
 }
 
 double Tuple::dot(const Tuple& other) const{
-  if (this->data.size() != other.data.size()){
-    throw std::invalid_argument("Dimensions don't match");
-  }
   double tally = 0.0;
   for(unsigned int i=0; i< this->data.size(); ++i){
     tally += this->data[i]*other.data[i];
@@ -171,12 +141,6 @@ double Tuple::dot(const Tuple& other) const{
 }
 
 Tuple Tuple::cross(const Tuple& other) const{
-    if (this->data.size() != other.data.size()){
-      throw std::invalid_argument("Dimensions don't match");
-    }
-    if(this->dim != 3){
-      throw std::invalid_argument("Dimensions must be 3");
-    }
     double cross_x = this->data[1]*other.data[2]-this->data[2]*other.data[1];
     double cross_y = this->data[2]*other.data[0]-this->data[0]*other.data[2];
     double cross_z = this->data[0]*other.data[1]-this->data[1]*other.data[0];
@@ -205,11 +169,8 @@ bool Tuple::is_same(double one, double two) const{
 }
 
 Tuple operator* (const Matrix& cur, const Tuple& other){
-    double total_dims = other.get_dim()+1;
-    if (total_dims != cur.get_dim()){
-        throw std::invalid_argument("matrix dimensions don't match");
-    }
-    Tuple out(other.get_dim());
+    const int total_dims = Tuple::dim + 1;   // plus 1 for w 
+    Tuple out;
     for(int i=0; i<cur.get_dim(); ++i){
         double sum = 0.0;
         for(int j=0; j< total_dims; ++j){

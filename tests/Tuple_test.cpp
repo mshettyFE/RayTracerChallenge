@@ -12,14 +12,15 @@ TEST(TupleTests, PointAndVector) {
 }
 
 TEST(TupleTests, TupleArithmetic){
-  Tuple a({3,-2,5,1}, TupType::POINT);
-  Tuple b({-2,3,1,0}, TupType::VECTOR);
-  Tuple c({1,1,6,1}, TupType::POINT);
+  // Tuples are always 3-D (x, y, z) plus the point/vector flag w.
+  Tuple a({3,-2,5}, TupType::POINT);
+  Tuple b({-2,3,1}, TupType::VECTOR);
+  Tuple c({1,1,6}, TupType::POINT);
   EXPECT_EQ(a+b,c);
   c = a+b;
   EXPECT_EQ(c.type(), TupType::POINT);
-  a = Tuple({3,-2,5,1}, TupType::VECTOR);
-  c = Tuple({1,1,6,1}, TupType::VECTOR);
+  a = Tuple({3,-2,5}, TupType::VECTOR);
+  c = Tuple({1,1,6}, TupType::VECTOR);
   a += b;
   EXPECT_EQ(a,c);
   EXPECT_EQ(a.type(), TupType::VECTOR);

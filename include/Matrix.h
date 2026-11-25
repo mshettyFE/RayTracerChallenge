@@ -6,23 +6,24 @@
 #include <type_traits>
 #include "Constants.h"
 #include <vector>
+#include <array>
 #include <stdexcept>
 
 class Matrix{
     protected:
-        // Tacitly assumes square matrices, since that is the only type of matrix I care about for Ray Tracing (I think...)
-        // hence, dim denotes a dimxdim matrix
-        int dim;
+        // Matrix only is for x,y,z,w transforms
+        static constexpr int dim = 4;
         double resolution;
         // utility function to check if two numbers are the same
         bool is_same(double one, double two) const;
         // Allow Tuple class direct access to protected members of Matrix
         friend class Tuple;
     public:
-        std::vector<double> data;
+        std::array<double, dim*dim> data{};
         Matrix();
+        // All zeros. dim must be 4. Will throw otherwise 
         Matrix(int dim, double resolution=glob_resolution);
-        // assumes row, column notation
+        // assumes row, column notation. Must be 4 rows of 4; throws otherwise.
         Matrix(std::initializer_list<std::initializer_list<double>> args, double a_resolution=glob_resolution);
 
         // Just like Canvas implementation

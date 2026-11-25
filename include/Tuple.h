@@ -2,6 +2,7 @@
 #define TUPLE_H
 
 #include <vector>
+#include <array>
 #include <iostream>
 #include <initializer_list>
 #include "Matrix.h"
@@ -9,10 +10,10 @@
 
 class Tuple{
   protected:
-// The number of physical dimensions. The actual number of coordinates stored is dim+1 to account for point/vector info
-    int dim;
-// place where data is stored. Size is dim+1. Last element is always either 0 (Vector) or 1 (Point)
-    std::vector<double> data;
+    // number of physical dimensions
+    static constexpr int dim = 3;
+// x, y, z, then w: always either 0 (Vector) or 1 (Point)
+    std::array<double, dim+1> data;
 
     bool is_same(double one, double two) const;
     friend class Matrix;
@@ -20,10 +21,11 @@ class Tuple{
   public:
     // Constructors
     // Defaults to internally being Vectors unless constructed as Point
+    // The zero vector.
     Tuple();
+    // args must be exactly 3 coordinates (x, y, z); throws otherwise.
     Tuple(std::initializer_list<double> args,  const TupType a_type=TupType::VECTOR);
     Tuple(std::vector<double> args,  const TupType a_type=TupType::VECTOR);
-    Tuple(unsigned int dim, const TupType a_type=TupType::VECTOR);
 
     // overloaded binary operators
     bool operator==(const Tuple& other) const;

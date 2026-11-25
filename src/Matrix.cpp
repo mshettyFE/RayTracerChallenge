@@ -3,35 +3,30 @@
 #include <cmath>
 
 Matrix::Matrix(){
-    dim = 1;
-    data.push_back(0.0);
     resolution  = glob_resolution;
 }
 
 Matrix::Matrix(int a_dim, double a_resolution){
-    if(a_dim<=0){
-        throw std::invalid_argument("Matrix dimension must be strictly positive");
+    if(a_dim != dim){
+        throw std::invalid_argument("Only 4x4 matrices are supported");
     }
     resolution = a_resolution;
-    dim = a_dim;
-    for(int i=0; i< a_dim; ++i){
-        for(int j=0; j<a_dim; ++j){
-            data.push_back(0);
-        }
-    }
 }
 
 Matrix::Matrix(std::initializer_list<std::initializer_list<double>> args, double a_resolution){
-    dim = args.size();
+    if(args.size() != dim){
+        throw std::invalid_argument("Initialization list must have 4 rows");
+    }
     for(auto row : args){
         if(row.size() != dim){
-            throw std::invalid_argument("Initialization list must have same number of columns as dim");
+            throw std::invalid_argument("Initialization list must have 4 columns per row");
         }
     }
     resolution = a_resolution;
+    int i = 0;
     for(auto row: args){
         for(auto entry: row){
-            data.push_back(entry);
+            data[i++] = entry;
         }
     }
 }
@@ -45,9 +40,6 @@ double Matrix::operator() (unsigned int row, unsigned int col) const{
 }
 
 bool Matrix::operator==(const Matrix& other) const{
-    if (other.dim != this->dim){
-        throw std::invalid_argument("matrix dimensions don't match");
-    }
     for(int i=0; i<other.dim; ++i){
         for(int j=0; j<other.dim; ++j){
             if(!is_same(this->data[get_index(i,j)], other(i,j))){
@@ -59,9 +51,6 @@ bool Matrix::operator==(const Matrix& other) const{
 }
 
 bool Matrix::operator!=(const Matrix& other) const{
-    if (other.dim != this->dim){
-        throw std::invalid_argument("matrix dimensions don't match");
-    }
     for(int i=0; i<other.dim; ++i){
         for(int j=0; j<other.dim; ++j){
             if(is_same(this->data[get_index(i,j)], other(i,j))){
@@ -73,9 +62,6 @@ bool Matrix::operator!=(const Matrix& other) const{
 }
 
 Matrix Matrix::operator*(const Matrix& other) const{
-    if (other.dim != this->dim){
-        throw std::invalid_argument("matrix dimensions don't match");
-    }
     Matrix out(other.dim);
     for(int i=0; i<this->dim; ++i){
         for(int j=0; j<other.dim; ++j){

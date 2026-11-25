@@ -3,33 +3,18 @@
 #include <cmath>
 
 Color::Color(){
-    data.clear();
-    data.push_back(0);
-    data.push_back(0);
-    data.push_back(0);
-    data.push_back(TupType::VECTOR);
-    dim = 3;
+    data = {0, 0, 0, TupType::VECTOR};
 }
 
 Color::Color(double red, double green, double blue){
-    data.clear();
-    data.push_back(red);
-    data.push_back(green);
-    data.push_back(blue);
-    data.push_back(TupType::VECTOR);
-    dim = 3;
+    data = {red, green, blue, TupType::VECTOR};
 }
 
 Color::Color(int hex){
-    data.clear();
     double red = RED_CHANNEL(hex);
     double green = GREEN_CHANNEL(hex);
     double blue = BLUE_CHANNEL(hex);
-    data.push_back(red/255.0);
-    data.push_back(green/255.0);
-    data.push_back(blue/255.0);
-    data.push_back(TupType::VECTOR);
-    dim = 3;
+    data = {red/255.0, green/255.0, blue/255.0, TupType::VECTOR};
 }
 
 
@@ -46,9 +31,6 @@ Color Color::operator-(const Color& other) const{
 }
 
 Color Color::operator*(const Color& other) const{
-    if((this->dim != other.dim) && (other.dim !=4)){
-        throw std::invalid_argument("Dimensions of color don't match");
-    }
     double r = this->data[0]*other.data[0];
     double g = this->data[1]*other.data[1];
     double b = this->data[2]*other.data[2];
