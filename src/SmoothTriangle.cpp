@@ -81,11 +81,11 @@ Tuple SmoothTriangle::local_normal_at(const Tuple& pt, const Impact& impt) const
 return this->n2 * impt.get_u() +this->n3 * impt.get_v() + this->n1 * (1 - impt.get_u() - impt.get_v());
 }
 
-std::unique_ptr<AABB> SmoothTriangle::bound() const{
-    auto output = std::make_unique<AABB>();
-    output->add_point(p1);
-    output->add_point(p2);
-    output->add_point(p3);
-    output->set_shape(this);
+AABB SmoothTriangle::bound() const{
+    AABB output;
+    output.add_point(p1);
+    output.add_point(p2);
+    output.add_point(p3);
+    output.set_shape(this);
     return output;
 }

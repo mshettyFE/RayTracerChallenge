@@ -33,15 +33,15 @@ Tuple Group::local_normal_at(const Tuple& pt, const Impact& impt) const{
 // A single box (in group space) tagged with this group -- not a tree. If this returned a tree of
 // child boxes, a parent BVH would hand out the children as candidates, and their boxes would be
 // in the wrong space since AABB::transform only moves the root box.
-std::unique_ptr<AABB> Group::bound() const{
-    auto output = std::make_unique<AABB>();
+AABB Group::bound() const{
+    AABB output;
     for(auto const& child: children){
-        auto bbox = parent_space_bounds(child.get());
-        if(!bbox->is_finite()){
-            return std::make_unique<AABB>(AABB({NEG_INFTY,NEG_INFTY,NEG_INFTY},{INFTY,INFTY,INFTY},this));
+        AABB bbox = parent_space_bounds(child.get());
+        if(!bbox.is_finite()){
+            return AABB({NEG_INFTY,NEG_INFTY,NEG_INFTY},{INFTY,INFTY,INFTY},this);
         }
-        output->expand_box(bbox.get());
+        output.expand_box(&bbox);
     }
-    output->set_shape(this);
+    output.set_shape(this);
     return output;
 }

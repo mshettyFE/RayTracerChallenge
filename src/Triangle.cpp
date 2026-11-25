@@ -34,12 +34,12 @@ Tuple Triangle::local_normal_at(const Tuple& pt, const Impact& impt) const {
     return this->normal; 
 }
 
-std::unique_ptr<AABB> Triangle::bound() const{
-    auto output = std::make_unique<AABB>();
-    output->add_point(p1);
-    output->add_point(p2);
-    output->add_point(p3);
-    output->set_shape(this);
+AABB Triangle::bound() const{
+    AABB output;
+    output.add_point(p1);
+    output.add_point(p2);
+    output.add_point(p3);
+    output.set_shape(this);
     return output;
 }
 

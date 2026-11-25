@@ -96,8 +96,8 @@ public:
 
 };
 
-std::unique_ptr<AABB> parent_space_bounds(const Shape* shape);
+AABB parent_space_bounds(const Shape* shape);
 // Bounds of shape in world space (applies the full parent chain, matching Shape::intersect)
-std::unique_ptr<AABB> world_space_bounds(const Shape* shape);
+AABB world_space_bounds(const Shape* shape);
 
 #endif

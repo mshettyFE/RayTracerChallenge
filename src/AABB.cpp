@@ -188,15 +188,15 @@ bool AABB::is_finite() const{
 
 // Infinite boxes are left untransformed: transforming them computes 0*inf = NaN.
 // Callers check is_finite() and treat such shapes as unbounded.
-std::unique_ptr<AABB> parent_space_bounds(const Shape* shape){
-    auto s = shape->bound();
-    if(s->is_finite()){s->transform(shape->get_transform());}
+AABB parent_space_bounds(const Shape* shape){
+    AABB s = shape->bound();
+    if(s.is_finite()){s.transform(shape->get_transform());}
     return s;
 }
 
-std::unique_ptr<AABB> world_space_bounds(const Shape* shape){
-    auto s = shape->bound();
-    if(s->is_finite()){s->transform(shape->get_aggregate_transform());}
+AABB world_space_bounds(const Shape* shape){
+    AABB s = shape->bound();
+    if(s.is_finite()){s.transform(shape->get_aggregate_transform());}
     return s;
 }
 
@@ -320,8 +320,8 @@ void AABB::split(){
         throw std::invalid_argument("Something went horribly wrong when spliting");
     }
 // assign left and right bounding box
-    this->left = std::make_unique<AABB>( AABB(this->get_min(), left_max));
-    this->right = std::make_unique<AABB>( AABB(right_min, this->get_max()));
+    this->left = std::make_unique<AABB>(this->get_min(), left_max);
+    this->right = std::make_unique<AABB>(right_min, this->get_max());
 }
 
 

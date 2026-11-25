@@ -18,7 +18,7 @@ public:
     Tuple local_normal_at(const Tuple& pt, const Impact& impt=Impact()) const override;
     std::vector<Impact> local_intersect(const Ray &other) const override;
     void verbose_print() const override;
-    std::unique_ptr<AABB> bound() const override;
+    AABB bound() const override;
 
     const Shape* get_left() const{return children[0].get();};
     const Shape* get_right() const{return children[1].get();};

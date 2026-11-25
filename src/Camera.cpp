@@ -161,16 +161,16 @@ std::unique_ptr<Canvas> Camera::render(World* w, unsigned int max_depth ){
     w->build_bvh();
     std::cout << "BVH Initialized" << std::endl;
     total_rays=0;
-    Canvas image = Canvas(this->hsize, this->vsize);
+    auto image = std::make_unique<Canvas>(this->hsize, this->vsize);
     for(int y=0; y<this->vsize; ++y){
         for(int x=0; x<this->hsize; ++x){
             Ray r = ray_for_pixel(x,y);
             Color c = w->color_at(r);
-            image.write_pixel(x,y,c);
+            image->write_pixel(x,y,c);
         }
     }
     std::cout << "Total Rays Created: " << Camera::total_rays << std::endl;
-    return std::make_unique<Canvas>(image);
+    return image;
 }
 
 std::ostream& operator << (std::ostream& out, const Camera& c){

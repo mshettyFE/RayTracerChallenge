@@ -29,6 +29,6 @@ void Plane::verbose_print() const{
     std::cout << "\tShape ID: " << id << std::endl;
 }
 
-std::unique_ptr<AABB> Plane::bound() const{
-    return std::make_unique<AABB>(AABB({NEG_INFTY,0,NEG_INFTY},{INFTY,0,INFTY},this));
+AABB Plane::bound() const{
+    return AABB({NEG_INFTY,0,NEG_INFTY},{INFTY,0,INFTY},this);
 }

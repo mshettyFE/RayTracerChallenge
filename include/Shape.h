@@ -27,8 +27,10 @@ public:
     Shape(const Matrix& Transformation=MatIdentity(4), const Material& material=Material(), const Shape* parent=nullptr, std::string name="PLACEHOLDER");
 //    Shape(const Shape&) = delete;
 //    Shape& operator= (const Shape&) = delete;
-    Shape(Shape&& mS)            = default;
-    Shape& operator=(Shape&& mS) = default;
+    // Not defaulted: children hold a raw pointer to their parent, so after a move they must be
+    // re-pointed at the new object instead of the moved-from one.
+    Shape(Shape&& mS);
+    Shape& operator=(Shape&& mS);
     virtual ~Shape() {}
 
     virtual void verbose_print() const=0;
@@ -62,7 +64,7 @@ public:
 
     bool includes(const Shape* test) const;
 
-    virtual std::unique_ptr<AABB> bound() const = 0;
+    virtual AABB bound() const = 0;
     
     friend std::ostream& operator << (std::ostream &out, const Shape* other);
 

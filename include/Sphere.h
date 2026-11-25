@@ -12,7 +12,7 @@ class Sphere: public Shape{
 
         void verbose_print() const override;
 
-        std::unique_ptr<AABB> bound() const override;
+        AABB bound() const override;
 
 };
 

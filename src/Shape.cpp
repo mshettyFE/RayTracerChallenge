@@ -15,6 +15,25 @@ Shape::Shape(const Matrix& Transformation, const Material& material, const Shape
     this->Transformation = Transformation;
 }
 
+Shape::Shape(Shape&& other)
+    : Transformation(std::move(other.Transformation)), id(other.id), mat(std::move(other.mat)),
+      parent(other.parent), children(std::move(other.children)), name(std::move(other.name)){
+    for(auto& child: children){child->set_parent(this);}
+}
+
+Shape& Shape::operator=(Shape&& other){
+    if(this != &other){
+        Transformation = std::move(other.Transformation);
+        id = other.id;
+        mat = std::move(other.mat);
+        parent = other.parent;
+        children = std::move(other.children);
+        name = std::move(other.name);
+        for(auto& child: children){child->set_parent(this);}
+    }
+    return *this;
+}
+
 void Shape::set_transform(Matrix a_Tranformation){
     this->Transformation = a_Tranformation;
 }

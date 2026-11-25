@@ -33,9 +33,9 @@ static void collect_primitives(const Shape* shape,
         }
         return;
     }
-    auto bbox = world_space_bounds(shape);
-    if (bbox->is_finite()) {
-        bounded.push_back(std::move(bbox));
+    AABB bbox = world_space_bounds(shape);
+    if (bbox.is_finite()) {
+        bounded.push_back(std::make_unique<AABB>(std::move(bbox)));
     } else {
         unbounded.push_back(shape);
     }
@@ -46,21 +46,21 @@ void World::build_bvh() const {
 
     unbounded_shapes.clear();
     bvh_cache.reset();
-    AABB root_box;
     std::vector<std::unique_ptr<AABB>> bounded_boxes;
 
     for (auto const& shape : shapes) {
         collect_primitives(shape.get(), bounded_boxes, unbounded_shapes);
     }
-    for (auto const& bbox : bounded_boxes) {
-        root_box.expand_box(bbox.get());
-    }
 
     if (!bounded_boxes.empty()) {
-        for (unsigned int i = 0; i < bounded_boxes.size(); ++i) {
-            root_box.insert(bounded_boxes[i]);
+        auto root_box = std::make_unique<AABB>();
+        for (auto const& bbox : bounded_boxes) {
+            root_box->expand_box(bbox.get());
         }
-        bvh_cache = std::make_unique<AABB>(std::move(root_box));
+        for (auto& bbox : bounded_boxes) {
+            root_box->insert(bbox);
+        }
+        bvh_cache = std::move(root_box);
     }
 
     bvh_built = true;

@@ -62,18 +62,18 @@ std::vector<Impact> CSG::local_intersect(const Ray &other) const {
 Tuple CSG::local_normal_at(const Tuple& pt, const Impact& impt) const{std::invalid_argument("CSG doesn't have a normal (like group)"); return GenVec(0,0,0);}
 void CSG::verbose_print() const {}
 
-std::unique_ptr<AABB> CSG::bound() const{
+AABB CSG::bound() const{
     // Single box tagged with the CSG. Must not contain child boxes, or a BVH would return the
     // children as candidates directly and bypass filter_impacts.
-    auto output = std::make_unique<AABB>();
+    AABB output;
     for(auto const& child: children){
-        auto bbox = parent_space_bounds(child.get());
-        if(!bbox->is_finite()){
-            return std::make_unique<AABB>(AABB({NEG_INFTY,NEG_INFTY,NEG_INFTY},{INFTY,INFTY,INFTY},this));
+        AABB bbox = parent_space_bounds(child.get());
+        if(!bbox.is_finite()){
+            return AABB({NEG_INFTY,NEG_INFTY,NEG_INFTY},{INFTY,INFTY,INFTY},this);
         }
-        output->expand_box(bbox.get());
+        output.expand_box(&bbox);
     }
-    output->set_shape(this);
+    output.set_shape(this);
     return output;
 }
  

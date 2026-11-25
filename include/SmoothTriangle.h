@@ -27,7 +27,7 @@ public:
     std::vector<Tuple> get_points() const;
     std::vector<Tuple> get_normals() const;
 
-    std::unique_ptr<AABB> bound() const override;
+    AABB bound() const override;
 
 };
 

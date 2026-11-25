@@ -78,8 +78,8 @@ std::vector<Impact> Cylinder::local_intersect(const Ray &other) const {
     return out;
 }
 
-std::unique_ptr<AABB> Cylinder::bound() const{
-    return std::make_unique<AABB>(AABB({-1,minimum,-1},{1,maximum,1}, this));
+AABB Cylinder::bound() const{
+    return AABB({-1,minimum,-1},{1,maximum,1}, this);
 }
 
 
