@@ -10,6 +10,7 @@
 #include "OBJParser.h"
 #include "Cube.h"
 #include "Mandelbulb.h"
+#include "Sphereflake.h"
 #include <random>
 #include <vector>
 #include <tuple>
@@ -608,4 +609,19 @@ static std::unique_ptr<Canvas> render_mandelbulb_scene(int width, int height){
 
 TEST(GenImage, Mandelbulb){
     render_mandelbulb_scene(400, 300)->save_ppm("Mandelbulb");
+}
+
+// The classic sphereflake benchmark scene (levels 3: 820 reflective spheres) on a checkered floor.
+TEST(GenImage, Sphereflake){
+    World w;
+    Material floor_mat(0.1, 0.8, 0.1, 100.0, WHITE, 0.1, 0.0, 1.0,
+                       std::make_shared<Checkers>(Color(0.2, 0.2, 0.25), Color(0.8, 0.8, 0.85), MatScaling(0.5, 0.5, 0.5)));
+    w.add_shape(std::make_unique<Plane>(MatTranslation(0, -1, 0), floor_mat));
+    Material chrome(0.05, 0.3, 0.9, 200.0, Color(0.75, 0.75, 0.8));
+    chrome.set_reflectance(0.6);
+    w.add_shape(make_sphereflake(3, chrome));
+    w.add_source(std::make_unique<PointSource>(WHITE, GenPoint(-6, 8, -8)));
+    w.set_sky(Color(0.85, 0.9, 1.0), Color(0.25, 0.45, 0.85));   // pale at the horizon, deep blue overhead
+    Camera cam(400, 400, pi/3.0, GenPoint(2.8, 2.4, -4.2), GenPoint(0, 0.2, 0), GenVec(0, 1, 0));
+    cam.render(&w)->save_ppm("Sphereflake");
 }
