@@ -16,6 +16,8 @@ bazel build Tracer
 bazel run Tracer
 ```
 
+NOTE: Might need to zoom out to bump up your terminal's resolution.
+
 ## Tests
 If you want to run the tests
 ### Without generating images
