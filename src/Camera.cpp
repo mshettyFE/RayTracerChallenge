@@ -22,7 +22,7 @@ Camera::Camera(int hsize, int vsize, double field_of_view){
     }
     // Assume that canvas is 1 pixel away from camera
     this->field_of_view = field_of_view;
-    this->view_trans = MatIdentity(4);
+    set_view_transform(MatIdentity(4));
     double half_view = std::tan(this->field_of_view/2.0);
     this->aspect_ratio = (static_cast<double>(this->hsize))/( static_cast<double>(this->vsize));
     if(this->aspect_ratio >= 1){
@@ -85,7 +85,7 @@ Camera::Camera(int hsize, int vsize, double field_of_view, const Tuple& camera_l
     }
     );
     Matrix trans = MatTranslation(-1.0*camera_loc.get_x(),-1.0*camera_loc.get_y(),-1.0*camera_loc.get_z());
-    this->view_trans = orientation*trans;
+    set_view_transform(orientation*trans);
 }
 
 int Camera::get_hsize() const{return this->hsize;}
@@ -122,11 +122,17 @@ void Camera::set_view(const Tuple& camera_loc,const Tuple& pointed_at, const Tup
     }
     );
     Matrix trans = MatTranslation(-1.0*camera_loc[0],-1.0*camera_loc[1],-1.0*camera_loc[2]);
-    this->view_trans = orientation*trans;
+    set_view_transform(orientation*trans);
 }
 
 void Camera::set_view(const Matrix& new_view){
-    this->view_trans = new_view;
+    set_view_transform(new_view);
+}
+
+// Use this to keep inverse_view caching in line with view_trans
+void Camera::set_view_transform(const Matrix& view){
+    this->view_trans = view;
+    this->inverse_view = view.Inverse();
 }
 
 bool Camera::operator==(const Camera& other) const{
@@ -152,9 +158,9 @@ Ray Camera::ray_for_pixel(int px, int py) const{
     double world_x = this->half_width-x_offset;
     double world_y = this->half_height-y_offset;
     Tuple world_pt = Tuple({world_x, world_y, -1}, TupType::POINT);
-    Tuple pixel = this->view_trans.Inverse()*world_pt;
+    Tuple pixel = this->inverse_view*world_pt;
     Tuple origin = Tuple({0,0,0}, TupType::POINT);
-    origin = this->view_trans.Inverse()*origin;
+    origin = this->inverse_view*origin;
     Tuple direction = pixel-origin;
     direction.normalize();
     return Ray(origin, direction);

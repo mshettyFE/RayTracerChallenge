@@ -19,6 +19,9 @@ private:
     double half_width;
     double half_height;
     Matrix view_trans;
+    // Inverse of view_trans, used by ray_for_pixel for every pixel.
+    Matrix inverse_view;
+    void set_view_transform(const Matrix& view);
     // Renders pixels [x0, x1) x [y0, y1) into image. Safe to call concurrently for non-overlapping tiles.
     void render_tile(const World* w, Canvas& image, int x0, int y0, int x1, int y1, unsigned int max_depth) const;
 public:
