@@ -5,6 +5,7 @@
 #include "Constants.h"
 #include "RNG.h"
 #include <random>
+#include <array>
 
 #define RED Color(1,0,0)
 #define GREEN Color(0,1,0)
@@ -52,6 +53,8 @@ class Color : public Tuple{
         void clamp();
         // clamp all channels, then scale to (0,255)
         void rescale();
+        // Clamped 8-bit channels, without modifying this color. 
+        std::array<unsigned char,3> to_rgb8() const;
         // normalize Color vector
         void normalize();
 

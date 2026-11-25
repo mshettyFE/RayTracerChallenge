@@ -73,6 +73,17 @@ void Color::rescale(){
     }
 }
 
+std::array<unsigned char,3> Color::to_rgb8() const{
+    std::array<unsigned char,3> out;
+    for(int i=0; i<3; ++i){
+        double v = data[i];
+        if(!(v > 0)){v = 0;}   // also maps NaN to 0
+        if(v > 1){v = 1;}
+        out[i] = static_cast<unsigned char>(v * 255);
+    }
+    return out;
+}
+
 void Color::normalize(){
     for(int i=0; i<dim; ++i){
         data[i] /= 255;

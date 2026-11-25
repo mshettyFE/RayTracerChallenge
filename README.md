@@ -1,5 +1,7 @@
 My own C++ Implementation of the [Ray Tracer Challenge](https://raytracerchallenge.com/).
 
+With some modifications.
+
 # Compiling
 I assume that you are on Linux, and that you have bazel installed. It would also be good to have ImageMagick to view the generated images. Assuming the above, run the following commands in the base directory of the repo:
 

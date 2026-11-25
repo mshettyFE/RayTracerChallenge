@@ -168,14 +168,14 @@ void Camera::render_tile(const World* w, Canvas& image, int x0, int y0, int x1, 
     }
 }
 
-std::unique_ptr<Canvas> Camera::render(World* w, unsigned int max_depth, unsigned int num_threads, int tile_size){
+std::unique_ptr<Canvas> Camera::render(World* w, unsigned int max_depth, unsigned int num_threads, int tile_size, bool verbose){
     if(tile_size <= 0){
         throw std::invalid_argument("tile_size must be positive");
     }
     // Must happen before any threads start: building the BVH writes to the World, and the
     // workers only read from it.
     w->build_bvh();
-    std::cout << "BVH Initialized" << std::endl;
+    if(verbose){std::cout << "BVH Initialized" << std::endl;}
     total_rays = 0;
     auto image = std::make_unique<Canvas>(this->hsize, this->vsize);
     Canvas& canvas = *image;
@@ -211,7 +211,7 @@ std::unique_ptr<Canvas> Camera::render(World* w, unsigned int max_depth, unsigne
         th.join();
     }
 
-    std::cout << "Rendered " << n_tiles << " tiles on " << threads << " threads. Total Rays Created: " << total_rays << std::endl;
+    if(verbose) std::cout << "Rendered " << n_tiles << " tiles on " << threads << " threads. Total Rays Created: " << total_rays << std::endl;
     return image;
 }
 

@@ -29,6 +29,10 @@ Color Canvas::operator()(unsigned int cand_w, unsigned int cand_h){
     return output;
 }
 
+const Color& Canvas::pixel_at(unsigned int x, unsigned int y) const{
+    return pixels[get_index(x, y)];   // get_index range-checks x and y
+}
+
 int Canvas::n_pixels() const{
     return width*height;
 };

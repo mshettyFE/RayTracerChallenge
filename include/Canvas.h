@@ -17,6 +17,10 @@ class Canvas{
         Canvas(unsigned int a_width, unsigned int a_height);
         // pixel access operator
         Color operator()(unsigned int cand_w, unsigned int cand_h);
+        // read-only pixel access, for code that only holds a const Canvas
+        const Color& pixel_at(unsigned int x, unsigned int y) const;
+        unsigned int get_width() const{return width;}
+        unsigned int get_height() const{return height;}
         // convenience function for number of pixels
         int n_pixels() const;
         // Convenience function to map (x,y) tuple to single index to select a pixel from pixels vector

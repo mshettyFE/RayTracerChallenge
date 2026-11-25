@@ -45,8 +45,9 @@ public:
     Ray ray_for_pixel(int x, int y) const;
 
     // Renders in tile_size x tile_size tiles handed out to worker threads on demand.
-    // num_threads = 0 uses one thread per hardware core.
-    std::unique_ptr<Canvas> render(World* w, unsigned int depth =20, unsigned int num_threads = 0, int tile_size = 16);
+    // num_threads = 0 uses one thread per hardware core. verbose = false suppresses the
+    // progress output (needed when the terminal itself is the display).
+    std::unique_ptr<Canvas> render(World* w, unsigned int depth =20, unsigned int num_threads = 0, int tile_size = 16, bool verbose = true);
 
     bool operator==(const Camera& other) const;
     bool operator!=(const Camera& other) const;
