@@ -6,6 +6,7 @@
 #include <type_traits>
 #include "Constants.h"
 #include <vector>
+#include <stdexcept>
 
 class Matrix{
     protected:
@@ -25,7 +26,15 @@ class Matrix{
         Matrix(std::initializer_list<std::initializer_list<double>> args, double a_resolution=glob_resolution);
 
         // Just like Canvas implementation
-        int get_index(unsigned int x, unsigned int y) const;
+        inline int get_index(unsigned int row, unsigned int col) const{
+            if (row>= dim){
+                throw std::invalid_argument("Invalid row access");
+            }
+            if (col>= dim){
+                throw std::invalid_argument("Invalid column access");
+            }
+            return row*dim+col;
+        }
 
         int get_dim() const;
 

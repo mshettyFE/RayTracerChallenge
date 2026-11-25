@@ -40,16 +40,6 @@ int Matrix::get_dim() const{
     return dim;
 }
 
-int Matrix::get_index (unsigned int row, unsigned int col) const{
-    if (row>= dim){
-        throw std::invalid_argument("Invalid row access");
-    }
-    if (col>= dim){
-        throw std::invalid_argument("Invalid column access");
-    }
-    return row*dim+col;
-}
-
 double Matrix::operator() (unsigned int row, unsigned int col) const{
     return data[get_index(row, col)];
 }
