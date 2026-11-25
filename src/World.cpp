@@ -166,7 +166,7 @@ Color World::color_at(const Ray& r, unsigned int remaining) const{
         if(lowest_positive_index==-1){
             return sky_color(r);
         }
-        out += shade_hit(CollisionInfo(std::make_unique<Impact>(hits[lowest_positive_index]),r), remaining);
+        out += shade_hit(CollisionInfo(std::make_unique<Impact>(hits[lowest_positive_index]), r, hits), remaining);
         return out;
     }
     return sky_color(r);   // hit nothing at all
