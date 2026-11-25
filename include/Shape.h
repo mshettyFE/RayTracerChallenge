@@ -14,6 +14,12 @@ class Shape{
 private:
     static inline unsigned long GlobalID{0};
     Matrix Transformation;
+    // Cached object-to-world transform (parent chain * Transformation) and its inverse.
+    // Kept up to date eagerly: set_transform and set_parent recompute them for this shape and
+    // every descendant
+    Matrix world_transform;
+    Matrix world_inverse;
+    void update_world_transform();
     virtual Tuple local_normal_at(const Tuple& pt, const Impact& impt=Impact()) const =0;
     virtual std::vector<Impact> local_intersect(const Ray &other) const =0;
     Matrix get_aggregate_transform(std::set<const Shape*>& visited, bool verbose=false, int count=0) const;
@@ -45,6 +51,8 @@ public:
 
     Matrix get_transform() const;
     Matrix get_aggregate_transform(bool verbose=false) const;
+    const Matrix& get_world_transform() const{return world_transform;}
+    const Matrix& get_world_inverse() const{return world_inverse;}
     void set_transform(Matrix Tranformation);
 
     std::string get_name() const;

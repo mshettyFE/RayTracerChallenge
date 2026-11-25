@@ -196,7 +196,7 @@ AABB parent_space_bounds(const Shape* shape){
 
 AABB world_space_bounds(const Shape* shape){
     AABB s = shape->bound();
-    if(s.is_finite()){s.transform(shape->get_aggregate_transform());}
+    if(s.is_finite()){s.transform(shape->get_world_transform());}
     return s;
 }
 

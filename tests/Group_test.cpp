@@ -60,3 +60,19 @@ TEST(GroupTest, Normal){
     g1.set_transform(MatRotateY(pi/2.0));
     EXPECT_EQ(s1->normal_at(Tuple({1.7321, 1.1547, -5.5774}, TupType::POINT)),Tuple({0.285704 ,0.428543, -0.857161}));
 }
+// The cached world transform must track changes made to ancestors after a child was added,
+// including when the group itself is moved into a new object.
+TEST(GroupTest, CachedWorldTransformTracksParents){
+    Group outer;
+    Group inner(MatTranslation(7,0,0));
+    const Shape* s = inner.add_child(std::make_unique<Sphere>(MatTranslation(-5,0,0)));
+    outer.add_child(std::make_unique<Group>(std::move(inner)));
+    outer.set_transform(MatRotateY(0.3)*MatScaling(2,2,2));   // changed after the children exist
+    EXPECT_EQ(s->get_world_transform(), s->get_aggregate_transform());
+    EXPECT_EQ(s->get_world_inverse(), s->get_aggregate_transform().Inverse());
+    Ray r({0,0,-5},{0,0,1});
+    auto expected = s->get_aggregate_transform();
+    EXPECT_EQ(s->intersect(r).size(), 0u);   // sphere is now centred at (4cos0.3, 0, -4sin0.3)
+    Ray r2(expected*Tuple({0,0,0},TupType::POINT) - Tuple({0,0,10}), Tuple({0,0,1}));
+    EXPECT_EQ(s->intersect(r2).size(), 2u);
+}

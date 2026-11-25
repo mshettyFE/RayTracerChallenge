@@ -49,7 +49,7 @@ std::vector<Impact> CSG::filter_impacts(const std::vector<Impact>& hits) const{
 std::vector<Impact> CSG::local_intersect(const Ray &other) const {
     // Children's Shape::intersect expects a world-space ray;
     // `other` is in CSG-local space.
-    Ray world_ray = other.transform(get_aggregate_transform());
+    Ray world_ray = other.transform(get_world_transform());
     auto left_hits = get_left()->intersect(world_ray);
     auto right_hits = get_right()->intersect(world_ray);
     std::sort(left_hits.begin(), left_hits.end());

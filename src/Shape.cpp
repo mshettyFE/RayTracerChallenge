@@ -13,12 +13,13 @@ Shape::Shape(const Matrix& Transformation, const Material& material, const Shape
     GlobalID += 1;
     this->name = name;
     this->Transformation = Transformation;
+    update_world_transform();
 }
 
 Shape::Shape(Shape&& other)
     : Transformation(std::move(other.Transformation)), id(other.id), mat(std::move(other.mat)),
       parent(other.parent), children(std::move(other.children)), name(std::move(other.name)){
-    for(auto& child: children){child->set_parent(this);}
+    update_world_transform();
 }
 
 Shape& Shape::operator=(Shape&& other){
@@ -29,13 +30,25 @@ Shape& Shape::operator=(Shape&& other){
         parent = other.parent;
         children = std::move(other.children);
         name = std::move(other.name);
-        for(auto& child: children){child->set_parent(this);}
+        update_world_transform();
     }
     return *this;
 }
 
 void Shape::set_transform(Matrix a_Tranformation){
     this->Transformation = a_Tranformation;
+    update_world_transform();
+}
+
+// Recomputes the cached world transform for this shape, then for each descendant. Also points
+// every child's parent at this, which keeps children correct after this shape is moved.
+void Shape::update_world_transform(){
+    world_transform = (parent == nullptr) ? Transformation : parent->world_transform * Transformation;
+    world_inverse = world_transform.Inverse();
+    for(auto& child: children){
+        child->parent = this;
+        child->update_world_transform();
+    }
 }
 
 Matrix Shape::get_transform() const{
@@ -84,9 +97,7 @@ const Shape* Shape::get_parent() const{
 
 void Shape::set_parent(const  Shape* new_parent){
     this->parent = new_parent;
-    for(int index=0; index<get_total_children(); ++index){
-        this->children[index]->set_parent(this);
-    }
+    update_world_transform();
 }
 
 unsigned long Shape::get_id() const{return id;}
@@ -116,18 +127,17 @@ void Shape::print(unsigned int indent, std::set<const Shape*> visited) const{
 }
 
 Tuple Shape::normal_at(const Tuple& world_pt, const Impact& impt) const{
-    Matrix agg_trans_inv = this->get_aggregate_transform().Inverse();
-    Tuple local_point = agg_trans_inv*world_pt;
+    Tuple local_point = world_inverse*world_pt;
     local_point.set_type(TupType::POINT);
     Tuple local_normal  = local_normal_at(local_point,impt);
-    Tuple output = agg_trans_inv.Transpose()*local_normal;
+    Tuple output = world_inverse.Transpose()*local_normal;
     output.set_type(TupType::VECTOR);
     output.normalize();
     return output;
 }
 
 std::vector<Impact> Shape::intersect(const Ray &other) const{
-    Ray TransformedRay = other.transform(get_aggregate_transform().Inverse());
+    Ray TransformedRay = other.transform(world_inverse);
     return local_intersect(TransformedRay);
 }
 

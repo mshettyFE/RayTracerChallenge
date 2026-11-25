@@ -16,7 +16,7 @@ void Group::verbose_print() const{
 // already in this group's local space, so convert it back before handing it to the children.
 std::vector<Impact> Group::local_intersect(const Ray &r) const {
     if (children.empty()) return {};
-    Ray world_ray = r.transform(get_aggregate_transform());
+    Ray world_ray = r.transform(get_world_transform());
     std::vector<Impact> out;
     for(auto const& child: children){
         for(auto hit: child->intersect(world_ray)){
