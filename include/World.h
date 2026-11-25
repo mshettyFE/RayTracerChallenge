@@ -13,6 +13,8 @@
 
 class World{
     private:
+        Color sky_horizon = BLACK;
+        Color sky_zenith = BLACK;
         std::vector<std::unique_ptr<LightSource>> sources;
         std::vector<std::unique_ptr<Shape>> shapes;
         mutable std::unique_ptr<AABB> bvh_cache;
@@ -27,6 +29,12 @@ class World{
     Color  shade_hit(const CollisionInfo& hit, unsigned int remaining=5) const;
 
     Color color_at(const Ray& r, unsigned int remaining=5) const;
+
+    // Colour seen by rays that hit nothing: a vertical gradient from horizon (for rays pointing
+    // level or downwards) to zenith (straight up). Reflected rays that escape see it too.
+    // Defaults to black for both, i.e. no sky.
+    void set_sky(const Color& horizon, const Color& zenith);
+    Color sky_color(const Ray& r) const;
 
     int number_of_sources() const;
     int number_of_shapes() const;

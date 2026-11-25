@@ -267,3 +267,28 @@ TEST(WorldTest, ReflectiveTransparentAtOnce){
     CollisionInfo comps(std::make_unique<Impact>(std::sqrt(2),w->get_shape(2)),r);
     EXPECT_EQ(w->shade_hit(comps), Color({0.93391, 0.69643, 0.69243}));
 }
+TEST(WorldTest, SkyGradientForRaysThatMiss){
+    World w;
+    Ray up({0, 0, 0}, {0, 1, 0}), level({0, 0, 0}, {1, 0, 0}), down({0, 0, 0}, {0, -1, 0});
+    EXPECT_EQ(w.color_at(up), BLACK);                       // default: no sky
+    const Color horizon(0.9, 0.9, 1.0), zenith(0.2, 0.4, 0.8);
+    w.set_sky(horizon, zenith);
+    EXPECT_EQ(w.color_at(up), zenith);
+    EXPECT_EQ(w.color_at(level), horizon);
+    EXPECT_EQ(w.color_at(down), horizon);                   // below the horizon stays at the horizon colour
+    Ray halfway({0, 0, 0}, {1, 1, 0});                      // 45 degrees up: sin(45) of the way to the zenith
+    double s = std::sqrt(0.5);
+    EXPECT_EQ(w.color_at(halfway), horizon * (1 - s) + zenith * s);
+}
+
+// A mirror's reflected rays that escape the scene see the sky, so mirrors reflect it.
+TEST(WorldTest, ReflectionsSeeTheSky){
+    World w;
+    Material mirror(0, 0, 0, 200, BLACK);
+    mirror.set_reflectance(1.0);
+    w.add_shape(std::make_unique<Plane>(MatIdentity(4), mirror));
+    w.add_source(std::make_unique<PointSource>(WHITE, Tuple({0, 10, 0}, TupType::POINT)));
+    w.set_sky(Color(1, 1, 1), Color(0, 0, 1));
+    Ray straight_down({0, 1, 0}, {0, -1, 0});               // bounces straight back up, into the zenith
+    EXPECT_EQ(w.color_at(straight_down), Color(0, 0, 1));
+}

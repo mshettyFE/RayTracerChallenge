@@ -162,13 +162,26 @@ Color World::color_at(const Ray& r, unsigned int remaining) const{
                 break;
             }
         }
-        // If all of the hits are negative, there is nothing in front of the array, so return BLACK
+        // If all of the hits are negative, there is nothing in front of the ray: it sees the sky
         if(lowest_positive_index==-1){
-            return out;
+            return sky_color(r);
         }
         out += shade_hit(CollisionInfo(std::make_unique<Impact>(hits[lowest_positive_index]),r), remaining);
+        return out;
     }
-    return out;
+    return sky_color(r);   // hit nothing at all
+}
+
+void World::set_sky(const Color& horizon, const Color& zenith){
+    sky_horizon = horizon;
+    sky_zenith = zenith;
+}
+
+Color World::sky_color(const Ray& r) const{
+    Tuple direction = r.get_direction();
+    direction.normalize();
+    const double up = std::max(0.0, direction.get_y());   // 0 at and below the horizon, 1 straight up
+    return sky_horizon * (1.0 - up) + sky_zenith * up;
 }
 
 std::unique_ptr<World> default_world(){
