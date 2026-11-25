@@ -10,6 +10,8 @@
 #include "PointSource.h"
 #include "Camera.h"
 #include "TerminalDisplay.h"
+#include "FlyCamera.h"
+#include <cmath>
 
 // A gold Mandelbulb, pole pointing up, over a reflective checkerboard.
 static std::unique_ptr<World> build_scene(){
@@ -27,8 +29,11 @@ static std::unique_ptr<World> build_scene(){
     return w;
 }
 
-static Camera make_camera(int width, int height){
-    return Camera(width, height, pi/3.0, Tuple({0, 2.6, -5.2}, TupType::POINT), Tuple({0, 1.3, 0}, TupType::POINT), Tuple({0, 1, 0}));
+const double FIELD_OF_VIEW = pi/3.0;
+
+// Starting view: in front of the bulb and slightly above, looking down at its centre (0, 1.3, 0).
+static FlyCamera starting_camera(){
+    return FlyCamera(GenPoint(0, 2.6, -5.2), 0.0, std::atan2(1.3 - 2.6, 5.2));
 }
 
 // Terminal-sized images are small, so 16x16 tiles leave too few tiles to keep every thread busy
@@ -36,19 +41,26 @@ static Camera make_camera(int width, int height){
 //   tile 16 / 8 / 4 / 2:  80x24: 78 / 46 / 30 / 26 ms   100x30: 74 / 57 / 43 / 46 ms   200x60: 212 / 171 / 161 / 165 ms
 constexpr int TERMINAL_TILE_SIZE = 4;
 
-// Shows the scene in the terminal, re-rendering whenever the terminal is resized.
+// Shows the scene in the terminal and flies the camera with the keyboard. Re-renders only when
+// the camera moved or the terminal was resized.
 static int run_in_terminal(World& world){
     TerminalDisplay display;
+    FlyCamera fly = starting_camera();
     TerminalDisplay::Size last_size{0, 0};
+    bool view_changed = true;
     while(true){
-        // Wait briefly for keys so an idle display doesn't spin the CPU; resizes are picked up
-        // within that interval.
-        for(char key : display.read_keys(100)){
+        // Apply every key that arrived since the last frame, then draw once. The terminal sends
+        // key repeats while a key is held, so movement speed follows the repeat rate rather than
+        // the frame rate, and a slow frame never leaves a backlog. If nothing needs redrawing,
+        // wait briefly for input so an idle display doesn't spin the CPU.
+        for(char key : display.read_keys(view_changed ? 0 : 100)){
             if(key == 'q' || key == 'Q' || key == 3 /* Ctrl-C */){return 0;}
+            if(fly.handle_key(key)){view_changed = true;}
         }
         const TerminalDisplay::Size size = display.size();
-        if(size == last_size){continue;}   // static scene: nothing changed, nothing to redraw
+        if(size == last_size && !view_changed){continue;}
         last_size = size;
+        view_changed = false;
 
         // One row is kept for the status line; each remaining row shows two pixels.
         const int width = size.cols;
@@ -56,11 +68,13 @@ static int run_in_terminal(World& world){
         if(width < 1 || height < 2){continue;}
 
         const auto start = std::chrono::steady_clock::now();
-        auto image = make_camera(width, height).render(&world, 20, 0, TERMINAL_TILE_SIZE, false);
+        auto image = fly.make_camera(width, height, FIELD_OF_VIEW).render(&world, 20, 0, TERMINAL_TILE_SIZE, false);
         const double ms = std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - start).count();
 
         char status[160];
-        std::snprintf(status, sizeof(status), " %dx%d px | %.0f ms | q to quit", width, height, ms);
+        const Tuple& p = fly.get_position();
+        std::snprintf(status, sizeof(status), " %.0f ms | pos %.2f %.2f %.2f yaw %.2f pitch %.2f | wasd move, ijkl look, q quit",
+                      ms, p[0], p[1], p[2], fly.get_yaw(), fly.get_pitch());
         display.draw(*image, status);
     }
 }
@@ -69,7 +83,7 @@ int main(){
     auto world = build_scene();
     if(!::isatty(STDIN_FILENO) || !::isatty(STDOUT_FILENO)){
         // Not running in a terminal (e.g. output redirected): render one image to a file instead.
-        make_camera(400, 300).render(world.get())->save_ppm("Mandelbulb");
+        starting_camera().make_camera(400, 300, FIELD_OF_VIEW).render(world.get())->save_ppm("Mandelbulb");
         return 0;
     }
     try{
