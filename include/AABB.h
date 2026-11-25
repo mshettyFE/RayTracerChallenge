@@ -21,7 +21,6 @@ private:
     std::array<double,3> min_bounds={INFTY,INFTY,INFTY};
     std::array<double,3> max_bounds={NEG_INFTY,NEG_INFTY,NEG_INFTY};
     void indented_print( const AABB* current_box, int indent=0, bool verbose=false) const;
-    std::vector<double> check_axis(double origin, double direction, double min, double max) const;
 public:
     bool intersect(const Ray &other) const;
     void collect_candidates(const Ray& r, std::vector<const Shape*>& candidates) const;

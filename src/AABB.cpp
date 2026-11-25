@@ -1,5 +1,6 @@
 #include "AABB.h"
 #include "Shape.h"
+#include <utility>
 #include <set>
 
 AABB::AABB(std::initializer_list<double> min_bounds, std::initializer_list<double> max_bounds, const Shape* shp){
@@ -200,52 +201,27 @@ AABB world_space_bounds(const Shape* shape){
     return s;
 }
 
-std::vector<double> AABB::check_axis(double origin, double direction, double min, double max) const{
-    double tmin_num = (min-origin);
-    double tmax_num = (max-origin);
-    double tmin, tmax;
-    if(std::abs(direction) >= glob_resolution){
-        tmin = tmin_num/direction;
-        tmax = tmax_num/direction;
-    }
-    else{
-        tmin = tmin_num*INFTY;
-        tmax = tmax_num*INFTY;
-    }
-    if(tmin>tmax){
-        double temp = tmin;
-        tmin = tmax;
-        tmax = temp;
-    }
-    return {tmin,tmax};
-}
-
 bool AABB::intersect(const Ray &other) const{
-    std::vector<double> minima;
-    std::vector<double> maxima;
-    auto bounds = check_axis(other.get_origin()[0],other.get_direction()[0], get_min_x(), get_max_x());
-    minima.push_back(bounds[0]);
-    maxima.push_back(bounds[1]);
-    bounds = check_axis(other.get_origin()[1],other.get_direction()[1], get_min_y(), get_max_y());
-    minima.push_back(bounds[0]);
-    maxima.push_back(bounds[1]);
-    bounds = check_axis(other.get_origin()[2],other.get_direction()[2], get_min_z(), get_max_z());
-    minima.push_back(bounds[0]);
-    maxima.push_back(bounds[1]);
-    double largest_min = NEG_INFTY;
-    for(auto x: minima){
-        if(x>largest_min){
-            largest_min = x;
-        }    
-    }
-    double smallest_max = INFTY;
-    for(auto x: maxima){
-        if(x<smallest_max){
-            smallest_max = x;
-        }    
-    }
-    if(largest_min > smallest_max){
-        return false;
+    const Tuple& o = other.get_origin();
+    const Tuple& d = other.get_direction();
+    const double origin[3] = {o.get_x(), o.get_y(), o.get_z()};
+    const double direction[3] = {d.get_x(), d.get_y(), d.get_z()};
+    double largest_entry = NEG_INFTY;
+    double smallest_exit = INFTY;
+    for(int axis = 0; axis < 3; ++axis){
+        if(std::abs(direction[axis]) < glob_resolution){
+            // Parallel to this slab: the ray is either always inside it (no constraint) or
+            // never (a miss). A ray lying exactly in a face's plane counts as inside.
+            if(origin[axis] < min_bounds[axis] || origin[axis] > max_bounds[axis]){return false;}
+            continue;
+        }
+        double t_enter = (min_bounds[axis] - origin[axis]) / direction[axis];
+        double t_exit = (max_bounds[axis] - origin[axis]) / direction[axis];
+        if(t_enter > t_exit){std::swap(t_enter, t_exit);}
+        if(t_enter > largest_entry){largest_entry = t_enter;}
+        if(t_exit < smallest_exit){smallest_exit = t_exit;}
+        // The overlap only shrinks as axes are added, so once empty it stays empty.
+        if(largest_entry > smallest_exit){return false;}
     }
     return true;
 }
